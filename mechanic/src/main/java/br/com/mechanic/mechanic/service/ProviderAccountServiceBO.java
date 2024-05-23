@@ -1,17 +1,24 @@
 package br.com.mechanic.mechanic.service;
 
-import br.com.mechanic.mechanic.request.ProviderAccountRequest;
-import br.com.mechanic.mechanic.response.ProviderAccountResponse;
+import br.com.mechanic.mechanic.exception.ProviderAccountException;
+import br.com.mechanic.mechanic.exception.ProviderAccountTypeException;
+import br.com.mechanic.mechanic.exception.ProviderAddressException;
+import br.com.mechanic.mechanic.exception.ProviderPhoneException;
+import br.com.mechanic.mechanic.request.ProviderAccountRequestDto;
+import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
-import java.util.List;
 import java.util.Optional;
 
 public interface ProviderAccountServiceBO {
-    Optional<ProviderAccountResponse> findById(Long id);
+    ProviderAccountResponseDto findById(Long id);
 
-    List<ProviderAccountResponse> findAll();
+    Page<ProviderAccountResponseDto> findAll(final Pageable pageable);
 
-    ProviderAccountResponse save(ProviderAccountRequest providerAccount);
+    ProviderAccountResponseDto save(ProviderAccountRequestDto providerAccount) throws ProviderAccountException, ProviderAddressException, ProviderPhoneException, ProviderAccountTypeException;
 
-    void delete(ProviderAccountResponse providerAccountResponse);
+    void delete(ProviderAccountResponseDto providerAccountResponse);
+
 }

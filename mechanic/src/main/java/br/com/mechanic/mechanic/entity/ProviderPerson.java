@@ -3,6 +3,7 @@ package br.com.mechanic.mechanic.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -21,7 +22,7 @@ public class ProviderPerson {
     private Long providerAccountId;
     private String name;
     @Column(name = "birth_date")
-    private LocalDateTime birthDate;
+    private LocalDate birthDate;
     @Column(name = "create_date")
     private LocalDateTime createDate;
     @Column(name = "last_update")
