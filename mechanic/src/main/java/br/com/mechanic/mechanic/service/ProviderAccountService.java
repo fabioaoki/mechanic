@@ -117,6 +117,7 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
     @Transactional
     @Override
     public void changeStatus(Long id, ProviderAccountStatusEnum statusEnum) throws ProviderAccountException {
+        logger.info("Service change status to: {}", statusEnum);
         ProviderAccountModel providerAccountModel = ProviderAccountMapper.MAPPER.toModel(getProvider(id));
         if (!providerAccountModel.getStatus().equals(statusEnum)) {
             providerAccountModel.setStatus(statusEnum);
@@ -127,6 +128,7 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
     }
 
     private void saveHistory(Long id, ProviderAccountStatusEnum statusEnum) {
+        logger.info("Service saving change status to: {} by accountId: {}", statusEnum, id);
         ProviderAccountHistory accountHistory = new ProviderAccountHistory();
         accountHistory.setProviderAccountId(id);
         accountHistory.setCreateDate(LocalDateTime.now());
