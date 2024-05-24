@@ -6,6 +6,7 @@ import br.com.mechanic.mechanic.exception.ProviderAccountTypeException;
 import br.com.mechanic.mechanic.exception.ProviderAddressException;
 import br.com.mechanic.mechanic.exception.ProviderPhoneException;
 import br.com.mechanic.mechanic.request.ProviderAccountRequestDto;
+import br.com.mechanic.mechanic.request.ProviderAccountUpdateRequestDto;
 import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,4 +19,6 @@ public interface ProviderAccountServiceBO {
     ProviderAccountResponseDto save(ProviderAccountRequestDto providerAccount) throws ProviderAccountException, ProviderAddressException, ProviderPhoneException, ProviderAccountTypeException;
 
     void changeStatus(Long id, ProviderAccountStatusEnum statusEnum) throws ProviderAccountException;
+
+    ProviderAccountResponseDto updateProviderAccount(Long id, ProviderAccountUpdateRequestDto requestDto);
 }

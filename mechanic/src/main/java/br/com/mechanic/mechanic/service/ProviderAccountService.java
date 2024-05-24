@@ -1,5 +1,6 @@
 package br.com.mechanic.mechanic.service;
 
+import br.com.mechanic.mechanic.config.ExcludeFromJacocoGeneratedReport;
 import br.com.mechanic.mechanic.entity.*;
 import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import br.com.mechanic.mechanic.exception.*;
@@ -9,10 +10,7 @@ import br.com.mechanic.mechanic.mapper.ProviderPersonMapper;
 import br.com.mechanic.mechanic.mapper.ProviderPhoneMapper;
 import br.com.mechanic.mechanic.model.ProviderAccountModel;
 import br.com.mechanic.mechanic.repository.*;
-import br.com.mechanic.mechanic.request.ProviderAccountRequestDto;
-import br.com.mechanic.mechanic.request.ProviderAddressRequest;
-import br.com.mechanic.mechanic.request.ProviderPersonRequest;
-import br.com.mechanic.mechanic.request.ProviderPhoneRequest;
+import br.com.mechanic.mechanic.request.*;
 import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
@@ -29,6 +27,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class ProviderAccountService implements ProviderAccountServiceBO {
@@ -127,6 +126,61 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
         }
     }
 
+    @Transactional
+    @Override
+    public ProviderAccountResponseDto updateProviderAccount(Long id, ProviderAccountUpdateRequestDto requestDto) {
+        logger.info("Service update status by id: {}", id);
+        validUpdateField(requestDto);
+        ProviderAccountModel providerAccountModel = ProviderAccountMapper.MAPPER.toModel(getProvider(id));
+        boolean isChange = updateField(providerAccountModel, requestDto);
+        if (isChange) {
+            ProviderAccount providerAccount = providerAccountRepository.save(ProviderAccountMapper.MAPPER.modelToEntity(providerAccountModel));
+            return ProviderAccountMapper.MAPPER.toDto(providerAccount);
+        }
+        throw new ProviderAccountException(ErrorCode.IDENTICAL_FIELDS, "No changes were made to the provider account.");
+    }
+
+    @ExcludeFromJacocoGeneratedReport
+    private boolean updateField(ProviderAccountModel providerAccountModel, ProviderAccountUpdateRequestDto requestDto) {
+        logger.info("Service update field by id: {}", providerAccountModel.getId());
+        boolean isChange = false;
+
+        if (requestDto.getWorkshop() != null && !requestDto.getWorkshop().isEmpty() && !requestDto.getWorkshop().equals(providerAccountModel.getWorkshop())) {
+            providerAccountModel.setWorkshop(requestDto.getWorkshop());
+            isChange = true;
+        }
+
+        if (requestDto.getType() != null && !Objects.equals(requestDto.getType(), providerAccountModel.getType())) {
+            providerAccountModel.setType(requestDto.getType());
+            isChange = true;
+        }
+
+        if (requestDto.getCnpj() != null && !requestDto.getCnpj().replaceAll("\\D", "").equals(providerAccountModel.getCnpj())) {
+            providerAccountModel.setCnpj(requestDto.getCnpj().replaceAll("\\D", ""));
+            isChange = true;
+        }
+
+        if (isChange) {
+            providerAccountModel.setLastUpdate(LocalDateTime.now());
+        }
+
+        return isChange;
+    }
+
+    private void validUpdateField(ProviderAccountUpdateRequestDto requestDto) {
+        logger.info("Service validate field update");
+        if (requestDto.getCnpj() != null) {
+            providerAccountRepository.findByCnpj(requestDto.getCnpj().replaceAll("\\D", ""))
+                    .ifPresent(clientAccount -> {
+                        throw new ProviderAccountException(ErrorCode.ERROR_CREATED_CLIENT, "CNPJ already registered");
+                    });
+        }
+        if (requestDto.getType() != null) {
+            getProviderType(requestDto.getType());
+        }
+
+    }
+
     private void saveHistory(Long id, ProviderAccountStatusEnum statusEnum) {
         logger.info("Service saving change status to: {} by accountId: {}", statusEnum, id);
         ProviderAccountHistory accountHistory = new ProviderAccountHistory();
@@ -138,7 +192,7 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
 
     private void validField(ProviderAccountRequestDto dto) throws ProviderAccountException, ProviderAddressException, ProviderPhoneException, ProviderAccountTypeException {
         logger.info("Service: valid provider account type exists");
-        typeRepository.getProviderType(dto.getType()).orElseThrow(() -> new ProviderAccountTypeException(ErrorCode.ERROR_PROVIDER_ACCOUNT_TYPE_NOT_FOUND, "Provider type not found by id: " + dto.getType()));
+        getProviderType(dto.getType());
         logger.info("Service: valid provider account field");
         validProviderAccount(dto);
         logger.info("Service: valid address field");
@@ -147,6 +201,10 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
         validPhoneField(dto.getPhoneRequest());
         logger.info("Service: valid person field");
         validPersonField(dto.getPersonRequest());
+    }
+
+    private void getProviderType(Long providerType) {
+        typeRepository.getProviderType(providerType).orElseThrow(() -> new ProviderAccountTypeException(ErrorCode.ERROR_PROVIDER_ACCOUNT_TYPE_NOT_FOUND, "Provider type not found by id: " + providerType));
     }
 
     private void validPersonField(ProviderPersonRequest personRequest) {

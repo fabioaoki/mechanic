@@ -3,6 +3,7 @@ package br.com.mechanic.mechanic.controller;
 import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import br.com.mechanic.mechanic.exception.*;
 import br.com.mechanic.mechanic.request.ProviderAccountRequestDto;
+import br.com.mechanic.mechanic.request.ProviderAccountUpdateRequestDto;
 import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;
 import br.com.mechanic.mechanic.service.ProviderAccountServiceBO;
 import org.apache.logging.log4j.LogManager;
@@ -84,6 +85,16 @@ public class ProviderAccountController {
             return ResponseEntity.ok().build();
         } catch (ProviderAccountException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
+        }
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateProviderAccount(@PathVariable Long id, @RequestBody ProviderAccountUpdateRequestDto requestDto) {
+        try {
+            logger.info("Updating provider account with id: " + id);
+            return ResponseEntity.ok(providerAccountServiceBO.updateProviderAccount(id, requestDto));
+        } catch (ProviderAccountException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
         }
     }
 
