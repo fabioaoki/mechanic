@@ -20,11 +20,10 @@ public interface ProviderAccountMapper {
 
     @Named("toEntity")
     default ProviderAccount toEntity(ProviderAccountRequestDto dto) {
-        ProviderAccount entity = ProviderAccount.builder()
+        return ProviderAccount.builder()
                 .workshop(dto.getWorkshop())
                 .cnpj(dto.getCnpj().replaceAll("\\s", ""))
                 .type(dto.getType())
                 .build();
-        return entity;
     }
 }

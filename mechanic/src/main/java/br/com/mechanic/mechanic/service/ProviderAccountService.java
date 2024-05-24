@@ -75,6 +75,7 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
         logger.info("Retrieving list of providers accounts");
         return providerAccountRepository.findAll(pageable).map(ProviderAccountMapper.MAPPER::toDto);
     }
+
     @Transactional(rollbackFor = {ProviderAccountException.class, ProviderAddressException.class, ProviderPhoneException.class, ProviderAccountTypeException.class})
     @Override
     public ProviderAccountResponseDto save(ProviderAccountRequestDto providerAccountRequest) throws ProviderAccountException, ProviderAddressException, ProviderPhoneException, ProviderAccountTypeException {
@@ -183,6 +184,10 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
             }
             logger.info("Service: Format number");
             phone.setNumber(formatPhoneNumber(phone.getArea(), phone.getNumber()));
+            phoneRepository.findByPhone(phone.getNumber())
+                    .ifPresent(number -> {
+                        throw new ProviderPhoneException(ErrorCode.ERROR_CREATED_PHONE, "Phone number already registered");
+                    });
         });
     }
 
@@ -197,7 +202,7 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
             if (addressRequest.getZipCode() == null || addressRequest.getZipCode().trim().isEmpty()) {
                 throw new ProviderAddressException(ErrorCode.INVALID_FIELD, "The 'zipcode' field is required and cannot be empty.");
             }
-            addressRepository.findByAddress(addressRequest.getCity(), addressRequest.getStreet(), addressRequest.getZipCode().trim())
+            addressRepository.findByAddress(addressRequest.getCity(), addressRequest.getStreet(), addressRequest.getZipCode().replaceAll("\\s", ""))
                     .ifPresent(address -> {
                         throw new ProviderAddressException(ErrorCode.ERROR_CREATED_ADDRESS, "address already registered");
                     });

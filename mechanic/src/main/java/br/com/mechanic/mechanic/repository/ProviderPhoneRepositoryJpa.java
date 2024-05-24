@@ -4,6 +4,7 @@ import br.com.mechanic.mechanic.entity.ProviderPhone;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Component
 public class ProviderPhoneRepositoryJpa implements ProviderPhoneRepositoryImpl {
@@ -18,5 +19,10 @@ public class ProviderPhoneRepositoryJpa implements ProviderPhoneRepositoryImpl {
     public ProviderPhone save(ProviderPhone entity) {
         entity.setCreateDate(LocalDateTime.now());
         return repository.save(entity);
+    }
+
+    @Override
+    public Optional<ProviderPhone> findByPhone(String number) {
+        return repository.findByNumber(number);
     }
 }
