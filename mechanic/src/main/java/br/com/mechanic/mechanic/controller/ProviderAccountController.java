@@ -1,5 +1,6 @@
 package br.com.mechanic.mechanic.controller;
 
+import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import br.com.mechanic.mechanic.exception.*;
 import br.com.mechanic.mechanic.request.ProviderAccountRequestDto;
 import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;
@@ -68,7 +69,18 @@ public class ProviderAccountController {
     public ResponseEntity<?> deleteProviderAccount(@PathVariable Long id) throws ProviderAccountException {
         try {
             logger.info("Deleting provider account with id: " + id);
-            providerAccountServiceBO.delete(id);
+            providerAccountServiceBO.changeStatus(id, ProviderAccountStatusEnum.CANCEL);
+            return ResponseEntity.ok().build();
+        } catch (ProviderAccountException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
+        }
+    }
+
+    @PutMapping("active/{id}")
+    public ResponseEntity<?> activeProviderAccount(@PathVariable Long id) {
+        try {
+            logger.info("Activating provider account with id: " + id);
+            providerAccountServiceBO.changeStatus(id, ProviderAccountStatusEnum.ACTIVE);
             return ResponseEntity.ok().build();
         } catch (ProviderAccountException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));

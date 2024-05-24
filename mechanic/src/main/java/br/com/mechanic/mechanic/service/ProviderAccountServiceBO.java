@@ -1,5 +1,6 @@
 package br.com.mechanic.mechanic.service;
 
+import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import br.com.mechanic.mechanic.exception.ProviderAccountException;
 import br.com.mechanic.mechanic.exception.ProviderAccountTypeException;
 import br.com.mechanic.mechanic.exception.ProviderAddressException;
@@ -16,5 +17,5 @@ public interface ProviderAccountServiceBO {
 
     ProviderAccountResponseDto save(ProviderAccountRequestDto providerAccount) throws ProviderAccountException, ProviderAddressException, ProviderPhoneException, ProviderAccountTypeException;
 
-    void delete(Long id) throws ProviderAccountException;
+    void changeStatus(Long id, ProviderAccountStatusEnum statusEnum) throws ProviderAccountException;
 }

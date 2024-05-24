@@ -116,21 +116,21 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
 
     @Transactional
     @Override
-    public void delete(Long id) throws ProviderAccountException {
+    public void changeStatus(Long id, ProviderAccountStatusEnum statusEnum) throws ProviderAccountException {
         ProviderAccountModel providerAccountModel = ProviderAccountMapper.MAPPER.toModel(getProvider(id));
-        if (!providerAccountModel.getStatus().equals(ProviderAccountStatusEnum.CANCEL)) {
-            providerAccountModel.setStatus(ProviderAccountStatusEnum.CANCEL);
+        if (!providerAccountModel.getStatus().equals(statusEnum)) {
+            providerAccountModel.setStatus(statusEnum);
             providerAccountModel.setLastUpdate(LocalDateTime.now());
             providerAccountRepository.save(ProviderAccountMapper.MAPPER.modelToEntity(providerAccountModel));
-            saveHistory(id);
+            saveHistory(id, statusEnum);
         }
     }
 
-    private void saveHistory(Long id) {
+    private void saveHistory(Long id, ProviderAccountStatusEnum statusEnum) {
         ProviderAccountHistory accountHistory = new ProviderAccountHistory();
         accountHistory.setProviderAccountId(id);
         accountHistory.setCreateDate(LocalDateTime.now());
-        accountHistory.setStatus(ProviderAccountStatusEnum.CANCEL);
+        accountHistory.setStatus(statusEnum);
         providerAccountHistoryRepository.save(accountHistory);
     }
 

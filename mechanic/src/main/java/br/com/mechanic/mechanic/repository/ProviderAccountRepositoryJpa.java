@@ -36,7 +36,9 @@ public class ProviderAccountRepositoryJpa implements ProviderAccountRepositoryIm
 
     @Override
     public ProviderAccount save(ProviderAccount entity) {
-        entity.setCreateDate(LocalDateTime.now());
+        if(entity.getCreateDate() == null){
+            entity.setCreateDate(LocalDateTime.now());
+        }
         return providerAccountRepository.save(entity);
     }
 }
