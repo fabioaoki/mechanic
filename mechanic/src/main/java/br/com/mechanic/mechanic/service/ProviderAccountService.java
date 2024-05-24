@@ -160,7 +160,7 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
         if (dto.getCnpj() == null || dto.getCnpj().trim().isEmpty()) {
             throw new ProviderAccountException(ErrorCode.INVALID_FIELD, "The 'cnpj' field is required and cannot be empty.");
         }
-        providerAccountRepository.findByCnpj(dto.getCnpj().replaceAll("\\s", ""))
+        providerAccountRepository.findByCnpj(dto.getCnpj().replaceAll("\\D", ""))
                 .ifPresent(clientAccount -> {
                     throw new ProviderAccountException(ErrorCode.ERROR_CREATED_CLIENT, "CNPJ already registered");
                 });
