@@ -1,5 +1,6 @@
 package br.com.mechanic.mechanic.entity;
 
+import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -24,4 +25,6 @@ public class ProviderAccount {
     @Column(name = "last_update")
     private LocalDateTime lastUpdate;
     private Long type;
+    @Enumerated(EnumType.STRING)
+    private ProviderAccountStatusEnum status = ProviderAccountStatusEnum.INITIAL_BLOCK;;
 }

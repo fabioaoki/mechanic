@@ -1,5 +1,6 @@
 package br.com.mechanic.mechanic.response;
 
+import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,4 +22,5 @@ public class ProviderAccountResponseDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDateTime lastUpdate;
     private Long type;
+    private ProviderAccountStatusEnum status;
 }
