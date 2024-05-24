@@ -2,6 +2,7 @@ package br.com.mechanic.mechanic.mapper;
 
 import br.com.mechanic.mechanic.entity.ProviderAccount;
 import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
+import br.com.mechanic.mechanic.model.ProviderAccountModel;
 import br.com.mechanic.mechanic.request.ProviderAccountRequestDto;
 import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;
 import org.mapstruct.Mapper;
@@ -13,7 +14,7 @@ public interface ProviderAccountMapper {
 
     ProviderAccountMapper MAPPER = Mappers.getMapper(ProviderAccountMapper.class);
 
-//    ProviderAccount toEntity(ProviderAccountRequestDto dto);
+    ProviderAccount modelToEntity(ProviderAccountModel model);
 
 //    @Mapping(target = "lastUpdate", ignore = true)
 //    ProviderAccountResponseDto toDto(ProviderAccount save);
@@ -41,4 +42,5 @@ public interface ProviderAccountMapper {
                 .build();
     }
 
+    ProviderAccountModel toModel(ProviderAccount provider);
 }

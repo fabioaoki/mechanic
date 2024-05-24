@@ -7,10 +7,7 @@ import br.com.mechanic.mechanic.exception.ProviderPhoneException;
 import br.com.mechanic.mechanic.request.ProviderAccountRequestDto;
 import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-
-import java.util.Optional;
 
 public interface ProviderAccountServiceBO {
     ProviderAccountResponseDto findById(Long id);
@@ -19,6 +16,5 @@ public interface ProviderAccountServiceBO {
 
     ProviderAccountResponseDto save(ProviderAccountRequestDto providerAccount) throws ProviderAccountException, ProviderAddressException, ProviderPhoneException, ProviderAccountTypeException;
 
-    void delete(ProviderAccountResponseDto providerAccountResponse);
-
+    void delete(Long id) throws ProviderAccountException;
 }

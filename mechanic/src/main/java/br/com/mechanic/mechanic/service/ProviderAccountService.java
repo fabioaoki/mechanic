@@ -1,14 +1,13 @@
 package br.com.mechanic.mechanic.service;
 
-import br.com.mechanic.mechanic.entity.ProviderAccount;
-import br.com.mechanic.mechanic.entity.ProviderAddress;
-import br.com.mechanic.mechanic.entity.ProviderPerson;
-import br.com.mechanic.mechanic.entity.ProviderPhone;
+import br.com.mechanic.mechanic.entity.*;
+import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import br.com.mechanic.mechanic.exception.*;
 import br.com.mechanic.mechanic.mapper.ProviderAccountMapper;
 import br.com.mechanic.mechanic.mapper.ProviderAddressMapper;
 import br.com.mechanic.mechanic.mapper.ProviderPersonMapper;
 import br.com.mechanic.mechanic.mapper.ProviderPhoneMapper;
+import br.com.mechanic.mechanic.model.ProviderAccountModel;
 import br.com.mechanic.mechanic.repository.*;
 import br.com.mechanic.mechanic.request.ProviderAccountRequestDto;
 import br.com.mechanic.mechanic.request.ProviderAddressRequest;
@@ -27,9 +26,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.Period;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ProviderAccountService implements ProviderAccountServiceBO {
@@ -44,17 +43,20 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
     private final ProviderPhoneRepositoryImpl phoneRepository;
 
     private final ProviderAccountTypeRepositoryImpl typeRepository;
+
+    private final ProviderAccountHistoryRepositoryImpl providerAccountHistoryRepository;
     private static final PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
 
 
     @Autowired
     public ProviderAccountService(ProviderAccountRepositoryImpl providerAccountRepository, ProviderAddressRepositoryImpl addressRepository, ProviderPersonRepositoryImpl providerPersonRepository, ProviderPhoneRepositoryImpl phoneRepository,
-                                  ProviderAccountTypeRepositoryImpl typeRepository) {
+                                  ProviderAccountTypeRepositoryImpl typeRepository, ProviderAccountHistoryRepositoryImpl providerAccountHistoryRepository) {
         this.providerAccountRepository = providerAccountRepository;
         this.addressRepository = addressRepository;
         this.providerPersonRepository = providerPersonRepository;
         this.phoneRepository = phoneRepository;
         this.typeRepository = typeRepository;
+        this.providerAccountHistoryRepository = providerAccountHistoryRepository;
     }
 
     @Override
@@ -63,11 +65,7 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
     }
 
     private ProviderAccount getProvider(Long id) {
-        return getById(id).orElseThrow(() -> new ProviderAccountException(ErrorCode.ERROR_PROVIDER_ACCOUNT_NOT_FOUND, "Provider not found by id: " + id));
-    }
-
-    private Optional<ProviderAccount> getById(Long id) {
-        return providerAccountRepository.findById(id);
+        return providerAccountRepository.findById(id).orElseThrow(() -> new ProviderAccountException(ErrorCode.ERROR_PROVIDER_ACCOUNT_NOT_FOUND, "Provider not found by id: " + id));
     }
 
     @Override
@@ -116,9 +114,24 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
 
     }
 
+    @Transactional
     @Override
-    public void delete(ProviderAccountResponseDto providerAccountResponse) {
+    public void delete(Long id) throws ProviderAccountException {
+        ProviderAccountModel providerAccountModel = ProviderAccountMapper.MAPPER.toModel(getProvider(id));
+        if (!providerAccountModel.getStatus().equals(ProviderAccountStatusEnum.CANCEL)) {
+            providerAccountModel.setStatus(ProviderAccountStatusEnum.CANCEL);
+            providerAccountModel.setLastUpdate(LocalDateTime.now());
+            providerAccountRepository.save(ProviderAccountMapper.MAPPER.modelToEntity(providerAccountModel));
+            saveHistory(id);
+        }
+    }
 
+    private void saveHistory(Long id) {
+        ProviderAccountHistory accountHistory = new ProviderAccountHistory();
+        accountHistory.setProviderAccountId(id);
+        accountHistory.setCreateDate(LocalDateTime.now());
+        accountHistory.setStatus(ProviderAccountStatusEnum.CANCEL);
+        providerAccountHistoryRepository.save(accountHistory);
     }
 
     private void validField(ProviderAccountRequestDto dto) throws ProviderAccountException, ProviderAddressException, ProviderPhoneException, ProviderAccountTypeException {

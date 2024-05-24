@@ -64,6 +64,17 @@ public class ProviderAccountController {
         }
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteProviderAccount(@PathVariable Long id) throws ProviderAccountException {
+        try {
+            logger.info("Deleting provider account with id: " + id);
+            providerAccountServiceBO.delete(id);
+            return ResponseEntity.ok().build();
+        } catch (ProviderAccountException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
+        }
+    }
+
     private static ErrorResponse getErrorResponse(ProviderAccountException e) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setErrorCode(e.getErrorCode());
