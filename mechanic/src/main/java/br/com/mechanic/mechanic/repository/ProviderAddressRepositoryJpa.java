@@ -30,8 +30,8 @@ public class ProviderAddressRepositoryJpa implements ProviderAddressRepositoryIm
     }
 
     @Override
-    public Optional<ProviderAddress> findByAddress(String city, String street, String zipcode) {
-        return addressRepository.findByCityAndStreetAndZipCode(city, street, zipcode);
+    public Optional<ProviderAddress> findByAddress(String city, String street, String zipcode, String state, String number, String neighborhood) {
+        return addressRepository.findByCityAndStreetAndZipCodeAndStateAndNumberAndNeighborhood(city, street, zipcode, state, number, neighborhood);
     }
 
     @Override

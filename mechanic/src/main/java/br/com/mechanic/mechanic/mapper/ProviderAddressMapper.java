@@ -23,14 +23,17 @@ public interface ProviderAddressMapper {
 
     @Named("toEntity")
     default ProviderAddress toEntity(ProviderAddressRequest dto) {
-        double latitude = -23.550520;
-        double longitude = -46.633308;
+//        double latitude = -23.550520;
+//        double longitude = -46.633308;
         return ProviderAddress.builder()
                 .city(dto.getCity())
                 .zipCode(dto.getZipCode().replaceAll("\\s", ""))
                 .street(dto.getStreet())
-                .latitude(latitude)
-                .longitude(longitude)
+                .state(dto.getState())
+                .neighborhood(dto.getNeighborhood())
+                .number(dto.getNumber())
+//                .latitude(latitude)
+//                .longitude(longitude)
                 .build();
     }
 }

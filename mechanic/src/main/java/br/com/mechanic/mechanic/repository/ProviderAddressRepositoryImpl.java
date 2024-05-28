@@ -12,7 +12,7 @@ public interface ProviderAddressRepositoryImpl {
 
     Optional<ProviderAddress> findById(Long id);
 
-    Optional<ProviderAddress> findByAddress(String city, String street, String zipcode);
+    Optional<ProviderAddress> findByAddress(String city, String street, String zipcode, String state, String number, String neighborhood);
 
     void save(ProviderAddress entity);
 }

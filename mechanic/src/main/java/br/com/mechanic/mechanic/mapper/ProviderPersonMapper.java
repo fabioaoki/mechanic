@@ -1,6 +1,7 @@
 package br.com.mechanic.mechanic.mapper;
 
 import br.com.mechanic.mechanic.entity.ProviderPerson;
+import br.com.mechanic.mechanic.model.ProviderPersonResponseModel;
 import br.com.mechanic.mechanic.request.ProviderPersonRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -14,4 +15,6 @@ public interface ProviderPersonMapper {
     ProviderPerson toEntity(ProviderPersonRequest dto);
 
     ProviderPersonRequest toDto(ProviderPerson save);
+
+    ProviderPersonResponseModel toModel(ProviderPerson save);
 }

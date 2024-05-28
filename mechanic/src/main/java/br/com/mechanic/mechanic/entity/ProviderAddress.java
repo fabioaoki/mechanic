@@ -27,7 +27,10 @@ public class ProviderAddress {
     private LocalDateTime createDate;
     @Column(name = "last_update")
     private LocalDateTime lastUpdate;
-    private Double latitude;
-    private Double longitude;
+    private double latitude;
+    private double longitude;
+    private String state;
+    private String number;
+    private String neighborhood;
 }
 
