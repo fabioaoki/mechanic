@@ -65,11 +65,11 @@ public class ProviderAddressService implements ProviderAddressServiceBO {
             if (addressRequest.getNumber() == null || addressRequest.getNumber().trim().isEmpty()) {
                 throw new ProviderAddressException(ErrorCode.INVALID_FIELD, "The 'number' field is required and cannot be empty.");
             }
-            if (addressRequest.getState() == null || addressRequest.getState().trim().isEmpty()) {
+            if (addressRequest.getState() == null) {
                 throw new ProviderAddressException(ErrorCode.INVALID_FIELD, "The 'state' field is required and cannot be empty.");
             }
             addressRepository.findByAddress(addressRequest.getCity(), addressRequest.getStreet(), addressRequest.getZipCode().replaceAll("\\s", ""),
-                            addressRequest.getState(), addressRequest.getNumber(), addressRequest.getNeighborhood())
+                            addressRequest.getState().toString(), addressRequest.getNumber(), addressRequest.getNeighborhood())
                     .ifPresent(address -> {
                         throw new ProviderAddressException(ErrorCode.ERROR_CREATED_ADDRESS, "address already registered");
                     });
@@ -82,11 +82,11 @@ public class ProviderAddressService implements ProviderAddressServiceBO {
         addressRequestList.forEach(addressRequest -> {
             ProviderAddress entity = ProviderAddressMapper.MAPPER.toEntity(addressRequest);
             entity.setProviderAccountId(providerAccountId);
-            try {
-                getGeocoding(addressRequest, entity);
-            } catch (ProviderAddressException e) {
-                throw new ProviderAddressException(ErrorCode.INVALID_FIELD, "The 'address' field is invalid.");
-            }
+//            try {
+//                getGeocoding(addressRequest, entity);
+//            } catch (ProviderAddressException e) {
+//                throw new ProviderAddressException(ErrorCode.INVALID_FIELD, "The 'address' field is invalid.");
+//            }
             addressRepository.save(entity);
         });
     }

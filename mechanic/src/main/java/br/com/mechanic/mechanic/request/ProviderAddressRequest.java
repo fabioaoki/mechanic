@@ -1,5 +1,6 @@
 package br.com.mechanic.mechanic.request;
 
+import br.com.mechanic.mechanic.enuns.StateEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -15,5 +16,5 @@ public class ProviderAddressRequest {
     private String neighborhood;
     private String zipCode;
     private String city;
-    private String state;
+    private StateEnum state;
 }
