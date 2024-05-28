@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 import java.util.Optional;
 
 @Component
@@ -35,9 +36,13 @@ public class ProviderAddressRepositoryJpa implements ProviderAddressRepositoryIm
     }
 
     @Override
-    public void save(ProviderAddress entity) {
-        entity.setCreateDate(LocalDateTime.now());
-        addressRepository.save(entity);
+    public ProviderAddress save(ProviderAddress entity) {
+        if(Objects.isNull(entity.getCreateDate())){
+            entity.setCreateDate(LocalDateTime.now());
+        } else {
+            entity.setLastUpdate(LocalDateTime.now());
+        }
+        return addressRepository.save(entity);
     }
 
 }
