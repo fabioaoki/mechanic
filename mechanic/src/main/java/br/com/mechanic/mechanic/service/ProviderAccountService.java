@@ -14,9 +14,8 @@ import br.com.mechanic.mechanic.repository.ProviderAccountTypeRepositoryImpl;
 import br.com.mechanic.mechanic.request.ProviderAccountRequestDto;
 import br.com.mechanic.mechanic.request.ProviderAccountUpdateRequestDto;
 import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,32 +24,19 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@AllArgsConstructor
+@Log4j2
 @Service
 public class ProviderAccountService implements ProviderAccountServiceBO {
 
-    private static final Logger logger = LogManager.getLogger(ProviderAccountService.class);
-
-    private final ProviderAccountRepositoryImpl providerAccountRepository;
     private final ProviderAddressServiceBO addressServiceBO;
     private final ProviderPersonServiceBO personServiceBO;
     private final ProviderPhoneServiceBO phoneServiceBO;
 
+    private final ProviderAccountRepositoryImpl providerAccountRepository;
     private final ProviderAccountTypeRepositoryImpl typeRepository;
 
     private final ProviderAccountHistoryRepositoryImpl providerAccountHistoryRepository;
-
-
-    @Autowired
-    public ProviderAccountService(ProviderAccountRepositoryImpl providerAccountRepository,
-                                  ProviderAccountTypeRepositoryImpl typeRepository, ProviderAccountHistoryRepositoryImpl providerAccountHistoryRepository,
-                                  ProviderAddressServiceBO addressServiceBO, ProviderPersonServiceBO personServiceBO, ProviderPhoneServiceBO phoneServiceBO) {
-        this.providerAccountRepository = providerAccountRepository;
-        this.phoneServiceBO = phoneServiceBO;
-        this.typeRepository = typeRepository;
-        this.providerAccountHistoryRepository = providerAccountHistoryRepository;
-        this.addressServiceBO = addressServiceBO;
-        this.personServiceBO = personServiceBO;
-    }
 
     @Override
     public ProviderAccountResponseDto findById(Long id) {
@@ -63,14 +49,14 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
 
     @Override
     public Page<ProviderAccountResponseDto> findAll(Pageable pageable) {
-        logger.info("Retrieving list of providers accounts");
+        log.info("Retrieving list of providers accounts");
         return providerAccountRepository.findAll(pageable).map(ProviderAccountMapper.MAPPER::toDto);
     }
 
     @Transactional(rollbackFor = {ProviderAccountException.class, ProviderAddressException.class, ProviderPhoneException.class, ProviderAccountTypeException.class})
     @Override
     public ProviderAccountResponseDto save(ProviderAccountRequestDto providerAccountRequest) throws ProviderAccountException, ProviderAddressException, ProviderPhoneException, ProviderAccountTypeException {
-        logger.info("Service: Creating a new provider account");
+        log.info("Service: Creating a new provider account");
         validField(providerAccountRequest);
         ProviderAccount providerAccount = providerAccountRepository.save(ProviderAccountMapper.MAPPER.toEntity(providerAccountRequest));
 
@@ -84,8 +70,9 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
     @Transactional
     @Override
     public void changeStatus(Long id, ProviderAccountStatusEnum statusEnum) throws ProviderAccountException {
-        logger.info("Service change status to: {}", statusEnum);
+        log.info("Service change status to: {}", statusEnum);
         ProviderAccountModel providerAccountModel = ProviderAccountMapper.MAPPER.toModel(getProvider(id));
+        isCancel(providerAccountModel);
         if (!providerAccountModel.getStatus().equals(statusEnum)) {
             providerAccountModel.setStatus(statusEnum);
             providerAccountModel.setLastUpdate(LocalDateTime.now());
@@ -94,12 +81,19 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
         }
     }
 
+    private static void isCancel(ProviderAccountModel providerAccountModel) {
+        if (providerAccountModel.getStatus().equals(ProviderAccountStatusEnum.CANCEL)) {
+            throw new ProviderAccountException(ErrorCode.CANNOT_CHANGE_STATUS, "Accounts already canceled");
+        }
+    }
+
     @Transactional
     @Override
-    public ProviderAccountResponseDto updateProviderAccount(Long id, ProviderAccountUpdateRequestDto requestDto) {
-        logger.info("Service update status by id: {}", id);
+    public ProviderAccountResponseDto updateProviderAccount(Long id, ProviderAccountUpdateRequestDto requestDto) throws ProviderAccountException {
+        log.info("Service update status by id: {}", id);
         validUpdateField(requestDto);
         ProviderAccountModel providerAccountModel = ProviderAccountMapper.MAPPER.toModel(getProvider(id));
+        isCancel(providerAccountModel);
         boolean isChange = updateField(providerAccountModel, requestDto);
         if (isChange) {
             ProviderAccount providerAccount = providerAccountRepository.save(ProviderAccountMapper.MAPPER.modelToEntity(providerAccountModel));
@@ -110,7 +104,7 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
 
     @ExcludeFromJacocoGeneratedReport
     private boolean updateField(ProviderAccountModel providerAccountModel, ProviderAccountUpdateRequestDto requestDto) {
-        logger.info("Service update field by id: {}", providerAccountModel.getId());
+        log.info("Service update field by id: {}", providerAccountModel.getId());
         boolean isChange = false;
 
         if (requestDto.getWorkshop() != null && !requestDto.getWorkshop().isEmpty() && !requestDto.getWorkshop().equals(providerAccountModel.getWorkshop())) {
@@ -136,7 +130,7 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
     }
 
     private void validUpdateField(ProviderAccountUpdateRequestDto requestDto) {
-        logger.info("Service validate field update");
+        log.info("Service validate field update");
         if (requestDto.getCnpj() != null) {
             providerAccountRepository.findByCnpj(requestDto.getCnpj().replaceAll("\\D", ""))
                     .ifPresent(clientAccount -> {
@@ -150,7 +144,7 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
     }
 
     private void saveHistory(Long id, ProviderAccountStatusEnum statusEnum) {
-        logger.info("Service saving change status to: {} by accountId: {}", statusEnum, id);
+        log.info("Service saving change status to: {} by accountId: {}", statusEnum, id);
         ProviderAccountHistory accountHistory = new ProviderAccountHistory();
         accountHistory.setProviderAccountId(id);
         accountHistory.setCreateDate(LocalDateTime.now());
@@ -159,9 +153,9 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
     }
 
     private void validField(ProviderAccountRequestDto dto) throws ProviderAccountException, ProviderAddressException, ProviderPhoneException, ProviderAccountTypeException {
-        logger.info("Service: valid provider account type exists");
+        log.info("Service: valid provider account type exists");
         getProviderType(dto.getType());
-        logger.info("Service: valid provider account field");
+        log.info("Service: valid provider account field");
         validProviderAccount(dto);
     }
 
@@ -184,7 +178,7 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
             throw new ProviderAccountException(ErrorCode.INVALID_FIELD, "The 'type' field is required and cannot be empty.");
         }
 
-        logger.info("Service: valid provider address account");
+        log.info("Service: valid provider address account");
         if (dto.getAddressRequest() == null || dto.getAddressRequest().isEmpty()) {
             throw new ProviderAddressException(ErrorCode.INVALID_FIELD, "The 'address' field is required and cannot be empty.");
         }

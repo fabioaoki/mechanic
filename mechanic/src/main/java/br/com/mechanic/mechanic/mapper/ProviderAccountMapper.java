@@ -16,9 +16,6 @@ public interface ProviderAccountMapper {
 
     ProviderAccount modelToEntity(ProviderAccountModel model);
 
-//    @Mapping(target = "lastUpdate", ignore = true)
-//    ProviderAccountResponseDto toDto(ProviderAccount save);
-
     @Named("toEntity")
     default ProviderAccount toEntity(ProviderAccountRequestDto dto) {
         return ProviderAccount.builder()
