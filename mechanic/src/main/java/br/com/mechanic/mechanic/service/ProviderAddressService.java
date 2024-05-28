@@ -14,6 +14,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -21,11 +22,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
-@AllArgsConstructor
-@Log4j2
 @Service
+@Log4j2
+@AllArgsConstructor
 public class ProviderAddressService implements ProviderAddressServiceBO {
 
+    private final ProviderAddressRepositoryImpl addressRepository;
 
     @Value("${google.api.geocoding.url}")
     private String geocodingUrl;
@@ -33,8 +35,10 @@ public class ProviderAddressService implements ProviderAddressServiceBO {
     @Value("${google.api.key}")
     private String apiKey;
 
-    private final ProviderAddressRepositoryImpl addressRepository;
-
+    @Autowired
+    public ProviderAddressService(ProviderAddressRepositoryImpl addressRepository) {
+        this.addressRepository = addressRepository;
+    }
 
     @Override
     public void save(List<ProviderAddressRequest> addressList, Long providerAccountId) {
@@ -72,6 +76,7 @@ public class ProviderAddressService implements ProviderAddressServiceBO {
         });
 
     }
+
     private void saveProviderAddressRequest(List<ProviderAddressRequest> addressRequestList, Long providerAccountId) {
         log.info("Service: saving a new provider address");
         addressRequestList.forEach(addressRequest -> {

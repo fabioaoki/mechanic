@@ -21,17 +21,21 @@ public class ProviderPersonRepositoryJpa implements ProviderPersonRepositoryImpl
 
     @Override
     public Page<ProviderPerson> findAll(Pageable pageable) {
-        return null;
+        return repository.findAll(pageable);
     }
 
     @Override
     public Optional<ProviderPerson> findById(Long id) {
-        return Optional.empty();
+        return repository.findById(id);
     }
 
     @Override
     public ProviderPerson save(ProviderPerson entity) {
-        entity.setCreateDate(LocalDateTime.now());
+        if(entity.getCreateDate() == null){
+            entity.setCreateDate(LocalDateTime.now());
+        } else {
+            entity.setLastUpdate(LocalDateTime.now());
+        }
         return repository.save(entity);
     }
 }

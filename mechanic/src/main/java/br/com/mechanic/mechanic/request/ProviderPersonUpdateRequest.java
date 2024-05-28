@@ -11,7 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Data
 @Builder
-public class ProviderPersonRequest {
+public class ProviderPersonUpdateRequest {
     private String name;
     private LocalDate birthDate;
 }
