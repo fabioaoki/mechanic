@@ -39,6 +39,7 @@ public class ProviderPhoneService implements ProviderPhoneServiceBO {
             ProviderPhone providerPhone = ProviderPhoneMapper.MAPPER.toEntity(phone);
             providerPhone.setProviderAccountId(providerAccountId);
             providerPhone.setProviderPersonId(personId);
+            phoneRepository.save(providerPhone);
         });
     }
 
