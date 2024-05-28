@@ -6,15 +6,14 @@ import br.com.mechanic.mechanic.exception.ProviderAddressException;
 import br.com.mechanic.mechanic.mapper.ProviderAddressMapper;
 import br.com.mechanic.mechanic.repository.ProviderAddressRepositoryImpl;
 import br.com.mechanic.mechanic.request.ProviderAddressRequest;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
-import org.apache.logging.log4j.LogManager;
 import org.json.JSONObject;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -22,10 +21,11 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.util.List;
 
+@AllArgsConstructor
+@Log4j2
 @Service
 public class ProviderAddressService implements ProviderAddressServiceBO {
 
-    private static final Logger logger = LogManager.getLogger(ProviderAddressService.class);
 
     @Value("${google.api.geocoding.url}")
     private String geocodingUrl;
@@ -35,14 +35,10 @@ public class ProviderAddressService implements ProviderAddressServiceBO {
 
     private final ProviderAddressRepositoryImpl addressRepository;
 
-    @Autowired
-    public ProviderAddressService(ProviderAddressRepositoryImpl addressRepository) {
-        this.addressRepository = addressRepository;
-    }
 
     @Override
     public void save(List<ProviderAddressRequest> addressList, Long providerAccountId) {
-        logger.info("Service: valid address field");
+        log.info("Service: valid address field");
         validAddressField(addressList);
         saveProviderAddressRequest(addressList, providerAccountId);
 
@@ -77,7 +73,7 @@ public class ProviderAddressService implements ProviderAddressServiceBO {
 
     }
     private void saveProviderAddressRequest(List<ProviderAddressRequest> addressRequestList, Long providerAccountId) {
-        logger.info("Service: saving a new provider address");
+        log.info("Service: saving a new provider address");
         addressRequestList.forEach(addressRequest -> {
             ProviderAddress entity = ProviderAddressMapper.MAPPER.toEntity(addressRequest);
             entity.setProviderAccountId(providerAccountId);
@@ -122,7 +118,7 @@ public class ProviderAddressService implements ProviderAddressServiceBO {
                     addressRequest.getState();
             return URLEncoder.encode(address, "UTF-8");
         } catch (UnsupportedEncodingException e) {
-            logger.error("Failed to encode address", e);
+            log.error("Failed to encode address", e);
             return "";
         }
     }

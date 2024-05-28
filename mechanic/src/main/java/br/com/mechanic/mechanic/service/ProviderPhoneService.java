@@ -9,32 +9,25 @@ import br.com.mechanic.mechanic.request.ProviderPhoneRequest;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
+@AllArgsConstructor
+@Log4j2
 @Service
 public class ProviderPhoneService implements ProviderPhoneServiceBO {
-
-    private static final Logger logger = LogManager.getLogger(ProviderPhoneService.class);
 
     private static final PhoneNumberUtil phoneNumberUtil = PhoneNumberUtil.getInstance();
 
     private final ProviderPhoneRepositoryImpl phoneRepository;
 
-    @Autowired
-    public ProviderPhoneService(ProviderPhoneRepositoryImpl phoneRepository) {
-        this.phoneRepository = phoneRepository;
-    }
-
     @Override
     public void save(List<ProviderPhoneRequest> phones, Long personId, Long providerAccountId) {
-        logger.info("Service: valid phone field");
+        log.info("Service: valid phone field");
         validPhoneField(phones);
-        logger.info("Service: Saving a new provider phone");
+        log.info("Service: Saving a new provider phone");
         phones.forEach(phone -> {
             ProviderPhone providerPhone = ProviderPhoneMapper.MAPPER.toEntity(phone);
             providerPhone.setProviderAccountId(providerAccountId);
@@ -51,7 +44,7 @@ public class ProviderPhoneService implements ProviderPhoneServiceBO {
             if (!isValidPhoneNumber(phone.getArea(), phone.getNumber())) {
                 throw new ProviderPhoneException(ErrorCode.INVALID_FIELD, "The 'phone number' field is invalid.");
             }
-            logger.info("Service: Format number");
+            log.info("Service: Format number");
             phone.setNumber(formatPhoneNumber(phone.getArea(), phone.getNumber()));
             phoneRepository.findByPhone(phone.getNumber())
                     .ifPresent(number -> {
@@ -62,9 +55,8 @@ public class ProviderPhoneService implements ProviderPhoneServiceBO {
 
     public static boolean isValidPhoneNumber(Long area, String number) {
         try {
-            // Construa o número de telefone no formato local, pois estamos passando a região "BR"
             String phoneNumber = area.toString() + number;
-            Phonenumber.PhoneNumber parsedNumber = phoneNumberUtil.parse(phoneNumber, "BR"); // Assumindo Brasil como exemplo
+            Phonenumber.PhoneNumber parsedNumber = phoneNumberUtil.parse(phoneNumber, "BR");
             return phoneNumberUtil.isValidNumber(parsedNumber);
         } catch (NumberParseException e) {
             return false;
@@ -73,7 +65,6 @@ public class ProviderPhoneService implements ProviderPhoneServiceBO {
 
     public static String formatPhoneNumber(Long area, String number) {
         try {
-            // Construa o número de telefone no formato local, pois estamos passando a região "BR"
             String phoneNumber = area.toString() + number;
             Phonenumber.PhoneNumber parsedNumber = phoneNumberUtil.parse(phoneNumber, "BR"); // Assumindo Brasil como exemplo
             return phoneNumberUtil.format(parsedNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL);
