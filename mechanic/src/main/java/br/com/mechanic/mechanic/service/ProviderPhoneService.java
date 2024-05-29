@@ -94,7 +94,7 @@ public class ProviderPhoneService implements ProviderPhoneServiceBO {
     }
 
     private ProviderPhone getPhone(Long id) {
-        return phoneRepository.findById(id).orElseThrow(() -> new ProviderPhoneException(ErrorCode.ERROR_PROVIDER_PHONE_NOT_FOUND, "Provider phone not found by id: " + id));
+        return phoneRepository.findById(id).orElseThrow(() -> new ProviderPhoneException(ErrorCode.VEHICLE_TYPE_EXCEPTION, "Provider phone not found by id: " + id));
     }
 
     private void validPhoneField(List<ProviderPhoneRequest> phones) {

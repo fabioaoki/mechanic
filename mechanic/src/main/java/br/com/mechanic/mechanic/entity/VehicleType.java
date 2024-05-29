@@ -23,4 +23,5 @@ public class VehicleType {
     private LocalDateTime createDate;
     @Column(name = "last_update")
     private LocalDateTime lastUpdate;
+    private boolean use;
 }
