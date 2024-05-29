@@ -19,6 +19,7 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
@@ -33,6 +34,7 @@ import java.util.Objects;
 public class ProviderAddressService implements ProviderAddressServiceBO {
 
     private final ProviderAddressRepositoryImpl addressRepository;
+
 
     @Value("${google.api.geocoding.url}")
     private String geocodingUrl;
@@ -75,6 +77,18 @@ public class ProviderAddressService implements ProviderAddressServiceBO {
             return ProviderAddressMapper.MAPPER.toDto(providerAddress);
         }
         throw new ProviderAddressException(ErrorCode.IDENTICAL_FIELDS, "No changes were made to the provider address.");
+    }
+
+    @Override
+    public Page<ProviderAddressResponseDto> findAllByProviderAccountId(Long providerAccountId, Pageable pageable) {
+        log.info("Retrieving list of address by provider");
+        Page<ProviderAddress> addresses = addressRepository.findByProviderAccountId(pageable, providerAccountId);
+
+        if (addresses.isEmpty()) {
+            throw new ProviderAddressException(ErrorCode.ERROR_PROVIDER_ACCOUNT_NOT_FOUND, "Provider account not found by id: " + providerAccountId);
+        }
+
+        return addresses.map(ProviderAddressMapper.MAPPER::toDto);
     }
 
     private boolean updateField(ProviderAddressModel addressModel, ProviderAddressRequest requestDto) {

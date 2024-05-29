@@ -38,6 +38,17 @@ public class ProviderAddressController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
         }
     }
+    @GetMapping("/provider-address/{provider-account-id}")
+    public ResponseEntity<?> findAllByProviderAccountId(
+            @PathVariable("provider-account-id") Long providerAccountId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size) {
+        try {
+            return ResponseEntity.ok(addressServiceBO.findAllByProviderAccountId(providerAccountId, PageRequest.of(page, size)));
+        } catch (ProviderAddressException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
+        }
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProviderAddress(@PathVariable Long id,@RequestBody ProviderAddressRequest requestDto) {

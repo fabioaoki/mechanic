@@ -11,11 +11,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ProviderAddressServiceBO {
-    void save(List<ProviderAddressRequest> addressRequest, Long id);
+    void save(final List<ProviderAddressRequest> addressRequest, final Long id);
 
     Page<ProviderAddressResponseDto> findAll(final Pageable pageable);
 
-    ProviderAddressResponseDto findById(Long id);
+    ProviderAddressResponseDto findById(final Long id);
 
-    ProviderAddressResponseDto updateProviderAddress(Long id, ProviderAddressRequest requestDto);
+    ProviderAddressResponseDto updateProviderAddress(final Long id, final ProviderAddressRequest requestDto);
+
+    Page<ProviderAddressResponseDto> findAllByProviderAccountId(final Long providerAccountId, final Pageable pageable);
 }

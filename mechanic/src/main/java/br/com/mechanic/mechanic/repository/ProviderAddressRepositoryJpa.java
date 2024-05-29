@@ -45,4 +45,9 @@ public class ProviderAddressRepositoryJpa implements ProviderAddressRepositoryIm
         return addressRepository.save(entity);
     }
 
+    @Override
+    public Page<ProviderAddress> findByProviderAccountId(Pageable pageable, Long providerAccountId) {
+        return addressRepository.findAllByProviderAccountId(providerAccountId, pageable);
+    }
+
 }

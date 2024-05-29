@@ -15,4 +15,6 @@ public interface ProviderAddressRepositoryImpl {
     Optional<ProviderAddress> findByAddress(String city, String street, String zipcode, String state, String number, String neighborhood);
 
     ProviderAddress save(ProviderAddress entity);
+
+    Page<ProviderAddress> findByProviderAccountId(Pageable pageable, Long providerAccountId);
 }
