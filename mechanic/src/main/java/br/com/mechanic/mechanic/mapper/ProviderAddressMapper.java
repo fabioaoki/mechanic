@@ -1,7 +1,9 @@
 package br.com.mechanic.mechanic.mapper;
 
 import br.com.mechanic.mechanic.entity.ProviderAddress;
+import br.com.mechanic.mechanic.entity.ProviderPhone;
 import br.com.mechanic.mechanic.enuns.StateEnum;
+import br.com.mechanic.mechanic.model.ProvidePhoneModel;
 import br.com.mechanic.mechanic.model.ProviderAddressModel;
 import br.com.mechanic.mechanic.request.ProviderAddressRequest;
 import br.com.mechanic.mechanic.response.ProviderAddressResponseDto;
@@ -56,4 +58,5 @@ public interface ProviderAddressMapper {
         return stateEnum.toString();
     }
 
+    ProviderPhone ProviderPhoneMapper(ProvidePhoneModel phoneModel);
 }

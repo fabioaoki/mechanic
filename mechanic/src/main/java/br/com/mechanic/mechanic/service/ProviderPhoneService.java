@@ -2,18 +2,26 @@ package br.com.mechanic.mechanic.service;
 
 import br.com.mechanic.mechanic.entity.ProviderPhone;
 import br.com.mechanic.mechanic.exception.ErrorCode;
+import br.com.mechanic.mechanic.exception.ProviderAddressException;
 import br.com.mechanic.mechanic.exception.ProviderPhoneException;
+import br.com.mechanic.mechanic.mapper.ProviderAddressMapper;
 import br.com.mechanic.mechanic.mapper.ProviderPhoneMapper;
+import br.com.mechanic.mechanic.model.ProvidePhoneModel;
 import br.com.mechanic.mechanic.repository.ProviderPhoneRepositoryImpl;
 import br.com.mechanic.mechanic.request.ProviderPhoneRequest;
+import br.com.mechanic.mechanic.response.ProviderPhoneResponseDto;
 import com.google.i18n.phonenumbers.NumberParseException;
 import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
+
 @AllArgsConstructor
 @Log4j2
 @Service
@@ -36,6 +44,59 @@ public class ProviderPhoneService implements ProviderPhoneServiceBO {
         });
     }
 
+    @Override
+    public Page<ProviderPhoneResponseDto> findAll(Pageable pageable) {
+        log.info("Retrieving list of providers phones");
+        return phoneRepository.findAll(pageable).map(ProviderPhoneMapper.MAPPER::toDto);
+    }
+
+    @Override
+    public ProviderPhoneResponseDto findById(Long id) {
+        return ProviderPhoneMapper.MAPPER.toDto(getPhone(id));
+    }
+
+    @Override
+    public Page<ProviderPhoneResponseDto> findAllByProviderAccountId(Long providerAccountId, Pageable pageable) {
+        log.info("Retrieving list of address by provider");
+        Page<ProviderPhone> phones = phoneRepository.findByProviderAccountId(pageable, providerAccountId);
+
+        if (phones.isEmpty()) {
+            throw new ProviderPhoneException(ErrorCode.ERROR_PROVIDER_ACCOUNT_NOT_FOUND, "Provider account not found by id: " + providerAccountId);
+        }
+
+        return phones.map(ProviderPhoneMapper.MAPPER::toDto);
+    }
+
+    @Override
+    public ProviderPhoneResponseDto updateProviderPhone(Long id, ProviderPhoneRequest requestDto) {
+        log.info("Service update phone by id: {}", id);
+        ProvidePhoneModel phoneModel = ProviderPhoneMapper.MAPPER.toModel(getPhone(id));
+        boolean isChange = updateField(phoneModel, requestDto);
+        if (isChange) {
+            findPhone(phoneModel.getNumber());
+            ProviderPhone providerPhone = phoneRepository.save(ProviderAddressMapper.MAPPER.ProviderPhoneMapper(phoneModel));
+            return ProviderPhoneMapper.MAPPER.toDto(providerPhone);
+        }
+        throw new ProviderAddressException(ErrorCode.IDENTICAL_FIELDS, "No changes were made to the provider address.");
+    }
+
+    private boolean updateField(ProvidePhoneModel phoneModel, ProviderPhoneRequest requestDto) {
+        boolean isChange = false;
+        if (Objects.nonNull(requestDto.getArea()) && !Objects.equals(phoneModel.getArea(), requestDto.getArea())) {
+            phoneModel.setArea(requestDto.getArea());
+            isChange = true;
+        }
+        if (Objects.nonNull(requestDto.getNumber()) && !Objects.equals(phoneModel.getNumber(), requestDto.getNumber())) {
+            phoneModel.setNumber(requestDto.getNumber().trim());
+            isChange = true;
+        }
+        return isChange;
+    }
+
+    private ProviderPhone getPhone(Long id) {
+        return phoneRepository.findById(id).orElseThrow(() -> new ProviderPhoneException(ErrorCode.ERROR_PROVIDER_PHONE_NOT_FOUND, "Provider phone not found by id: " + id));
+    }
+
     private void validPhoneField(List<ProviderPhoneRequest> phones) {
         phones.forEach(phone -> {
             if (phone.getArea() == null || phone.getNumber().isEmpty()) {
@@ -46,11 +107,15 @@ public class ProviderPhoneService implements ProviderPhoneServiceBO {
             }
             log.info("Service: Format number");
             phone.setNumber(formatPhoneNumber(phone.getArea(), phone.getNumber()));
-            phoneRepository.findByPhone(phone.getNumber())
-                    .ifPresent(number -> {
-                        throw new ProviderPhoneException(ErrorCode.ERROR_CREATED_PHONE, "Phone number already registered");
-                    });
+            findPhone(phone.getNumber());
         });
+    }
+
+    private void findPhone(String phoneNumber) {
+        phoneRepository.findByPhone(phoneNumber)
+                .ifPresent(number -> {
+                    throw new ProviderPhoneException(ErrorCode.ERROR_CREATED_PHONE, "Phone number already registered");
+                });
     }
 
     public static boolean isValidPhoneNumber(Long area, String number) {
