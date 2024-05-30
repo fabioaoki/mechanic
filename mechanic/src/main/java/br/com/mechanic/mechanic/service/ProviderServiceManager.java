@@ -1,15 +1,14 @@
 package br.com.mechanic.mechanic.service;
 
 import br.com.mechanic.mechanic.entity.ProviderService;
-import br.com.mechanic.mechanic.exception.ErrorCode;
-import br.com.mechanic.mechanic.exception.ProviderAddressException;
-import br.com.mechanic.mechanic.exception.ProviderServiceException;
-import br.com.mechanic.mechanic.exception.TypeServiceException;
+import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
+import br.com.mechanic.mechanic.exception.*;
 import br.com.mechanic.mechanic.mapper.ProviderServiceMapper;
 import br.com.mechanic.mechanic.model.ProviderServiceModel;
 import br.com.mechanic.mechanic.repository.ProviderServiceRepositoryImpl;
 import br.com.mechanic.mechanic.repository.VehicleTypeRepositoryImpl;
 import br.com.mechanic.mechanic.request.ProviderServiceRequest;
+import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;
 import br.com.mechanic.mechanic.response.ProviderServiceResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -114,7 +113,10 @@ public class ProviderServiceManager implements ProviderServiceBO {
         if (Objects.isNull(requestDto.getProviderAccountId())) {
             throw new ProviderServiceException(ErrorCode.INVALID_FIELD, "The 'providerAccountId' field is required and cannot be empty.");
         }
-        providerAccountServiceBO.findById(requestDto.getProviderAccountId());
+        ProviderAccountResponseDto providerAccountId = providerAccountServiceBO.findById(requestDto.getProviderAccountId());
+        if (providerAccountId.getStatus().equals(ProviderAccountStatusEnum.CANCEL)) {
+            throw new ProviderAccountException(ErrorCode.ERROR_PROVIDER_ACCOUNT_STATUS_IS_CANCEL, "The 'providerAccountStatus' is canceled.");
+        }
         if (Objects.isNull(requestDto.getTypeServiceId())) {
             throw new ProviderServiceException(ErrorCode.INVALID_FIELD, "The 'typeAccountId' field is required and cannot be empty.");
         }
