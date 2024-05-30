@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface ProviderServiceRepository extends JpaRepository<ProviderService, Long> {
     Optional<ProviderService> findByVehicleTypeId(Long vehicleTypeId);
+
+    Optional<ProviderService> findByIdentifierAndTypeServiceIdAndProviderAccountIdAndVehicleTypeIdAndIsEnabledIsTrue(String identifier, Long typeServiceId, Long providerAccountId, Long vehicleTypeId);
 }

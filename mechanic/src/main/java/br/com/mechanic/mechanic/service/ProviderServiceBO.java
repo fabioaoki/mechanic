@@ -1,5 +1,8 @@
 package br.com.mechanic.mechanic.service;
 
+import br.com.mechanic.mechanic.exception.ProviderAccountException;
+import br.com.mechanic.mechanic.exception.ProviderServiceException;
+import br.com.mechanic.mechanic.exception.TypeServiceException;
 import br.com.mechanic.mechanic.exception.VehicleTypeException;
 import br.com.mechanic.mechanic.request.ProviderServiceRequest;
 import br.com.mechanic.mechanic.request.VehicleTypeRequestDto;
@@ -13,9 +16,10 @@ public interface ProviderServiceBO {
 
     Page<ProviderServiceResponseDto> findAll(final Pageable pageable);
 
-    ProviderServiceResponseDto save(ProviderServiceRequest providerServiceRequest) throws VehicleTypeException;
+    ProviderServiceResponseDto save(ProviderServiceRequest providerServiceRequest) throws ProviderServiceException, VehicleTypeException, TypeServiceException, ProviderAccountException;
 
     ProviderServiceResponseDto updateVehicleTypeName(Long id, ProviderServiceRequest providerServiceRequest);
+
     void isUsed(Long id, boolean isUsed);
 
     void findByVehicleTypeId(Long vehicleTypeId);

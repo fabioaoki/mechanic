@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class VehicleTypeRequestDto {
+public class TypeServiceRequestDto {
     private String name;
 }

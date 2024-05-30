@@ -17,6 +17,7 @@ public interface ProviderServiceMapper {
     ProviderServiceResponseDto toDto(ProviderService entity);
 
     ProviderServiceModel toModel(ProviderService entity);
+    ProviderServiceModel dtoToModel(ProviderServiceRequest dto);
 
     ProviderService modelToEntity(ProviderServiceModel providerServiceModel);
 }

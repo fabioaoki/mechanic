@@ -22,6 +22,7 @@ public class ProviderServiceRepositoryJpa implements ProviderServiceRepositoryIm
     public ProviderService save(ProviderService entity) {
         if (Objects.isNull(entity.getCreateDate())) {
             entity.setCreateDate(LocalDateTime.now());
+            entity.setIsEnabled(true);
         } else {
             entity.setLastUpdate(LocalDateTime.now());
         }
@@ -46,5 +47,10 @@ public class ProviderServiceRepositoryJpa implements ProviderServiceRepositoryIm
     @Override
     public Optional<ProviderService> findByVehicleTypeId(Long vehicleTypeId) {
         return repository.findByVehicleTypeId(vehicleTypeId);
+    }
+
+    @Override
+    public Optional<ProviderService> providerServiceIsExistsByAccountId(String identifier, Long typeServiceId, Long providerAccountId, Long vehicleTypeId) {
+        return repository.findByIdentifierAndTypeServiceIdAndProviderAccountIdAndVehicleTypeIdAndIsEnabledIsTrue(identifier, typeServiceId, providerAccountId,vehicleTypeId);
     }
 }

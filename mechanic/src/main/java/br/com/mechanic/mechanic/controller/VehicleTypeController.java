@@ -41,20 +41,20 @@ public class VehicleTypeController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> createProviderAccount(@RequestBody VehicleTypeRequestDto providerAccountRequest) throws VehicleTypeException {
+    public ResponseEntity<?> createVehicleType(@RequestBody VehicleTypeRequestDto providerAccountRequest) throws VehicleTypeException {
         try {
-            log.info("Creating a provider account");
+            log.info("Creating a vehicle type");
             return ResponseEntity.ok(vehicleTypeServiceBO.save(providerAccountRequest));
         } catch (VehicleTypeException e) {
-            log.error("ProviderAccountTypeException: {}", e.getMessage());
+            log.error("VehicleTypeException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
         }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteProviderAccount(@PathVariable Long id) throws ProviderAccountException {
+    public ResponseEntity<?> deleteVehicleType(@PathVariable Long id) throws ProviderAccountException {
         try {
-            log.info("Deleting provider account with id: " + id);
+            log.info("Deleting vehicle type with id: " + id);
             vehicleTypeServiceBO.isUsed(id, false);
             return ResponseEntity.ok().build();
         } catch (VehicleTypeException e) {
@@ -63,9 +63,9 @@ public class VehicleTypeController {
     }
 
     @PutMapping("active/{id}")
-    public ResponseEntity<?> activeProviderAccount(@PathVariable Long id) {
+    public ResponseEntity<?> activeVehicleType(@PathVariable Long id) {
         try {
-            log.info("Activating provider account with id: " + id);
+            log.info("Activating vehicle type with id: " + id);
             vehicleTypeServiceBO.isUsed(id, true);
             return ResponseEntity.ok().build();
         } catch (VehicleTypeException e) {
@@ -74,9 +74,9 @@ public class VehicleTypeController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateProviderAccount(@PathVariable Long id, @RequestBody VehicleTypeRequestDto requestDto) {
+    public ResponseEntity<?> updateVehicleType(@PathVariable Long id, @RequestBody VehicleTypeRequestDto requestDto) {
         try {
-            log.info("Updating provider account with id: " + id);
+            log.info("Updating vehicle type with id: " + id);
             return ResponseEntity.ok(vehicleTypeServiceBO.updateVehicleTypeName(id, requestDto));
         } catch (VehicleTypeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
@@ -90,4 +90,3 @@ public class VehicleTypeController {
         return errorResponse;
     }
 }
-

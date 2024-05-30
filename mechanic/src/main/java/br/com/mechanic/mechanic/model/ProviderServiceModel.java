@@ -1,5 +1,6 @@
 package br.com.mechanic.mechanic.model;
 
+import br.com.mechanic.mechanic.enuns.ProviderServiceIdentifierEnum;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -13,9 +14,8 @@ public class ProviderServiceModel {
 
     private Long id;
     private Long providerAccountId;
-    private Long typeAccountId;
+    private Long typeServiceId;
     private Long vehicleTypeId;
     private String name;
-    private String identifier;
-    private boolean isEnable;
+    private ProviderServiceIdentifierEnum identifier;
 }

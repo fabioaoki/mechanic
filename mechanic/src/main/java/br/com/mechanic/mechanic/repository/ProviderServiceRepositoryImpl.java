@@ -16,5 +16,7 @@ public interface ProviderServiceRepositoryImpl {
     Optional<ProviderService> findById(Long id);
 
     Optional<ProviderService> findByVehicleTypeId(Long vehicleTypeId);
+
+    Optional<ProviderService> providerServiceIsExistsByAccountId(String identifier, Long typeServiceId, Long providerAccountId, Long vehicleTypeId);
 }
 

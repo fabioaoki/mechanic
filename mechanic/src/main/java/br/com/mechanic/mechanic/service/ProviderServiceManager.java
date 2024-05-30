@@ -4,9 +4,11 @@ import br.com.mechanic.mechanic.entity.ProviderService;
 import br.com.mechanic.mechanic.exception.ErrorCode;
 import br.com.mechanic.mechanic.exception.ProviderAddressException;
 import br.com.mechanic.mechanic.exception.ProviderServiceException;
+import br.com.mechanic.mechanic.exception.TypeServiceException;
 import br.com.mechanic.mechanic.mapper.ProviderServiceMapper;
 import br.com.mechanic.mechanic.model.ProviderServiceModel;
 import br.com.mechanic.mechanic.repository.ProviderServiceRepositoryImpl;
+import br.com.mechanic.mechanic.repository.VehicleTypeRepositoryImpl;
 import br.com.mechanic.mechanic.request.ProviderServiceRequest;
 import br.com.mechanic.mechanic.response.ProviderServiceResponseDto;
 import lombok.AllArgsConstructor;
@@ -20,17 +22,36 @@ import java.util.Objects;
 @AllArgsConstructor
 @Log4j2
 @Service
-public class ProviderServiceService implements ProviderServiceBO {
+public class ProviderServiceManager implements ProviderServiceBO {
 
     private final ProviderServiceRepositoryImpl serviceRepository;
+    private final VehicleTypeRepositoryImpl typeRepository;
+
+    private final ProviderAccountServiceBO providerAccountServiceBO;
+    private final TypeServiceBO typeServiceBO;
 
     @Override
     public ProviderServiceResponseDto save(ProviderServiceRequest requestDto) {
         log.info("Service: valid provider service field");
         validProviderServiceField(requestDto);
         log.info("Service: Saving a new provider service");
-        ProviderService providerService = ProviderServiceMapper.MAPPER.toEntity(requestDto);
+        ProviderServiceModel providerServiceModel = getProviderServiceModel(requestDto);
+        ProviderService providerService = ProviderServiceMapper.MAPPER.modelToEntity(providerServiceModel);
         return ProviderServiceMapper.MAPPER.toDto(serviceRepository.save(providerService));
+    }
+
+    private ProviderServiceModel getProviderServiceModel(ProviderServiceRequest requestDto) {
+        ProviderServiceModel providerServiceModel = ProviderServiceMapper.MAPPER.dtoToModel(requestDto);
+        providerServiceModel.setName(providerServiceModel.getName());
+        providerServiceModel.setName(capitalizeFirstLetter(providerServiceModel.getName().trim()));
+        return providerServiceModel;
+    }
+
+    private String capitalizeFirstLetter(String str) {
+        if (str == null || str.isEmpty()) {
+            return str;
+        }
+        return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
     }
 
     @Override
@@ -50,11 +71,11 @@ public class ProviderServiceService implements ProviderServiceBO {
     }
 
     public ProviderServiceResponseDto updateProviderServiceName(Long id, ProviderServiceRequest requestDto) {
-        log.info("Service update phone by id: {}", id);
+        log.info("Service update provider service by id: {}", id);
         ProviderServiceModel vehicleTypeModel = ProviderServiceMapper.MAPPER.toModel(getProviderService(id));
         boolean isChange = updateField(vehicleTypeModel, requestDto);
         if (isChange) {
-            providerServiceIsExists(vehicleTypeModel.getName());
+            providerServiceIsExistsByAccountId(vehicleTypeModel.getIdentifier().toString(), vehicleTypeModel.getTypeServiceId(), vehicleTypeModel.getProviderAccountId(), vehicleTypeModel.getVehicleTypeId());
             ProviderService vehicleType = serviceRepository.save(ProviderServiceMapper.MAPPER.modelToEntity(vehicleTypeModel));
             return ProviderServiceMapper.MAPPER.toDto(vehicleType);
         }
@@ -93,22 +114,30 @@ public class ProviderServiceService implements ProviderServiceBO {
         if (Objects.isNull(requestDto.getProviderAccountId())) {
             throw new ProviderServiceException(ErrorCode.INVALID_FIELD, "The 'providerAccountId' field is required and cannot be empty.");
         }
-        if (Objects.isNull(requestDto.getTypeAccountId())) {
+        providerAccountServiceBO.findById(requestDto.getProviderAccountId());
+        if (Objects.isNull(requestDto.getTypeServiceId())) {
             throw new ProviderServiceException(ErrorCode.INVALID_FIELD, "The 'typeAccountId' field is required and cannot be empty.");
         }
+        typeServiceBO.findById(requestDto.getTypeServiceId());
+
         if (Objects.isNull(requestDto.getVehicleTypeId())) {
             throw new ProviderServiceException(ErrorCode.INVALID_FIELD, "The 'vehicleTypeId' field is required and cannot be empty.");
         }
-        if (Objects.isNull(requestDto.getIsEnable())) {
-            throw new ProviderServiceException(ErrorCode.INVALID_FIELD, "The 'isEnable' field is required and cannot be null.");
-        }
-        if (Objects.isNull(requestDto.getIdentifier()) || requestDto.getIdentifier().trim().isEmpty()) {
+        typeRepository.findById(requestDto.getVehicleTypeId()).orElseThrow(() -> new TypeServiceException(ErrorCode.ERROR_VEHICLE_TYPE, "Vehicle type not found by id: " + requestDto.getVehicleTypeId()));
+        if (Objects.isNull(requestDto.getIdentifier())) {
             throw new ProviderAddressException(ErrorCode.INVALID_FIELD, "The 'identifier' field is required and cannot be empty.");
         }
         if (Objects.isNull(requestDto.getName()) || requestDto.getName().trim().isEmpty()) {
             throw new ProviderAddressException(ErrorCode.INVALID_FIELD, "The 'name' field is required and cannot be empty.");
         }
-        providerServiceIsExists(requestDto.getIdentifier());
+        providerServiceIsExistsByAccountId(requestDto.getIdentifier().toString(), requestDto.getTypeServiceId(), requestDto.getProviderAccountId(), requestDto.getVehicleTypeId());
+    }
+
+    private void providerServiceIsExistsByAccountId(String identifier, Long typeServiceId, Long providerAccountId, Long vehicleTypeId) {
+        serviceRepository.providerServiceIsExistsByAccountId(identifier, typeServiceId, providerAccountId, vehicleTypeId)
+                .ifPresent(providerService -> {
+                    throw new ProviderServiceException(ErrorCode.ERROR_CREATED_PROVIDER_SERVICE, "Provider service already registered");
+                });
     }
 
     private void providerServiceIsExists(String identifier) {
