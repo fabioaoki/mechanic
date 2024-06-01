@@ -18,5 +18,7 @@ public interface EquipmentMapper {
 
     EquipmentModel toModel(Equipment entity);
 
+    EquipmentModel requestToModel(EquipmentRequestDto dto);
+
     Equipment modelToEntity(EquipmentModel typeServiceModel);
 }

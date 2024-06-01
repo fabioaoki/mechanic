@@ -22,33 +22,40 @@ import java.util.Objects;
 public class EquipmentService implements EquipmentServiceBO {
 
     private final EquipmentRepositoryImpl equipmentRepository;
+
     @Override
-    public EquipmentResponseDto  save(EquipmentRequestDto requestDto) {
+    public EquipmentResponseDto save(EquipmentRequestDto requestDto) {
         log.info("Service: valid equipment field");
         validTypeServiceField(requestDto);
+        EquipmentModel equipmentModel = EquipmentMapper.MAPPER.requestToModel(requestDto);
+        equipmentModel.setName(formatName(equipmentModel.getName().trim()));
         log.info("Service: Saving a new equipment ");
-        Equipment equipment = EquipmentMapper.MAPPER.toEntity(requestDto);
+        Equipment equipment = EquipmentMapper.MAPPER.modelToEntity(equipmentModel);
         return EquipmentMapper.MAPPER.toDto(equipmentRepository.save(equipment));
     }
 
+    public String formatName(String name) {
+        return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
+    }
 
     @Override
-    public Page<EquipmentResponseDto > findAll(Pageable pageable) {
+    public Page<EquipmentResponseDto> findAll(Pageable pageable) {
         log.info("Retrieving list of equipments");
         return equipmentRepository.findAll(pageable).map(EquipmentMapper.MAPPER::toDto);
     }
 
     @Override
-    public EquipmentResponseDto  findById(Long id) {
+    public EquipmentResponseDto findById(Long id) {
         return EquipmentMapper.MAPPER.toDto(getTypeService(id));
     }
 
     @Override
-    public EquipmentResponseDto  updateEquipmentName(Long id, EquipmentRequestDto requestDto) throws EquipmentException {
+    public EquipmentResponseDto updateEquipmentName(Long id, EquipmentRequestDto requestDto) throws EquipmentException {
         log.info("Service update equipment by id: {}", id);
         EquipmentModel equipmentModel = EquipmentMapper.MAPPER.toModel(getTypeService(id));
         boolean isChange = updateField(equipmentModel, requestDto);
         if (isChange) {
+            equipmentModel.setName(formatName(equipmentModel.getName().trim()));
             equipmentIsExists(equipmentModel.getName());
             Equipment equipment = equipmentRepository.save(EquipmentMapper.MAPPER.modelToEntity(equipmentModel));
             return EquipmentMapper.MAPPER.toDto(equipment);
