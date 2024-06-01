@@ -1,6 +1,6 @@
 package br.com.mechanic.mechanic.repository;
 
-import br.com.mechanic.mechanic.entity.TypeService;
+import br.com.mechanic.mechanic.entity.Equipment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -10,16 +10,16 @@ import java.util.Objects;
 import java.util.Optional;
 
 @Component
-public class TypeServiceRepositoryJpa implements TypeServiceRepositoryImpl {
+public class EquipmentRepositoryJpa implements EquipmentRepositoryImpl {
 
-    TypeServiceRepository repository;
+    EquipmentRepository repository;
 
-    public TypeServiceRepositoryJpa(TypeServiceRepository repository) {
+    public EquipmentRepositoryJpa(EquipmentRepository repository) {
         this.repository = repository;
     }
 
     @Override
-    public TypeService save(TypeService entity) {
+    public Equipment save(Equipment entity) {
         if(Objects.isNull(entity.getCreateDate())){
             entity.setCreateDate(LocalDateTime.now());
         } else {
@@ -29,17 +29,17 @@ public class TypeServiceRepositoryJpa implements TypeServiceRepositoryImpl {
     }
 
     @Override
-    public Page<TypeService> findAll(Pageable pageable) {
+    public Page<Equipment> findAll(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
     @Override
-    public Optional<TypeService> findById(Long id) {
+    public Optional<Equipment> findById(Long id) {
         return repository.findById(id);
     }
 
     @Override
-    public Optional<TypeService> findByName(String name) {
+    public Optional<Equipment> findByName(String name) {
         return repository.findByName(name);
     }
 }

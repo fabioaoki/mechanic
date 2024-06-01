@@ -53,7 +53,7 @@ public class ProviderServiceController {
         } catch (ProviderAccountException e) {
             log.error("ProviderAccountException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
-        } catch (TypeServiceException e) {
+        } catch (EquipmentException e) {
             log.error("TypeServiceException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
         }
@@ -88,7 +88,7 @@ public class ProviderServiceController {
             return ResponseEntity.ok(providerServiceBO.updateVehicleTypeName(id, requestDto));
         } catch (ProviderServiceException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
-        } catch (TypeServiceException e) {
+        } catch (EquipmentException e) {
             log.error("TypeServiceException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
         }
@@ -115,7 +115,7 @@ public class ProviderServiceController {
         return errorResponse;
     }
 
-    private static ErrorResponse getErrorResponse(TypeServiceException e) {
+    private static ErrorResponse getErrorResponse(EquipmentException e) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setErrorCode(e.getErrorCode());
         errorResponse.setMessage(e.getMessage());

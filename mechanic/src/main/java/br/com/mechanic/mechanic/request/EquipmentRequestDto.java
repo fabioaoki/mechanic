@@ -9,6 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class TypeServiceRequestDto {
+public class EquipmentRequestDto {
     private String name;
 }

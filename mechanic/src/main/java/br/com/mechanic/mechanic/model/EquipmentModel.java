@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @Builder
-public class TypeServiceModel {
+public class EquipmentModel {
 
     private Long id;
     private String name;

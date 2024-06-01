@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @Builder
-public class TypeServiceResponseDto {
+public class EquipmentResponseDto {
 
     private Long id;
     private String name;

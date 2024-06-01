@@ -6,13 +6,13 @@ import lombok.*;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "type_service")
+@Table(name = "equipment")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class TypeService {
+public class Equipment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
