@@ -94,6 +94,9 @@ public class ProviderAccountController {
         } catch (ProviderAccountException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
         }
+        catch (ProviderAccountTypeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
+        }
     }
 
     private static ErrorResponse getErrorResponse(ProviderAccountException e) {

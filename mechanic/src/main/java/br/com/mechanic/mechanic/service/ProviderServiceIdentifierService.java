@@ -2,7 +2,7 @@ package br.com.mechanic.mechanic.service;
 
 import br.com.mechanic.mechanic.entity.ProviderServiceIdentifier;
 import br.com.mechanic.mechanic.exception.ErrorCode;
-import br.com.mechanic.mechanic.exception.TypeServiceException;
+import br.com.mechanic.mechanic.exception.ProviderServiceIdentifierException;
 import br.com.mechanic.mechanic.mapper.ProviderServiceIdentifierMapper;
 import br.com.mechanic.mechanic.repository.ProviderServiceIdentifierRepositoryImpl;
 import br.com.mechanic.mechanic.response.ProviderServiceIdentifierResponseDto;
@@ -30,7 +30,7 @@ public class ProviderServiceIdentifierService implements ProviderServiceIdentifi
     }
 
     private ProviderServiceIdentifier getTypeService(Long id) {
-        return providerServiceIdentifierRepository.findById(id).orElseThrow(() -> new TypeServiceException(ErrorCode.TYPE_SERVICE_NOT_FOUND, "Provider identifier service not found by id: " + id));
+        return providerServiceIdentifierRepository.findById(id).orElseThrow(() -> new ProviderServiceIdentifierException(ErrorCode.TYPE_SERVICE_NOT_FOUND, "Provider identifier service not found by id: " + id));
     }
 
     @Override
@@ -39,6 +39,6 @@ public class ProviderServiceIdentifierService implements ProviderServiceIdentifi
     }
 
     private ProviderServiceIdentifier findByIdentifier(String identifier) {
-        return providerServiceIdentifierRepository.findByIdentifier(identifier).orElseThrow(() -> new TypeServiceException(ErrorCode.TYPE_SERVICE_NOT_FOUND, "Provider identifier service not found by name: " + identifier));
+        return providerServiceIdentifierRepository.findByIdentifier(identifier).orElseThrow(() -> new ProviderServiceIdentifierException(ErrorCode.TYPE_SERVICE_NOT_FOUND, "Provider identifier service not found by name: " + identifier));
     }
 }
