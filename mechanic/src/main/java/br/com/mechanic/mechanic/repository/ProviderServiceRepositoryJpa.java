@@ -1,6 +1,7 @@
 package br.com.mechanic.mechanic.repository;
 
 import br.com.mechanic.mechanic.entity.ProviderService;
+import br.com.mechanic.mechanic.enuns.ProviderServiceIdentifierEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -50,7 +51,7 @@ public class ProviderServiceRepositoryJpa implements ProviderServiceRepositoryIm
     }
 
     @Override
-    public Optional<ProviderService> providerServiceIsExistsByAccountId(String identifier, Long typeServiceId, Long providerAccountId, Long vehicleTypeId) {
-        return repository.findByIdentifierAndTypeServiceIdAndProviderAccountIdAndVehicleTypeIdAndIsEnabledIsTrue(identifier, typeServiceId, providerAccountId,vehicleTypeId);
+    public Optional<ProviderService> providerServiceIsExistsByAccountId(Long identifierId, Long providerAccountId, Long vehicleTypeId) {
+        return repository.findByIdentifierIdAndProviderAccountIdAndVehicleTypeIdAndIsEnabledIsTrue(identifierId, providerAccountId,vehicleTypeId);
     }
 }

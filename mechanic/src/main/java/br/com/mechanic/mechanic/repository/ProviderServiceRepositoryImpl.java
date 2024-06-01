@@ -1,6 +1,7 @@
 package br.com.mechanic.mechanic.repository;
 
 import br.com.mechanic.mechanic.entity.ProviderService;
+import br.com.mechanic.mechanic.enuns.ProviderServiceIdentifierEnum;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -17,6 +18,6 @@ public interface ProviderServiceRepositoryImpl {
 
     Optional<ProviderService> findByVehicleTypeId(Long vehicleTypeId);
 
-    Optional<ProviderService> providerServiceIsExistsByAccountId(String identifier, Long typeServiceId, Long providerAccountId, Long vehicleTypeId);
+    Optional<ProviderService> providerServiceIsExistsByAccountId(Long identifierId, Long providerAccountId, Long vehicleTypeId);
 }
 

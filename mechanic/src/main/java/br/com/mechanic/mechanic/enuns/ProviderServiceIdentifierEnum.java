@@ -1,5 +1,8 @@
 package br.com.mechanic.mechanic.enuns;
 
+import lombok.Getter;
+
+@Getter
 public enum ProviderServiceIdentifierEnum {
 
     ALINHAMENTO_PNEUS("ALINHAMENTO_PNEUS"),
@@ -19,14 +22,18 @@ public enum ProviderServiceIdentifierEnum {
         this.identifier = identifier;
     }
 
+    public String getIdentifier() {
+        return this.identifier;
+    }
+
     @Override
     public String toString() {
         return this.identifier;
     }
 
-    public static ProviderServiceIdentifierEnum fromString(String identifier) {
+    public static ProviderServiceIdentifierEnum fromIdentifier(String identifier) {
         for (ProviderServiceIdentifierEnum s : ProviderServiceIdentifierEnum.values()) {
-            if (s.identifier.equalsIgnoreCase(identifier)) {
+            if (s.getIdentifier().equals(identifier)) {
                 return s;
             }
         }

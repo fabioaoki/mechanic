@@ -1,4 +1,4 @@
-package br.com.mechanic.mechanic.model;
+package br.com.mechanic.mechanic.response;
 
 import br.com.mechanic.mechanic.enuns.ProviderServiceIdentifierEnum;
 import lombok.AllArgsConstructor;
@@ -10,10 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class ProviderServiceModel {
+public class ProviderServiceIdentifierResponseDto {
 
     private Long id;
-    private Long providerAccountId;
-    private Long vehicleTypeId;
-    private Long identifierId;
+    private String identifier;
 }

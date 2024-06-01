@@ -19,12 +19,10 @@ public class ProviderService {
     private Long id;
     @Column(name = "provider_account_id")
     private Long providerAccountId;
-    @Column(name = "type_service_id")
-    private Long typeServiceId;
     @Column(name = "vehicle_type_id")
     private Long vehicleTypeId;
-    private String name;
-    private String identifier;
+    @Column(name = "identifier_id")
+    private Long identifierId;
     @Column(name = "is_enabled")
     private Boolean isEnabled;
     @Column(name = "create_date")

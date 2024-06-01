@@ -2,6 +2,7 @@ package br.com.mechanic.mechanic.controller;
 
 import br.com.mechanic.mechanic.exception.*;
 import br.com.mechanic.mechanic.request.ProviderServiceRequest;
+import br.com.mechanic.mechanic.request.ProviderServiceUpdateRequestDto;
 import br.com.mechanic.mechanic.response.ProviderServiceResponseDto;
 import br.com.mechanic.mechanic.service.ProviderServiceBO;
 import lombok.extern.log4j.Log4j2;
@@ -39,7 +40,7 @@ public class ProviderServiceController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<?> createProviderService(@RequestBody ProviderServiceRequest providerServiceRequest) throws ProviderServiceException, VehicleTypeException, TypeServiceException, ProviderAccountException {
+    public ResponseEntity<?> createProviderService(@RequestBody ProviderServiceRequest providerServiceRequest) throws ProviderServiceException, VehicleTypeException, ProviderAccountException {
         try {
             log.info("Creating a provider service");
             return ResponseEntity.ok(providerServiceBO.save(providerServiceRequest));
@@ -49,11 +50,11 @@ public class ProviderServiceController {
         } catch (VehicleTypeException e) {
             log.error("VehicleTypeException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
-        } catch (TypeServiceException e) {
-            log.error("TypeServiceException: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
         } catch (ProviderAccountException e) {
             log.error("ProviderAccountException: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
+        } catch (TypeServiceException e) {
+            log.error("TypeServiceException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
         }
     }
@@ -81,11 +82,14 @@ public class ProviderServiceController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateProviderService(@PathVariable Long id, @RequestBody ProviderServiceRequest requestDto) {
+    public ResponseEntity<?> updateProviderService(@PathVariable Long id, @RequestBody ProviderServiceUpdateRequestDto requestDto) {
         try {
             log.info("Updating provider account with id: " + id);
             return ResponseEntity.ok(providerServiceBO.updateVehicleTypeName(id, requestDto));
         } catch (ProviderServiceException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
+        } catch (TypeServiceException e) {
+            log.error("TypeServiceException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
         }
     }

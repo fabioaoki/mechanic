@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Data
 @Builder
-public class ProviderServiceRequest {
-    private Long providerAccountId;
-    private Long vehicleTypeId;
+public class ProviderServiceUpdateRequestDto {
     private Long identifierId;
 }
