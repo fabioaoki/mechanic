@@ -57,7 +57,7 @@ public class ProviderPhoneService implements ProviderPhoneServiceBO {
 
     @Override
     public Page<ProviderPhoneResponseDto> findAllByProviderAccountId(Long providerAccountId, Pageable pageable) {
-        log.info("Retrieving list of address by provider");
+        log.info("Retrieving list of phones by provider");
         Page<ProviderPhone> phones = phoneRepository.findByProviderAccountId(pageable, providerAccountId);
 
         if (phones.isEmpty()) {
@@ -73,11 +73,14 @@ public class ProviderPhoneService implements ProviderPhoneServiceBO {
         ProvidePhoneModel phoneModel = ProviderPhoneMapper.MAPPER.toModel(getPhone(id));
         boolean isChange = updateField(phoneModel, requestDto);
         if (isChange) {
+            log.info("Service: Format number");
+            phoneModel.setNumber(formatPhoneNumber(phoneModel.getArea(), phoneModel.getNumber()));
             findPhone(phoneModel.getNumber());
+
             ProviderPhone providerPhone = phoneRepository.save(ProviderAddressMapper.MAPPER.ProviderPhoneMapper(phoneModel));
             return ProviderPhoneMapper.MAPPER.toDto(providerPhone);
         }
-        throw new ProviderAddressException(ErrorCode.IDENTICAL_FIELDS, "No changes were made to the provider address.");
+        throw new ProviderPhoneException(ErrorCode.IDENTICAL_FIELDS, "No changes were made to the provider phone.");
     }
 
     private boolean updateField(ProvidePhoneModel phoneModel, ProviderPhoneRequest requestDto) {
