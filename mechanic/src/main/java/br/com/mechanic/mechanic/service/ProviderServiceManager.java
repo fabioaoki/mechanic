@@ -35,21 +35,32 @@ public class ProviderServiceManager implements ProviderServiceBO {
     @Transactional
     @Override
     public List<ProviderServiceResponseDto> save(ProviderServiceRequest requestDto) {
-        log.info("Service: valid provider service field");
+        log.info("Service: Starting validation of provider service fields");
         List<ProviderServiceIdentifierResponseDto> services = validProviderServiceField(requestDto);
-        log.info("Service: Saving a new provider service");
+        log.info("Service: Validation complete. Number of services to process: {}", services.size());
+        log.info("Service: Preparing provider service model");
         ProviderServiceModel providerServiceModel = getProviderServiceModel(requestDto);
+        log.info("Service: Provider service model prepared with provider account ID: {}", providerServiceModel.getProviderAccountId());
+
         List<ProviderServiceResponseDto> serviceResponseList = new ArrayList<>();
         services.forEach(service -> {
+            log.info("Service: Processing service with identifier: {}", service.getIdentifier());
             providerServiceModel.getVehicleTypeIds().forEach(vehicle -> {
+                log.info("Service: Processing vehicle type ID: {}", vehicle);
                 ProviderService providerServiceSave = ProviderServiceMapper.MAPPER.prepareToSave(providerServiceModel.getProviderAccountId(), vehicle, service.getId());
-                ProviderServiceResponseDto dto = ProviderServiceMapper.MAPPER.toDto(serviceRepository.save(providerServiceSave), service);
+                log.info("Service: Prepared provider service entity for saving: {}", providerServiceSave);
+                ProviderService savedProviderService = serviceRepository.save(providerServiceSave);
+                log.info("Service: Provider service saved with ID: {}", savedProviderService.getId());
+                ProviderServiceResponseDto dto = ProviderServiceMapper.MAPPER.toDto(savedProviderService, service);
+                log.info("Service: Mapped provider service to response DTO: {}", dto);
                 serviceResponseList.add(dto);
+                log.info("Service: Added response DTO to the list. Current list size: {}", serviceResponseList.size());
             });
         });
-
+        log.info("Service: Completed saving provider services. Total services saved: {}", serviceResponseList.size());
         return serviceResponseList;
     }
+
 
     private ProviderServiceModel getProviderServiceModel(ProviderServiceRequest requestDto) {
         return ProviderServiceMapper.MAPPER.dtoToModel(requestDto);

@@ -4,6 +4,7 @@ package br.com.mechanic.mechanic.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,11 +21,11 @@ public class EquipmentIn {
     private Long id;
     @Column(name = "provider_account_id")
     private Long providerAccountId;
-    @Column(name = "type_service_id")
-    private Long typeServiceId;
-    private String identifier;
-    private Float amount;
-    private Boolean reversal;
+    @Column(name = "equipment_id")
+    private Long equipmentId;
+    private BigDecimal amount;
+    private Long quantity;
+    private boolean finish;
     @Column(name = "create_date")
     private LocalDateTime createDate;
     @Column(name = "last_update")
