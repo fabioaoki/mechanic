@@ -56,6 +56,9 @@ public class ProviderServiceController {
         } catch (EquipmentException e) {
             log.error("TypeServiceException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
+        } catch (ProviderServiceIdentifierException e) {
+            log.error("ProviderServiceIdentifierException: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
         }
     }
 
@@ -85,11 +88,15 @@ public class ProviderServiceController {
     public ResponseEntity<?> updateProviderService(@PathVariable Long id, @RequestBody ProviderServiceUpdateRequestDto requestDto) {
         try {
             log.info("Updating provider account with id: " + id);
-            return ResponseEntity.ok(providerServiceBO.updateVehicleTypeName(id, requestDto));
+            return ResponseEntity.ok(providerServiceBO.updateProviderServiceIdentifier(id, requestDto));
         } catch (ProviderServiceException e) {
+            log.error("ProviderServiceException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
         } catch (EquipmentException e) {
             log.error("TypeServiceException: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
+        } catch (ProviderServiceIdentifierException e) {
+            log.error("ProviderServiceIdentifierException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
         }
     }
@@ -116,6 +123,13 @@ public class ProviderServiceController {
     }
 
     private static ErrorResponse getErrorResponse(EquipmentException e) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setErrorCode(e.getErrorCode());
+        errorResponse.setMessage(e.getMessage());
+        return errorResponse;
+    }
+
+    private static ErrorResponse getErrorResponse(ProviderServiceIdentifierException e) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setErrorCode(e.getErrorCode());
         errorResponse.setMessage(e.getMessage());

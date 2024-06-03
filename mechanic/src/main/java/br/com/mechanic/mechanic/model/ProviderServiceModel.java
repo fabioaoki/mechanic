@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
@@ -14,6 +16,6 @@ public class ProviderServiceModel {
 
     private Long id;
     private Long providerAccountId;
-    private Long vehicleTypeId;
-    private Long identifierId;
+    private List<Long> vehicleTypeIds;
+    private List<Long> identifierIds;
 }

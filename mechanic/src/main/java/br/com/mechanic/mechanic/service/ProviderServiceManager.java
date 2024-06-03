@@ -4,10 +4,10 @@ import br.com.mechanic.mechanic.entity.ProviderService;
 import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import br.com.mechanic.mechanic.exception.ErrorCode;
 import br.com.mechanic.mechanic.exception.ProviderAccountException;
-import br.com.mechanic.mechanic.exception.ProviderAddressException;
 import br.com.mechanic.mechanic.exception.ProviderServiceException;
 import br.com.mechanic.mechanic.mapper.ProviderServiceMapper;
 import br.com.mechanic.mechanic.model.ProviderServiceModel;
+import br.com.mechanic.mechanic.model.ProviderServiceModelToUpdate;
 import br.com.mechanic.mechanic.repository.ProviderServiceRepositoryImpl;
 import br.com.mechanic.mechanic.request.ProviderServiceRequest;
 import br.com.mechanic.mechanic.request.ProviderServiceUpdateRequestDto;
@@ -19,8 +19,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Objects;
+import java.util.*;
 
 @AllArgsConstructor
 @Log4j2
@@ -31,15 +32,23 @@ public class ProviderServiceManager implements ProviderServiceBO {
     private final ProviderAccountServiceBO providerAccountServiceBO;
     private ProviderServiceIdentifierBO serviceIdentifierBO;
 
+    @Transactional
     @Override
-    public ProviderServiceResponseDto save(ProviderServiceRequest requestDto) {
+    public List<ProviderServiceResponseDto> save(ProviderServiceRequest requestDto) {
         log.info("Service: valid provider service field");
-        ProviderServiceIdentifierResponseDto serviceResponse = validProviderServiceField(requestDto);
+        List<ProviderServiceIdentifierResponseDto> services = validProviderServiceField(requestDto);
         log.info("Service: Saving a new provider service");
         ProviderServiceModel providerServiceModel = getProviderServiceModel(requestDto);
-        ProviderService providerService = ProviderServiceMapper.MAPPER.modelToEntity(providerServiceModel);
+        List<ProviderServiceResponseDto> serviceResponseList = new ArrayList<>();
+        services.forEach(service -> {
+            providerServiceModel.getVehicleTypeIds().forEach(vehicle -> {
+                ProviderService providerServiceSave = ProviderServiceMapper.MAPPER.prepareToSave(providerServiceModel.getProviderAccountId(), vehicle, service.getId());
+                ProviderServiceResponseDto dto = ProviderServiceMapper.MAPPER.toDto(serviceRepository.save(providerServiceSave), service);
+                serviceResponseList.add(dto);
+            });
+        });
 
-        return ProviderServiceMapper.MAPPER.toDto(serviceRepository.save(providerService), serviceResponse);
+        return serviceResponseList;
     }
 
     private ProviderServiceModel getProviderServiceModel(ProviderServiceRequest requestDto) {
@@ -70,14 +79,14 @@ public class ProviderServiceManager implements ProviderServiceBO {
     }
 
     @Override
-    public ProviderServiceResponseDto updateVehicleTypeName(Long id, ProviderServiceUpdateRequestDto updateRequestDto) {
+    public ProviderServiceResponseDto updateProviderServiceIdentifier(Long id, ProviderServiceUpdateRequestDto updateRequestDto) {
         log.info("Service update provider service by id: {}", id);
-        ProviderServiceModel providerServiceModel = ProviderServiceMapper.MAPPER.toModel(getProviderService(id));
-        boolean isChange = updateField(providerServiceModel, updateRequestDto);
+        ProviderServiceModelToUpdate modelToUpdate = ProviderServiceMapper.MAPPER.toModelToUpdate(getProviderService(id));
+        boolean isChange = updateField(modelToUpdate, updateRequestDto);
         ProviderServiceIdentifierResponseDto identifierResponseDto = serviceIdentifierBO.findById(updateRequestDto.getIdentifierId());
         if (isChange) {
-            providerServiceIsExistsByAccountId(providerServiceModel.getIdentifierId(), providerServiceModel.getProviderAccountId(), providerServiceModel.getVehicleTypeId());
-            ProviderService providerService = serviceRepository.save(ProviderServiceMapper.MAPPER.modelToEntity(providerServiceModel));
+            providerServiceIsExistsByAccountId(modelToUpdate.getIdentifierId(), modelToUpdate.getProviderAccountId(), modelToUpdate.getVehicleTypeId());
+            ProviderService providerService = serviceRepository.save(ProviderServiceMapper.MAPPER.modelToEntity(modelToUpdate));
 
             return ProviderServiceMapper.MAPPER.toDto(providerService, identifierResponseDto);
         }
@@ -98,20 +107,20 @@ public class ProviderServiceManager implements ProviderServiceBO {
         providerServiceIsUsed(vehicleTypeId);
     }
 
-    private boolean updateField(ProviderServiceModel phoneModel, ProviderServiceUpdateRequestDto requestDto) {
+    private boolean updateField(ProviderServiceModelToUpdate modelToUpdate, ProviderServiceUpdateRequestDto requestDto) {
         boolean isChange = false;
-        if (Objects.nonNull(requestDto.getIdentifierId()) && !Objects.equals(phoneModel.getIdentifierId(), requestDto.getIdentifierId())) {
-            phoneModel.setIdentifierId(requestDto.getIdentifierId());
+        if (Objects.nonNull(requestDto.getIdentifierId()) && !Objects.equals(modelToUpdate.getIdentifierId(), requestDto.getIdentifierId())) {
+            modelToUpdate.setIdentifierId(requestDto.getIdentifierId());
             isChange = true;
         }
         return isChange;
     }
 
     private ProviderService getProviderService(Long id) {
-        return serviceRepository.findById(id).orElseThrow(() -> new ProviderServiceException(ErrorCode.VEHICLE_TYPE_EXCEPTION, "Vehicle type not found by id: " + id));
+        return serviceRepository.findById(id).orElseThrow(() -> new ProviderServiceException(ErrorCode.TYPE_SERVICE_NOT_FOUND, "Provider service not found by id: " + id));
     }
 
-    private ProviderServiceIdentifierResponseDto validProviderServiceField(ProviderServiceRequest requestDto) {
+    private List<ProviderServiceIdentifierResponseDto> validProviderServiceField(ProviderServiceRequest requestDto) {
         if (Objects.isNull(requestDto.getProviderAccountId())) {
             throw new ProviderServiceException(ErrorCode.INVALID_FIELD, "The 'providerAccountId' field is required and cannot be empty.");
         }
@@ -119,14 +128,29 @@ public class ProviderServiceManager implements ProviderServiceBO {
         if (providerAccountId.getStatus().equals(ProviderAccountStatusEnum.CANCEL)) {
             throw new ProviderAccountException(ErrorCode.ERROR_PROVIDER_ACCOUNT_STATUS_IS_CANCEL, "The 'providerAccountStatus' is canceled.");
         }
-        if (Objects.isNull(requestDto.getVehicleTypeId())) {
-            throw new ProviderServiceException(ErrorCode.INVALID_FIELD, "The 'vehicleTypeId' field is required and cannot be empty.");
+        if (Objects.isNull(requestDto.getVehicleTypeIds()) ||
+                requestDto.getVehicleTypeIds().isEmpty() ||
+                requestDto.getVehicleTypeIds().stream().anyMatch(id -> id == null || id == 0)) {
+            throw new ProviderServiceException(ErrorCode.INVALID_FIELD, "The 'vehicleTypeIds' field is required and cannot be empty or contain null/zero values.");
         }
-        if (Objects.isNull(requestDto.getIdentifierId())) {
+        if (Objects.isNull(requestDto.getServiceIdentifierIds()) ||
+                requestDto.getServiceIdentifierIds().isEmpty() ||
+                requestDto.getServiceIdentifierIds().stream().anyMatch(id -> id == null || id == 0)) {
             throw new ProviderServiceException(ErrorCode.INVALID_FIELD, "The 'identifier' field is required and cannot be empty.");
         }
-        providerServiceIsExistsByAccountId(requestDto.getIdentifierId(), requestDto.getProviderAccountId(), requestDto.getVehicleTypeId());
-        return serviceIdentifierBO.findById(requestDto.getIdentifierId());
+        List<ProviderServiceIdentifierResponseDto> identifierList = new ArrayList<>();
+        requestDto.getVehicleTypeIds().forEach(vehicleTypeId -> {
+            requestDto.getServiceIdentifierIds().forEach(identifierId -> {
+                providerServiceIsExistsByAccountId(identifierId, requestDto.getProviderAccountId(), vehicleTypeId);
+                identifierList.add(serviceIdentifierBO.findById(identifierId));
+            });
+        });
+        return removeDuplicate(identifierList);
+    }
+
+    private static List<ProviderServiceIdentifierResponseDto> removeDuplicate(List<ProviderServiceIdentifierResponseDto> identifierList) {
+        Set<ProviderServiceIdentifierResponseDto> set = new HashSet<>(identifierList);
+        return new ArrayList<>(set);
     }
 
     private void providerServiceIsExistsByAccountId(Long identifierId, Long providerAccountId, Long vehicleTypeId) {
