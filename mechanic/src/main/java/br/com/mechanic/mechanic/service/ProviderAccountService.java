@@ -7,13 +7,14 @@ import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import br.com.mechanic.mechanic.exception.*;
 import br.com.mechanic.mechanic.mapper.ProviderAccountMapper;
 import br.com.mechanic.mechanic.model.ProviderAccountModel;
-import br.com.mechanic.mechanic.model.ProviderPersonResponseModel;
+import br.com.mechanic.mechanic.model.ProviderPersonModel;
 import br.com.mechanic.mechanic.repository.ProviderAccountHistoryRepositoryImpl;
 import br.com.mechanic.mechanic.repository.ProviderAccountRepositoryImpl;
 import br.com.mechanic.mechanic.repository.ProviderAccountTypeRepositoryImpl;
 import br.com.mechanic.mechanic.request.ProviderAccountRequestDto;
 import br.com.mechanic.mechanic.request.ProviderAccountUpdateRequestDto;
 import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;
+import br.com.mechanic.mechanic.response.ProviderPersonResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -62,8 +63,8 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
 
         ProviderAccountModel accountModel = ProviderAccountMapper.MAPPER.toModel(providerAccount);
         addressServiceBO.save(providerAccountRequest.getAddressRequest(), accountModel.getId());
-        ProviderPersonResponseModel personResponseModel = personServiceBO.save(providerAccountRequest.getPersonRequest(), accountModel.getId());
-        phoneServiceBO.save(providerAccountRequest.getPhoneRequest(), personResponseModel.getId(), accountModel.getId());
+        ProviderPersonResponseDto personResponseDto = personServiceBO.save(providerAccountRequest.getPersonRequest(), accountModel.getId());
+        phoneServiceBO.save(providerAccountRequest.getPhoneRequest(), personResponseDto.getId(), accountModel.getId());
         return ProviderAccountMapper.MAPPER.toDto(providerAccount);
     }
 

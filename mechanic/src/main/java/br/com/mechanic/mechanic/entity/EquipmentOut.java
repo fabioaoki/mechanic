@@ -4,6 +4,7 @@ package br.com.mechanic.mechanic.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,12 +21,11 @@ public class EquipmentOut {
     private Long id;
     @Column(name = "provider_account_id")
     private Long providerAccountId;
-    @Column(name = "type_service_id")
-    private Long typeServiceId;
+    @Column(name = "equipment_id")
+    private Long equipmentId;
     @Column(name = "transaction_id")
     private Long transactionId;
-    private String identifier;
-    private Float amount;
+    private BigDecimal amount;
     private Boolean reversal;
     @Column(name = "create_date")
     private LocalDateTime createDate;

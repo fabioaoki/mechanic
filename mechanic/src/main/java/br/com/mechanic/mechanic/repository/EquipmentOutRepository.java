@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface EquipmentOutRepository extends JpaRepository<EquipmentOut, Long> {}
+public interface EquipmentOutRepository extends JpaRepository<EquipmentOut, Long> {
+    Long countByProviderAccountIdAndEquipmentIdAndReversalIsFalse(Long providerAccountId, Long equipmentId);
+}

@@ -5,7 +5,7 @@ import br.com.mechanic.mechanic.exception.ErrorCode;
 import br.com.mechanic.mechanic.exception.ProviderAccountException;
 import br.com.mechanic.mechanic.exception.ProviderPersonException;
 import br.com.mechanic.mechanic.mapper.ProviderPersonMapper;
-import br.com.mechanic.mechanic.model.ProviderPersonResponseModel;
+import br.com.mechanic.mechanic.model.ProviderPersonModel;
 import br.com.mechanic.mechanic.repository.ProviderPersonRepositoryImpl;
 import br.com.mechanic.mechanic.request.ProviderPersonRequest;
 import br.com.mechanic.mechanic.request.ProviderPersonUpdateRequest;
@@ -28,12 +28,12 @@ public class ProviderPersonService implements ProviderPersonServiceBO {
     private final ProviderPersonRepositoryImpl providerPersonRepository;
 
     @Override
-    public ProviderPersonResponseModel save(ProviderPersonRequest personRequest, Long providerAccountId) {
+    public ProviderPersonResponseDto save(ProviderPersonRequest personRequest, Long providerAccountId) {
         validPersonField(personRequest);
         log.info("Service: Saving a new provider person");
         ProviderPerson entity = ProviderPersonMapper.MAPPER.toEntity(personRequest);
         entity.setProviderAccountId(providerAccountId);
-        return ProviderPersonMapper.MAPPER.toModel(providerPersonRepository.save(entity));
+        return ProviderPersonMapper.MAPPER.toDto(providerPersonRepository.save(entity));
     }
 
     @Override
@@ -50,7 +50,7 @@ public class ProviderPersonService implements ProviderPersonServiceBO {
     @Override
     public ProviderPersonResponseDto updateProviderPerson(Long id, ProviderPersonUpdateRequest requestDto) {
         log.info("Service update person by id: {}", id);
-        ProviderPersonResponseModel personModel = ProviderPersonMapper.MAPPER.toModel(getPerson(id));
+        ProviderPersonModel personModel = ProviderPersonMapper.MAPPER.toModel(getPerson(id));
         boolean isChange = updateField(personModel, requestDto);
         if (isChange) {
             ProviderPerson providerPerson = providerPersonRepository.save(ProviderPersonMapper.MAPPER.modelToEntity(personModel));
@@ -59,7 +59,7 @@ public class ProviderPersonService implements ProviderPersonServiceBO {
         throw new ProviderAccountException(ErrorCode.IDENTICAL_FIELDS, "No changes were made to the provider account.");
     }
 
-    private boolean updateField(ProviderPersonResponseModel personModel, ProviderPersonUpdateRequest requestDto) {
+    private boolean updateField(ProviderPersonModel personModel, ProviderPersonUpdateRequest requestDto) {
         boolean isChange = false;
         if (Objects.nonNull(requestDto.getBirthDate()) && personModel.getBirthDate() != requestDto.getBirthDate()) {
             personModel.setBirthDate(requestDto.getBirthDate());
