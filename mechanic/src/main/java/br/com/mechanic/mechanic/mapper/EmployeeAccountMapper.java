@@ -4,8 +4,8 @@ import br.com.mechanic.mechanic.entity.EmployeeAccount;
 import br.com.mechanic.mechanic.model.EmployeeAccountModel;
 import br.com.mechanic.mechanic.request.EmployeeAccountRequest;
 import br.com.mechanic.mechanic.response.EmployeeAccountResponseDto;
+import br.com.mechanic.mechanic.response.EmployeeAccountResponseDtoPage;
 import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;
-import br.com.mechanic.mechanic.response.ProviderPersonResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
@@ -17,7 +17,8 @@ public interface EmployeeAccountMapper {
 
     EmployeeAccount toEntity(EmployeeAccountRequest dto);
 
-    EmployeeAccountResponseDto toDtoPage(EmployeeAccount entity);
+    EmployeeAccountResponseDtoPage toDtoPage(EmployeeAccount entity);
+
     @Named("toDto")
     default EmployeeAccountResponseDto toDto(EmployeeAccount entity, ProviderAccountResponseDto accountResponseDto) {
         return EmployeeAccountResponseDto.builder()
@@ -27,10 +28,13 @@ public interface EmployeeAccountMapper {
                 .birthDate(entity.getBirthDate())
                 .providerAccountId(accountResponseDto)
                 .lastUpdate(entity.getLastUpdate())
+                .createDate(entity.getCreateDate())
                 .build();
     }
 
     EmployeeAccountModel toModel(EmployeeAccount entity);
+
+    EmployeeAccountModel toModel(EmployeeAccountRequest dto);
 
     EmployeeAccount modelToEntity(EmployeeAccountModel entity);
 }

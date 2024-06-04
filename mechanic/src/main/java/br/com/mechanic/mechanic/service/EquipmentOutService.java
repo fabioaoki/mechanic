@@ -1,21 +1,16 @@
 package br.com.mechanic.mechanic.service;
 
-import br.com.mechanic.mechanic.entity.EquipmentIn;
 import br.com.mechanic.mechanic.entity.EquipmentOut;
 import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import br.com.mechanic.mechanic.exception.EquipmentException;
 import br.com.mechanic.mechanic.exception.ErrorCode;
 import br.com.mechanic.mechanic.exception.ProviderAccountException;
-import br.com.mechanic.mechanic.mapper.EquipmentInMapper;
 import br.com.mechanic.mechanic.mapper.EquipmentOutMapper;
-import br.com.mechanic.mechanic.model.EquipmentInModel;
+import br.com.mechanic.mechanic.model.EquipmentOutModel;
 import br.com.mechanic.mechanic.repository.EquipmentOutRepositoryImpl;
-import br.com.mechanic.mechanic.request.EquipmentInUpdateRequest;
 import br.com.mechanic.mechanic.request.EquipmentOutRequest;
-import br.com.mechanic.mechanic.response.EquipmentInResponseDto;
-import br.com.mechanic.mechanic.response.EquipmentOutResponseDto;
-import br.com.mechanic.mechanic.response.EquipmentResponseDto;
-import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;
+import br.com.mechanic.mechanic.request.EquipmentOutUpdateRequest;
+import br.com.mechanic.mechanic.response.*;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -42,15 +37,11 @@ public class EquipmentOutService implements EquipmentOutServiceBO {
         EquipmentResponseDto equipmentResponseDto = equipmentServiceBO.findById(requestDto.getEquipmentId());
 
         haveEquipment(requestDto);
-        //TRAZER FUNCIONARIO
-        //COMPLETAR UM SERVIÇO
 
-
-        //GRAVAR UMA TRANSAÇÃO
         EquipmentOut equipmentOut = equipmentOutRepository.save(EquipmentOutMapper.MAPPER.modelToEntity(EquipmentOutMapper.MAPPER.requestToModel(requestDto)));
+        EquipmentOutMapper.MAPPER.toDto(equipmentOut, equipmentResponseDto);
 
-
-        return ;
+        return null;
     }
 
     private void haveEquipment(EquipmentOutRequest requestDto) {
@@ -64,43 +55,46 @@ public class EquipmentOutService implements EquipmentOutServiceBO {
 
 
     @Override
-    public Page<EquipmentOutResponseDto> findAll(Pageable pageable) {
+    public Page<EquipmentOutResponseDtoPage> findAll(Pageable pageable) {
         log.info("Retrieving list of equipments out");
-        return equipmentOutRepository.findAll(pageable).map(EquipmentOutMapper.MAPPER::toDto);
+        return equipmentOutRepository.findAll(pageable).map(EquipmentOutMapper.MAPPER::toDtoPage);
     }
 
     @Override
     public EquipmentOutResponseDto findById(Long id) {
-        return EquipmentOutMapper.MAPPER.toDto(getEquipmentById(id));
+        EquipmentOut equipment = getEquipmentById(id);
+        EquipmentResponseDto equipmentResponseDto = equipmentServiceBO.findById(equipment.getEquipmentId());
+        return EquipmentOutMapper.MAPPER.toDto(equipment, equipmentResponseDto);
     }
 
     @Override
-    public Page<EquipmentInResponseDto> findAllByProviderAccountId(Long providerAccountId, Pageable pageable) {
+    public Page<EquipmentOutResponseDtoPage> findAllByProviderAccountId(Long providerAccountId, Pageable pageable) {
         log.info("Retrieving list of equipmentsIn by providerAccount");
-        return equipmentOutRepository.findAllByProviderAccountId(pageable, providerAccountId).map(EquipmentInMapper.MAPPER::toDto);
+        return equipmentOutRepository.findAllByProviderAccountId(pageable, providerAccountId).map(EquipmentOutMapper.MAPPER::toDtoPage);
     }
 
     @Override
-    public EquipmentInResponseDto updateEquipmentOut(Long id, EquipmentInUpdateRequest requestDto) throws EquipmentException {
+    public EquipmentOutResponseDto updateEquipmentOut(Long id, EquipmentOutUpdateRequest requestDto) throws EquipmentException {
         log.info("Service update equipment by id: {}", id);
-        EquipmentInModel equipmentInModel = EquipmentInMapper.MAPPER.toModel(getEquipmentById(id));
-        boolean isChange = updateField(equipmentInModel, requestDto);
+        EquipmentOutModel equipmentOutModel = EquipmentOutMapper.MAPPER.toModel(getEquipmentById(id));
+        boolean isChange = updateField(equipmentOutModel, requestDto);
         if (isChange) {
-            EquipmentIn equipmentIn = equipmentOutRepository.save(EquipmentInMapper.MAPPER.modelToEntity(equipmentInModel));
-            return EquipmentInMapper.MAPPER.toDto(equipmentIn);
+            EquipmentOut equipmentOut = equipmentOutRepository.save(EquipmentOutMapper.MAPPER.modelToEntity(equipmentOutModel));
+            EquipmentResponseDto equipmentResponseDto = equipmentServiceBO.findById(equipmentOut.getEquipmentId());
+            return EquipmentOutMapper.MAPPER.toDto(equipmentOut, equipmentResponseDto);
         }
         throw new EquipmentException(ErrorCode.IDENTICAL_FIELDS, "No changes were made to the equipmentIn.");
     }
 
-    private boolean updateField(EquipmentInModel equipmentInModel, EquipmentInUpdateRequest requestDto) {
+    private boolean updateField(EquipmentOutModel equipmentInModel, EquipmentOutUpdateRequest outUpdateRequest) {
         boolean isChange = false;
-        if (Objects.nonNull(requestDto.getQuantity()) && !Objects.equals(equipmentInModel.getQuantity(), requestDto.getQuantity())) {
-            equipmentInModel.setQuantity(requestDto.getQuantity());
+        if (Objects.nonNull(outUpdateRequest.getEquipmentId()) && !Objects.equals(equipmentInModel.getEquipmentId(), outUpdateRequest.getEquipmentId())) {
+            equipmentInModel.setEquipmentId(outUpdateRequest.getEquipmentId());
             isChange = true;
         }
-        if (Objects.nonNull(requestDto.getAmount()) && requestDto.getAmount().compareTo(BigDecimal.ZERO) != 0) {
+        if (Objects.nonNull(outUpdateRequest.getAmount()) && outUpdateRequest.getAmount().compareTo(BigDecimal.ZERO) != 0) {
             BigDecimal currentAmount = equipmentInModel.getAmount();
-            BigDecimal newAmount = requestDto.getAmount();
+            BigDecimal newAmount = outUpdateRequest.getAmount();
             if (currentAmount == null || currentAmount.compareTo(newAmount) != 0) {
                 equipmentInModel.setAmount(newAmount);
                 isChange = true;

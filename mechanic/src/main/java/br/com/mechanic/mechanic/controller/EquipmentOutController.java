@@ -6,6 +6,7 @@ import br.com.mechanic.mechanic.exception.ErrorResponse;
 import br.com.mechanic.mechanic.exception.ProviderAccountException;
 import br.com.mechanic.mechanic.request.EquipmentInUpdateRequest;
 import br.com.mechanic.mechanic.request.EquipmentOutRequest;
+import br.com.mechanic.mechanic.request.EquipmentOutUpdateRequest;
 import br.com.mechanic.mechanic.service.EquipmentOutServiceBO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,9 +73,9 @@ public class EquipmentOutController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateEquipmentIn(@PathVariable Long id, @RequestBody EquipmentInUpdateRequest requestDto) {
+    public ResponseEntity<?> updateEquipmentOut(@PathVariable Long id, @RequestBody EquipmentOutUpdateRequest requestDto) {
         try {
-            log.info("Updating equipmentIn with id: " + id);
+            log.info("Updating equipmentOut with id: " + id);
             return ResponseEntity.ok(equipmentOutServiceBO.updateEquipmentOut(id, requestDto));
         } catch (EquipmentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));

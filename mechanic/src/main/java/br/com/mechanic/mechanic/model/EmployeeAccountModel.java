@@ -20,8 +20,9 @@ public class EmployeeAccountModel {
     private Long id;
     private Long providerAccountId;
     private String name;
+    private String cpf;
     private LocalDate birthDate;
-    private EmployeeRoleEnum role;
+    private String role;
     private LocalDateTime createDate;
     private LocalDateTime lastUpdate;
 }

@@ -6,21 +6,20 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
-public class EquipmentOutResponseDto {
+public class EmployeeAccountResponseDtoPage {
 
     private Long id;
     private Long providerAccountId;
-    private EquipmentResponseDto equipmentId;
-    private Long transactionId;
-    private BigDecimal amount;
-    private Boolean reversal;
+    private String name;
+    private LocalDate birthDate;
+    private String role;
     private LocalDateTime createDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDateTime lastUpdate;

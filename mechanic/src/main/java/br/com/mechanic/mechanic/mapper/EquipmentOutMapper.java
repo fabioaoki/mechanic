@@ -4,6 +4,8 @@ import br.com.mechanic.mechanic.entity.EquipmentOut;
 import br.com.mechanic.mechanic.model.EquipmentOutModel;
 import br.com.mechanic.mechanic.request.EquipmentOutRequest;
 import br.com.mechanic.mechanic.response.EquipmentOutResponseDto;
+import br.com.mechanic.mechanic.response.EquipmentOutResponseDtoPage;
+import br.com.mechanic.mechanic.response.EquipmentResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
@@ -17,7 +19,18 @@ public interface EquipmentOutMapper {
 
     EquipmentOut toEntity(EquipmentOutRequest dto);
 
-    EquipmentOutResponseDto toDto(EquipmentOut entity);
+    @Named("toDto")
+   default EquipmentOutResponseDto toDto(EquipmentOut entity, EquipmentResponseDto equipmentResponseDto){
+        return EquipmentOutResponseDto.builder()
+                .equipmentId(equipmentResponseDto)
+                .amount(entity.getAmount())
+                .createDate(entity.getCreateDate())
+                .lastUpdate(entity.getLastUpdate())
+                .transactionId(entity.getTransactionId())
+                .providerAccountId(entity.getProviderAccountId())
+                .id(entity.getId())
+                .build();
+    }
 
     @Named("requestToModel")
     default EquipmentOutModel toModel(EquipmentOut entity) {
@@ -42,4 +55,6 @@ public interface EquipmentOutMapper {
                 .amount(dto.getAmount().setScale(2, RoundingMode.HALF_UP))
                 .build();
     }
+
+    EquipmentOutResponseDtoPage toDtoPage(EquipmentOut equipmentOut);
 }

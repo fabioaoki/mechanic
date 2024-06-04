@@ -28,4 +28,5 @@ public class EmployeeAccount {
     private LocalDateTime createDate;
     @Column(name = "last_update")
     private LocalDateTime lastUpdate;
+    private String cpf;
 }

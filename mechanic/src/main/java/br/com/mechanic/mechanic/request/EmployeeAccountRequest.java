@@ -17,4 +17,5 @@ public class EmployeeAccountRequest {
     private String name;
     private LocalDate birthDate;
     private EmployeeRoleEnum role;
+    private String cpf;
 }

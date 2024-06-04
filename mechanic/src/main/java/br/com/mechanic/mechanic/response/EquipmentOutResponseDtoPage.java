@@ -13,11 +13,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @Builder
-public class EquipmentOutResponseDto {
+public class EquipmentOutResponseDtoPage {
 
     private Long id;
     private Long providerAccountId;
-    private EquipmentResponseDto equipmentId;
+    private Long equipmentId;
     private Long transactionId;
     private BigDecimal amount;
     private Boolean reversal;

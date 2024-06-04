@@ -1,6 +1,7 @@
 package br.com.mechanic.mechanic.service;
 
 import br.com.mechanic.mechanic.entity.EmployeeAccount;
+import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import br.com.mechanic.mechanic.exception.EmployeeAccountException;
 import br.com.mechanic.mechanic.exception.EquipmentException;
 import br.com.mechanic.mechanic.exception.ErrorCode;
@@ -10,6 +11,7 @@ import br.com.mechanic.mechanic.model.EmployeeAccountModel;
 import br.com.mechanic.mechanic.repository.EmployeeAccountRepositoryImpl;
 import br.com.mechanic.mechanic.request.EmployeeAccountRequest;
 import br.com.mechanic.mechanic.response.EmployeeAccountResponseDto;
+import br.com.mechanic.mechanic.response.EmployeeAccountResponseDtoPage;
 import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -32,14 +34,30 @@ public class EmployeeAccountService implements EmployeeAccountServiceBO {
     @Override
     public EmployeeAccountResponseDto save(EmployeeAccountRequest employeeAccountRequest) {
         validEmployeeField(employeeAccountRequest);
+
+        EmployeeAccountModel employeeAccountModel = EmployeeAccountMapper.MAPPER.toModel(employeeAccountRequest);
+        formaterCpf(employeeAccountModel);
         log.info("Service: Saving a new employee");
         EmployeeAccount entity = EmployeeAccountMapper.MAPPER.toEntity(employeeAccountRequest);
         ProviderAccountResponseDto accountResponseDto = getProviderAccountResponseDto(entity.getProviderAccountId());
+        if (accountResponseDto.getStatus().equals(ProviderAccountStatusEnum.CANCEL)) {
+            throw new ProviderAccountException(ErrorCode.ERROR_PROVIDER_ACCOUNT_STATUS_IS_CANCEL, "The 'providerAccountStatus' is canceled.");
+        }
         return EmployeeAccountMapper.MAPPER.toDto(employeeAccountRepository.save(entity), accountResponseDto);
     }
 
+    private static void formaterCpf(EmployeeAccountModel employeeAccountModel) {
+        employeeAccountModel.setCpf(employeeAccountModel.getCpf().replaceAll("\\D", ""));
+        if (employeeAccountModel.getCpf().length() != 11) {
+            throw new EmployeeAccountException(ErrorCode.INVALID_FIELD, "Invalid CPF length.");
+        }
+        employeeAccountModel.setCpf(
+                employeeAccountModel.getCpf().replaceFirst("(\\d{3})(\\d{3})(\\d{3})(\\d{2})", "$1.$2.$3-$4")
+        );
+    }
+
     @Override
-    public Page<EmployeeAccountResponseDto> findAll(Pageable pageable) {
+    public Page<EmployeeAccountResponseDtoPage> findAll(Pageable pageable) {
         log.info("Retrieving list of employees");
         return employeeAccountRepository.findAll(pageable).map(EmployeeAccountMapper.MAPPER::toDtoPage);
     }
@@ -88,6 +106,12 @@ public class EmployeeAccountService implements EmployeeAccountServiceBO {
                 isChange = true;
             }
         }
+        if (Objects.nonNull(requestDto.getRole())) {
+            if (!employeeAccountModel.getRole().equals(requestDto.getRole().toString())) {
+                employeeAccountModel.setRole(requestDto.getRole().toString());
+                isChange = true;
+            }
+        }
         return isChange;
     }
 
@@ -112,6 +136,9 @@ public class EmployeeAccountService implements EmployeeAccountServiceBO {
         }
         validBirthDate(employeeAccountRequest.getBirthDate());
 
+        if (employeeAccountRequest.getCpf().isEmpty() || employeeAccountRequest.getCpf().trim().isEmpty()) {
+            throw new EmployeeAccountException(ErrorCode.INVALID_FIELD, "The 'cpf' field is required.");
+        }
         if (employeeAccountRequest.getName().isEmpty() || employeeAccountRequest.getName().trim().isEmpty()) {
             throw new EmployeeAccountException(ErrorCode.INVALID_FIELD, "The 'name' field is required.");
         }

@@ -24,4 +24,5 @@ public class EmployeeAccountResponseDto {
     private LocalDateTime createDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDateTime lastUpdate;
+    private String cpf;
 }

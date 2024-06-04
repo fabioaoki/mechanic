@@ -9,8 +9,6 @@ import java.util.Optional;
 public interface EquipmentOutRepositoryImpl {
     Long countByProviderAccountIdAndEquipmentId(final Long providerAccountId, final Long equipmentId);
 
-    Optional<EquipmentOut> findByProviderAccountId(final Long providerAccountId);
-
     EquipmentOut save(final EquipmentOut typeService);
 
     Page<EquipmentOut> findAll(final Pageable pageable);

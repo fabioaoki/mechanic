@@ -48,8 +48,4 @@ public class EquipmentOutRepositoryJpa implements EquipmentOutRepositoryImpl {
         return repository.countByProviderAccountIdAndEquipmentIdAndReversalIsFalse(providerAccountId, equipmentId);
     }
 
-    @Override
-    public Optional<EquipmentOut> findByProviderAccountId(Long providerAccountId) {
-        return repository.findByProviderAccountId(providerAccountId);
-    }
 }
