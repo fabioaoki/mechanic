@@ -1,12 +1,8 @@
 package br.com.mechanic.mechanic.mapper;
 
-import br.com.mechanic.mechanic.entity.ClientAddress;
-import br.com.mechanic.mechanic.entity.ProviderPhone;
+import br.com.mechanic.mechanic.entity.client.ClientAddress;
 import br.com.mechanic.mechanic.enuns.StateEnum;
 import br.com.mechanic.mechanic.model.ClientAddressModel;
-import br.com.mechanic.mechanic.model.ProvidePhoneModel;
-import br.com.mechanic.mechanic.model.ClientAddressModel;
-import br.com.mechanic.mechanic.request.ClientAddressRequest;
 import br.com.mechanic.mechanic.request.ClientAddressRequest;
 import br.com.mechanic.mechanic.response.ClientAddressResponseDto;
 import org.mapstruct.Mapper;

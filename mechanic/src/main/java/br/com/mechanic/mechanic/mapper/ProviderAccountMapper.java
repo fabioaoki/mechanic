@@ -1,6 +1,6 @@
 package br.com.mechanic.mechanic.mapper;
 
-import br.com.mechanic.mechanic.entity.ProviderAccount;
+import br.com.mechanic.mechanic.entity.provider.ProviderAccount;
 import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import br.com.mechanic.mechanic.model.ProviderAccountModel;
 import br.com.mechanic.mechanic.request.ProviderAccountRequestDto;

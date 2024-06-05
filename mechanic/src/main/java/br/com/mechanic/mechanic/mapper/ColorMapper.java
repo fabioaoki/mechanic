@@ -1,6 +1,6 @@
 package br.com.mechanic.mechanic.mapper;
 
-import br.com.mechanic.mechanic.entity.Color;
+import br.com.mechanic.mechanic.entity.vehicle.Color;
 import br.com.mechanic.mechanic.model.ColorModel;
 import br.com.mechanic.mechanic.request.ColorRequest;
 import br.com.mechanic.mechanic.response.ColorResponseDto;

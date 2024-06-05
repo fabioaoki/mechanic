@@ -1,12 +1,12 @@
 package br.com.mechanic.mechanic.service;
 
-import br.com.mechanic.mechanic.entity.ClientAddress;
+import br.com.mechanic.mechanic.entity.client.ClientAddress;
 import br.com.mechanic.mechanic.exception.ClientAddressException;
 import br.com.mechanic.mechanic.exception.ErrorCode;
 import br.com.mechanic.mechanic.exception.ProviderAccountTypeException;
 import br.com.mechanic.mechanic.mapper.ClientAddressMapper;
 import br.com.mechanic.mechanic.model.ClientAddressModel;
-import br.com.mechanic.mechanic.repository.ClientAddressRepositoryImpl;
+import br.com.mechanic.mechanic.repository.client.ClientAddressRepositoryImpl;
 import br.com.mechanic.mechanic.request.ClientAddressRequest;
 import br.com.mechanic.mechanic.response.ClientAddressResponseDto;
 import lombok.AllArgsConstructor;

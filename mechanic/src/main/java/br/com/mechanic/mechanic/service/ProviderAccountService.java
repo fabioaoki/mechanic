@@ -1,16 +1,15 @@
 package br.com.mechanic.mechanic.service;
 
 import br.com.mechanic.mechanic.config.ExcludeFromJacocoGeneratedReport;
-import br.com.mechanic.mechanic.entity.ProviderAccount;
-import br.com.mechanic.mechanic.entity.ProviderAccountHistory;
+import br.com.mechanic.mechanic.entity.provider.ProviderAccount;
+import br.com.mechanic.mechanic.entity.provider.ProviderAccountHistory;
 import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import br.com.mechanic.mechanic.exception.*;
 import br.com.mechanic.mechanic.mapper.ProviderAccountMapper;
 import br.com.mechanic.mechanic.model.ProviderAccountModel;
-import br.com.mechanic.mechanic.model.ProviderPersonModel;
-import br.com.mechanic.mechanic.repository.ProviderAccountHistoryRepositoryImpl;
-import br.com.mechanic.mechanic.repository.ProviderAccountRepositoryImpl;
-import br.com.mechanic.mechanic.repository.ProviderAccountTypeRepositoryImpl;
+import br.com.mechanic.mechanic.repository.provider.ProviderAccountHistoryRepositoryImpl;
+import br.com.mechanic.mechanic.repository.provider.ProviderAccountRepositoryImpl;
+import br.com.mechanic.mechanic.repository.provider.ProviderAccountTypeRepositoryImpl;
 import br.com.mechanic.mechanic.request.ProviderAccountRequestDto;
 import br.com.mechanic.mechanic.request.ProviderAccountUpdateRequestDto;
 import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;

@@ -1,6 +1,6 @@
 package br.com.mechanic.mechanic.service;
 
-import br.com.mechanic.mechanic.entity.ProviderService;
+import br.com.mechanic.mechanic.entity.provider.ProviderService;
 import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import br.com.mechanic.mechanic.exception.ErrorCode;
 import br.com.mechanic.mechanic.exception.ProviderAccountException;
@@ -8,7 +8,7 @@ import br.com.mechanic.mechanic.exception.ProviderServiceException;
 import br.com.mechanic.mechanic.mapper.ProviderServiceMapper;
 import br.com.mechanic.mechanic.model.ProviderServiceModel;
 import br.com.mechanic.mechanic.model.ProviderServiceModelToUpdate;
-import br.com.mechanic.mechanic.repository.ProviderServiceRepositoryImpl;
+import br.com.mechanic.mechanic.repository.provider.ProviderServiceRepositoryImpl;
 import br.com.mechanic.mechanic.request.ProviderServiceRequest;
 import br.com.mechanic.mechanic.request.ProviderServiceUpdateRequestDto;
 import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;

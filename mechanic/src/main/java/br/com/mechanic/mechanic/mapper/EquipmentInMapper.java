@@ -1,6 +1,6 @@
 package br.com.mechanic.mechanic.mapper;
 
-import br.com.mechanic.mechanic.entity.EquipmentIn;
+import br.com.mechanic.mechanic.entity.provider.EquipmentIn;
 import br.com.mechanic.mechanic.model.EquipmentInModel;
 import br.com.mechanic.mechanic.request.EquipmentInRequest;
 import br.com.mechanic.mechanic.request.EquipmentRequestDto;

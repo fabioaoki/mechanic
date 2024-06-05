@@ -1,6 +1,6 @@
 package br.com.mechanic.mechanic.mapper;
 
-import br.com.mechanic.mechanic.entity.ProviderService;
+import br.com.mechanic.mechanic.entity.provider.ProviderService;
 import br.com.mechanic.mechanic.model.ProviderServiceModel;
 import br.com.mechanic.mechanic.model.ProviderServiceModelToUpdate;
 import br.com.mechanic.mechanic.request.ProviderServiceRequest;

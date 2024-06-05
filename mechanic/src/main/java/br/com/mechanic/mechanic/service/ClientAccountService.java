@@ -1,15 +1,16 @@
 package br.com.mechanic.mechanic.service;
 
-import br.com.mechanic.mechanic.entity.ClientAccount;
+import br.com.mechanic.mechanic.entity.client.ClientAccount;
 import br.com.mechanic.mechanic.exception.ClientAccountException;
 import br.com.mechanic.mechanic.exception.ErrorCode;
 import br.com.mechanic.mechanic.exception.ProviderAccountException;
 import br.com.mechanic.mechanic.mapper.ClientAccountMapper;
 import br.com.mechanic.mechanic.model.ClientAccountModel;
-import br.com.mechanic.mechanic.repository.ClientAccountRepositoryImpl;
+import br.com.mechanic.mechanic.repository.client.ClientAccountRepositoryImpl;
 import br.com.mechanic.mechanic.request.ClientAccountRequest;
 import br.com.mechanic.mechanic.request.ClientAccountUpdateRequest;
 import br.com.mechanic.mechanic.response.ClientAccountResponseDto;
+import br.com.mechanic.mechanic.response.ClientAddressResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,7 @@ public class ClientAccountService implements ClientAccountServiceBO {
 
     private final ClientAccountRepositoryImpl clientAccountRepository;
 
+    private ClientAddressServiceBO addressServiceBO;
     @Transactional
     @Override
     public ClientAccountResponseDto save(ClientAccountRequest clientAccountRequest) {
@@ -44,6 +46,8 @@ public class ClientAccountService implements ClientAccountServiceBO {
         log.info("Service: Saving a new client account");
         ClientAccount entity = ClientAccountMapper.MAPPER.modelToEntity(accountModel);
         ClientAccount clientAccount = clientAccountRepository.save(entity);
+        ClientAddressResponseDto save = addressServiceBO.save(clientAccountRequest.getAddress(), clientAccount.getId());
+
 
         return ClientAccountMapper.MAPPER.toDto(clientAccountRepository.save(entity), accountResponseDto);
     }

@@ -1,6 +1,6 @@
 package br.com.mechanic.mechanic.service;
 
-import br.com.mechanic.mechanic.entity.EmployeeAccount;
+import br.com.mechanic.mechanic.entity.provider.emloyee.EmployeeAccount;
 import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import br.com.mechanic.mechanic.exception.EmployeeAccountException;
 import br.com.mechanic.mechanic.exception.EquipmentException;
@@ -8,7 +8,7 @@ import br.com.mechanic.mechanic.exception.ErrorCode;
 import br.com.mechanic.mechanic.exception.ProviderAccountException;
 import br.com.mechanic.mechanic.mapper.EmployeeAccountMapper;
 import br.com.mechanic.mechanic.model.EmployeeAccountModel;
-import br.com.mechanic.mechanic.repository.EmployeeAccountRepositoryImpl;
+import br.com.mechanic.mechanic.repository.employee.EmployeeAccountRepositoryImpl;
 import br.com.mechanic.mechanic.request.EmployeeAccountRequest;
 import br.com.mechanic.mechanic.response.EmployeeAccountResponseDto;
 import br.com.mechanic.mechanic.response.EmployeeAccountResponseDtoPage;

@@ -1,6 +1,6 @@
 package br.com.mechanic.mechanic.mapper;
 
-import br.com.mechanic.mechanic.entity.ProviderPhone;
+import br.com.mechanic.mechanic.entity.provider.ProviderPhone;
 import br.com.mechanic.mechanic.model.ProvidePhoneModel;
 import br.com.mechanic.mechanic.request.ProviderPhoneRequest;
 import br.com.mechanic.mechanic.response.ProviderPhoneResponseDto;

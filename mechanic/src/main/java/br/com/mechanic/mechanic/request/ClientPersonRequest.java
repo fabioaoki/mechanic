@@ -18,5 +18,4 @@ public class ClientPersonRequest {
 
     private String name;
     private LocalDate birthDate;
-    private LocalDateTime createDate;
 }

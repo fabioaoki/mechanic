@@ -1,11 +1,11 @@
 package br.com.mechanic.mechanic.service;
 
-import br.com.mechanic.mechanic.entity.Equipment;
+import br.com.mechanic.mechanic.entity.provider.Equipment;
 import br.com.mechanic.mechanic.exception.EquipmentException;
 import br.com.mechanic.mechanic.exception.ErrorCode;
 import br.com.mechanic.mechanic.mapper.EquipmentMapper;
 import br.com.mechanic.mechanic.model.EquipmentModel;
-import br.com.mechanic.mechanic.repository.EquipmentRepositoryImpl;
+import br.com.mechanic.mechanic.repository.provider.EquipmentRepositoryImpl;
 import br.com.mechanic.mechanic.request.EquipmentRequestDto;
 import br.com.mechanic.mechanic.response.EquipmentResponseDto;
 import lombok.AllArgsConstructor;

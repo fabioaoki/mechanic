@@ -1,11 +1,11 @@
 package br.com.mechanic.mechanic.service;
 
-import br.com.mechanic.mechanic.entity.ProviderPhone;
+import br.com.mechanic.mechanic.entity.provider.ProviderPhone;
 import br.com.mechanic.mechanic.exception.ErrorCode;
 import br.com.mechanic.mechanic.exception.ProviderPhoneException;
 import br.com.mechanic.mechanic.mapper.ProviderPhoneMapper;
 import br.com.mechanic.mechanic.model.ProvidePhoneModel;
-import br.com.mechanic.mechanic.repository.ProviderPhoneRepositoryImpl;
+import br.com.mechanic.mechanic.repository.provider.ProviderPhoneRepositoryImpl;
 import br.com.mechanic.mechanic.request.ProviderPhoneRequest;
 import br.com.mechanic.mechanic.response.ProviderPhoneResponseDto;
 import com.google.i18n.phonenumbers.NumberParseException;

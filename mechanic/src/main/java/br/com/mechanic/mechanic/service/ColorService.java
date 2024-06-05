@@ -1,10 +1,10 @@
 package br.com.mechanic.mechanic.service;
 
-import br.com.mechanic.mechanic.entity.Color;
+import br.com.mechanic.mechanic.entity.vehicle.Color;
 import br.com.mechanic.mechanic.exception.ColorException;
 import br.com.mechanic.mechanic.exception.ErrorCode;
 import br.com.mechanic.mechanic.mapper.ColorMapper;
-import br.com.mechanic.mechanic.repository.ColorRepositoryImpl;
+import br.com.mechanic.mechanic.repository.vehicle.ColorRepositoryImpl;
 import br.com.mechanic.mechanic.request.ColorRequest;
 import br.com.mechanic.mechanic.response.ColorResponseDto;
 import lombok.AllArgsConstructor;

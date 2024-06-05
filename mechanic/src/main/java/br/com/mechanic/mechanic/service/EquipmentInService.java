@@ -1,13 +1,13 @@
 package br.com.mechanic.mechanic.service;
 
-import br.com.mechanic.mechanic.entity.EquipmentIn;
+import br.com.mechanic.mechanic.entity.provider.EquipmentIn;
 import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import br.com.mechanic.mechanic.exception.EquipmentException;
 import br.com.mechanic.mechanic.exception.ErrorCode;
 import br.com.mechanic.mechanic.exception.ProviderAccountException;
 import br.com.mechanic.mechanic.mapper.EquipmentInMapper;
 import br.com.mechanic.mechanic.model.EquipmentInModel;
-import br.com.mechanic.mechanic.repository.EquipmentInRepositoryImpl;
+import br.com.mechanic.mechanic.repository.provider.EquipmentInRepositoryImpl;
 import br.com.mechanic.mechanic.request.EquipmentInRequest;
 import br.com.mechanic.mechanic.request.EquipmentInUpdateRequest;
 import br.com.mechanic.mechanic.response.EquipmentInResponseDto;

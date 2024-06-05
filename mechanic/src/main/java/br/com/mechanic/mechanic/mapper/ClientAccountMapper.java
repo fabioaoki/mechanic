@@ -1,7 +1,7 @@
 package br.com.mechanic.mechanic.mapper;
 
-import br.com.mechanic.mechanic.entity.ClientAccount;
-import br.com.mechanic.mechanic.entity.EmployeeAccount;
+import br.com.mechanic.mechanic.entity.client.ClientAccount;
+import br.com.mechanic.mechanic.entity.provider.emloyee.EmployeeAccount;
 import br.com.mechanic.mechanic.model.ClientAccountModel;
 import br.com.mechanic.mechanic.request.ClientAccountRequest;
 import br.com.mechanic.mechanic.request.EmployeeAccountRequest;
