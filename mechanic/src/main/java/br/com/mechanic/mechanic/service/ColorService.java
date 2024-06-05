@@ -31,24 +31,31 @@ public class ColorService implements ColorServiceBO {
         List<ColorResponseDto> colors = new ArrayList<>();
 
         colorRequest.getColors().forEach(color -> {
+            log.info("Processing color: {}", color);
+
             // Validar se essa cor é válida em português
             if (!ColorUtil.isValidColor(color)) {
+                log.error("Invalid color value: {}", color);
                 throw new ColorException(ErrorCode.INVALID_FIELD, "Invalid color value: " + color);
             }
 
-            // Obter o valor hexadecimal da cor
-            String colorHex = ColorUtil.getColorHex(color);
+            // Obter o nome da cor formatado
+            String formattedColor = ColorUtil.formatColor(color);
 
             // Validar se essa cor existe no repositório
-            colorRepository.findByColor(colorHex).ifPresent(existingColor -> {
+            colorRepository.findByColor(formattedColor).ifPresent(existingColor -> {
+                log.error("Color already registered: {}", formattedColor);
                 throw new ColorException(ErrorCode.ERROR_CREATED_COLOR, "Color already registered");
             });
 
             // Salvar no repositório
-            Color entity = colorRepository.save(ColorMapper.MAPPER.toEntity(colorHex));
+            Color entity = colorRepository.save(ColorMapper.MAPPER.toEntity(formattedColor));
+            log.info("Color saved: {}", formattedColor);
+
             colors.add(ColorMapper.MAPPER.toDto(entity));
         });
 
+        log.info("All colors processed and saved");
         return colors;
     }
 
@@ -58,27 +65,36 @@ public class ColorService implements ColorServiceBO {
         return colorRepository.findAll(pageable)
                 .map(color -> {
                     ColorResponseDto dto = ColorMapper.MAPPER.toDto(color);
-                    String colorName = ColorUtil.getColorName(color.getColor());
+                    String colorName = ColorUtil.formatColor(color.getColor());
                     dto.setColor(colorName);
+                    log.info("Color retrieved: {}", colorName);
                     return dto;
                 });
     }
 
     @Override
     public ColorResponseDto findById(Long id) {
+        log.info("Retrieving color by id: {}", id);
         Color color = getColorById(id);
         ColorResponseDto dto = ColorMapper.MAPPER.toDto(color);
-        String colorName = ColorUtil.getColorName(color.getColor());
+        String colorName = ColorUtil.formatColor(color.getColor());
         dto.setColor(colorName);
+        log.info("Color retrieved by id: {} - {}", id, colorName);
         return dto;
     }
 
     private Color getColorById(Long id) {
-        return colorRepository.findById(id).orElseThrow(() -> new ColorException(ErrorCode.ERROR_COLOR_NOT_FOUND, "Color not found by id: " + id));
+        log.info("Searching for color by id: {}", id);
+        return colorRepository.findById(id).orElseThrow(() -> {
+            log.error("Color not found by id: {}", id);
+            return new ColorException(ErrorCode.ERROR_COLOR_NOT_FOUND, "Color not found by id: " + id);
+        });
     }
 
     private void validColorField(ColorRequest colorRequest) {
+        log.info("Validating color request");
         if (colorRequest.getColors() == null || colorRequest.getColors().isEmpty() || colorRequest.getColors().stream().anyMatch(color -> color.trim().isEmpty())) {
+            log.error("The 'colors' field is required and must not contain empty values");
             throw new ColorException(ErrorCode.INVALID_FIELD, "The 'colors' field is required.");
         }
     }
