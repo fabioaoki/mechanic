@@ -69,7 +69,7 @@ public class ProviderPersonService implements ProviderPersonServiceBO {
         if (Objects.nonNull(requestDto.getName()) && !requestDto.getName().isEmpty()) {
             isValidName(requestDto.getName());
             if (!personModel.getName().equalsIgnoreCase(requestDto.getName())) {
-                personModel.setName(requestDto.getName().trim());
+                personModel.setName(formatName(requestDto.getName().trim()));
                 isChange = true;
             }
         }
@@ -83,6 +83,22 @@ public class ProviderPersonService implements ProviderPersonServiceBO {
         if (name.split("\\s+").length < 2) {
             throw new ProviderPersonException(ErrorCode.INVALID_FIELD, "The 'name' field is not full.");
         }
+    }
+
+    public String formatName(String name) {
+
+        String[] words = name.split("\\s+");
+
+        StringBuilder formattedName = new StringBuilder();
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                formattedName.append(word.substring(0, 1).toUpperCase())
+                        .append(word.substring(1).toLowerCase())
+                        .append(" ");
+            }
+        }
+
+        return formattedName.toString().trim();
     }
 
 

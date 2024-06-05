@@ -17,7 +17,19 @@ public interface EmployeeAccountMapper {
 
     EmployeeAccount toEntity(EmployeeAccountRequest dto);
 
-    EmployeeAccountResponseDtoPage toDtoPage(EmployeeAccount entity);
+    @Named("toDtoPage")
+   default EmployeeAccountResponseDtoPage toDtoPage(EmployeeAccount entity){
+        return EmployeeAccountResponseDtoPage.builder()
+                .id(entity.getId())
+                .name(entity.getName())
+                .role(entity.getRole())
+                .birthDate(entity.getBirthDate())
+                .providerAccountId(entity.getProviderAccountId())
+                .lastUpdate(entity.getLastUpdate())
+                .createDate(entity.getCreateDate())
+                .cpf(entity.getCpf().replaceFirst("(\\d{3})(\\d{3})(\\d{3})(\\d{2})", "$1.$2.$3-$4"))
+                .build();
+    }
 
     @Named("toDto")
     default EmployeeAccountResponseDto toDto(EmployeeAccount entity, ProviderAccountResponseDto accountResponseDto) {
@@ -29,6 +41,7 @@ public interface EmployeeAccountMapper {
                 .providerAccountId(accountResponseDto)
                 .lastUpdate(entity.getLastUpdate())
                 .createDate(entity.getCreateDate())
+                .cpf(entity.getCpf().replaceFirst("(\\d{3})(\\d{3})(\\d{3})(\\d{2})", "$1.$2.$3-$4"))
                 .build();
     }
 

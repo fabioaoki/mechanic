@@ -20,6 +20,7 @@ public class EmployeeAccountResponseDtoPage {
     private String name;
     private LocalDate birthDate;
     private String role;
+    private String cpf;
     private LocalDateTime createDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDateTime lastUpdate;

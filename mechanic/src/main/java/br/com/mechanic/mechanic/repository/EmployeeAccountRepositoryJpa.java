@@ -39,4 +39,9 @@ public class EmployeeAccountRepositoryJpa implements EmployeeAccountRepositoryIm
         }
         return repository.save(entity);
     }
+
+    @Override
+    public Optional<EmployeeAccount> findByCpf(String cpf) {
+        return repository.findByCpf(cpf);
+    }
 }

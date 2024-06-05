@@ -36,9 +36,13 @@ public class EmployeeAccountService implements EmployeeAccountServiceBO {
         validEmployeeField(employeeAccountRequest);
 
         EmployeeAccountModel employeeAccountModel = EmployeeAccountMapper.MAPPER.toModel(employeeAccountRequest);
-        formaterCpf(employeeAccountModel);
+        employeeAccountModel.setName(formatName(employeeAccountModel.getName().trim()));
+        formatCpf(employeeAccountModel);
+        employeeAccountRepository.findByCpf(employeeAccountModel.getCpf()).ifPresent(clientAccount -> {
+            throw new EmployeeAccountException(ErrorCode.ERROR_CREATED_EMPLOYEE, "CPF already registered");
+        });
         log.info("Service: Saving a new employee");
-        EmployeeAccount entity = EmployeeAccountMapper.MAPPER.toEntity(employeeAccountRequest);
+        EmployeeAccount entity = EmployeeAccountMapper.MAPPER.modelToEntity(employeeAccountModel);
         ProviderAccountResponseDto accountResponseDto = getProviderAccountResponseDto(entity.getProviderAccountId());
         if (accountResponseDto.getStatus().equals(ProviderAccountStatusEnum.CANCEL)) {
             throw new ProviderAccountException(ErrorCode.ERROR_PROVIDER_ACCOUNT_STATUS_IS_CANCEL, "The 'providerAccountStatus' is canceled.");
@@ -46,14 +50,28 @@ public class EmployeeAccountService implements EmployeeAccountServiceBO {
         return EmployeeAccountMapper.MAPPER.toDto(employeeAccountRepository.save(entity), accountResponseDto);
     }
 
-    private static void formaterCpf(EmployeeAccountModel employeeAccountModel) {
+    public String formatName(String name) {
+
+        String[] words = name.split("\\s+");
+
+        StringBuilder formattedName = new StringBuilder();
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                formattedName.append(word.substring(0, 1).toUpperCase())
+                        .append(word.substring(1).toLowerCase())
+                        .append(" ");
+            }
+        }
+
+        return formattedName.toString().trim();
+    }
+
+
+    private static void formatCpf(EmployeeAccountModel employeeAccountModel) {
         employeeAccountModel.setCpf(employeeAccountModel.getCpf().replaceAll("\\D", ""));
         if (employeeAccountModel.getCpf().length() != 11) {
             throw new EmployeeAccountException(ErrorCode.INVALID_FIELD, "Invalid CPF length.");
         }
-        employeeAccountModel.setCpf(
-                employeeAccountModel.getCpf().replaceFirst("(\\d{3})(\\d{3})(\\d{3})(\\d{2})", "$1.$2.$3-$4")
-        );
     }
 
     @Override
@@ -75,7 +93,7 @@ public class EmployeeAccountService implements EmployeeAccountServiceBO {
 
     @Override
     public EmployeeAccountResponseDto updateEmployeeAccount(Long id, EmployeeAccountRequest requestDto) {
-        log.info("Service update person by id: {}", id);
+        log.info("Service update employee account by id: {}", id);
         EmployeeAccountModel employeeAccountModel = EmployeeAccountMapper.MAPPER.toModel(getEmployee(id));
         boolean isChange = updateField(employeeAccountModel, requestDto);
         if (isChange) {

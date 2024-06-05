@@ -14,4 +14,6 @@ public interface EmployeeAccountRepositoryImpl {
     Optional<EmployeeAccount> findById(Long id);
 
     EmployeeAccount save(EmployeeAccount entity);
+
+    Optional<EmployeeAccount> findByCpf(String cpf);
 }
