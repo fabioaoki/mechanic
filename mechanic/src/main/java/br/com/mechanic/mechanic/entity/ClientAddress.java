@@ -20,16 +20,17 @@ public class ClientAddress {
     private Long id;
     @Column(name = "client_account_id")
     private Long clientAccountId;
-    @Column(name = "post_code")
-    private String postCode;
-    @Column(name = "address_1")
-    private String address1;
-    @Column(name = "address_2")
-    private String address2;
     private String city;
-    private String country;
+    private String street;
+    @Column(name = "zip_code")
+    private String zipCode;
     @Column(name = "create_date")
     private LocalDateTime createDate;
     @Column(name = "last_update")
     private LocalDateTime lastUpdate;
+    private double latitude;
+    private double longitude;
+    private String state;
+    private String number;
+    private String neighborhood;
 }

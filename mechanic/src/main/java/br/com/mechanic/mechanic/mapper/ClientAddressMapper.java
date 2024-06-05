@@ -1,36 +1,38 @@
 package br.com.mechanic.mechanic.mapper;
 
-import br.com.mechanic.mechanic.entity.ProviderAddress;
+import br.com.mechanic.mechanic.entity.ClientAddress;
 import br.com.mechanic.mechanic.entity.ProviderPhone;
 import br.com.mechanic.mechanic.enuns.StateEnum;
+import br.com.mechanic.mechanic.model.ClientAddressModel;
 import br.com.mechanic.mechanic.model.ProvidePhoneModel;
-import br.com.mechanic.mechanic.model.ProviderAddressModel;
-import br.com.mechanic.mechanic.request.ProviderAddressRequest;
-import br.com.mechanic.mechanic.response.ProviderAddressResponseDto;
+import br.com.mechanic.mechanic.model.ClientAddressModel;
+import br.com.mechanic.mechanic.request.ClientAddressRequest;
+import br.com.mechanic.mechanic.request.ClientAddressRequest;
+import br.com.mechanic.mechanic.response.ClientAddressResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
-public interface ProviderAddressMapper {
+public interface ClientAddressMapper {
 
-    ProviderAddressMapper MAPPER = Mappers.getMapper(ProviderAddressMapper.class);
+    ClientAddressMapper MAPPER = Mappers.getMapper(ClientAddressMapper.class);
 
-    ProviderAddressModel requestToModel(ProviderAddressRequest addressRequest);
+    ClientAddressModel requestToModel(ClientAddressRequest addressRequest);
 
 //    @Mapping(target = "createDate", ignore = true)  // Ignorando campos que não estão no DTO
 //    @Mapping(target = "lastUpdate", ignore = true)  // Ignorando campos que não estão no DTO
 //    @Mapping(target = "providerAccountId", ignore = true)  // Ignorando campos que não estão no DTO
-//    ProviderAddress toEntity(ProviderAddressRequest dto);
+//    ClientAddress toEntity(ClientAddressRequest dto);
 
-    ProviderAddressResponseDto toDto(ProviderAddress entity);
+    ClientAddressResponseDto toDto(ClientAddress entity);
 
     @Named("toEntity")
-    default ProviderAddress toEntity(ProviderAddressRequest dto) {
+    default ClientAddress toEntity(ClientAddressRequest dto) {
         double latitude = -23.550520;
         double longitude = -46.633308;
-        return ProviderAddress.builder()
+        return ClientAddress.builder()
                 .city(dto.getCity())
                 .zipCode(dto.getZipCode().replaceAll("\\s", ""))
                 .street(dto.getStreet())
@@ -43,10 +45,10 @@ public interface ProviderAddressMapper {
     }
 
     @Mapping(target = "state", source = "state", qualifiedByName = "stringToStateEnum")
-    ProviderAddressModel toModel(ProviderAddress address);
+    ClientAddressModel toModel(ClientAddress address);
 
     @Mapping(target = "state", source = "state", qualifiedByName = "stateEnumToString")
-    ProviderAddress modelToEntity(ProviderAddressModel addressModel);
+    ClientAddress modelToEntity(ClientAddressModel addressModel);
 
     @Named("stringToStateEnum")
     default StateEnum stringToStateEnum(String state) {

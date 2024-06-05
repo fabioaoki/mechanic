@@ -6,25 +6,21 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
-public class ProviderAddressResponseDto {
+public class ClientPersonResponseDto {
 
     private Long id;
-    private Long providerAccountId;
-    private String city;
-    private String street;
-    private String zipCode;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private ClientAccountResponseDto clientAccount;
+    private String name;
+    private LocalDate birthDate;
     private LocalDateTime createDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDateTime lastUpdate;
-    private Double latitude;
-    private Double longitude;
-    private String state;
-    private String number;
-    private String neighborhood;
 }

@@ -5,7 +5,6 @@ import br.com.mechanic.mechanic.model.ProvidePhoneModel;
 import br.com.mechanic.mechanic.request.ProviderPhoneRequest;
 import br.com.mechanic.mechanic.response.ProviderPhoneResponseDto;
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 @Mapper
@@ -18,4 +17,6 @@ public interface ProviderPhoneMapper {
     ProviderPhoneResponseDto toDto(ProviderPhone entity);
 
     ProvidePhoneModel toModel(ProviderPhone entity);
+
+    ProviderPhone modelToEntity(ProvidePhoneModel phoneModel);
 }

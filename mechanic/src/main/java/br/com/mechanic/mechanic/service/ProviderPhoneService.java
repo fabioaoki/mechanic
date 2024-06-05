@@ -2,9 +2,7 @@ package br.com.mechanic.mechanic.service;
 
 import br.com.mechanic.mechanic.entity.ProviderPhone;
 import br.com.mechanic.mechanic.exception.ErrorCode;
-import br.com.mechanic.mechanic.exception.ProviderAddressException;
 import br.com.mechanic.mechanic.exception.ProviderPhoneException;
-import br.com.mechanic.mechanic.mapper.ProviderAddressMapper;
 import br.com.mechanic.mechanic.mapper.ProviderPhoneMapper;
 import br.com.mechanic.mechanic.model.ProvidePhoneModel;
 import br.com.mechanic.mechanic.repository.ProviderPhoneRepositoryImpl;
@@ -77,7 +75,7 @@ public class ProviderPhoneService implements ProviderPhoneServiceBO {
             phoneModel.setNumber(formatPhoneNumber(phoneModel.getArea(), phoneModel.getNumber()));
             findPhone(phoneModel.getNumber());
 
-            ProviderPhone providerPhone = phoneRepository.save(ProviderAddressMapper.MAPPER.ProviderPhoneMapper(phoneModel));
+            ProviderPhone providerPhone = phoneRepository.save(ProviderPhoneMapper.MAPPER.modelToEntity(phoneModel));
             return ProviderPhoneMapper.MAPPER.toDto(providerPhone);
         }
         throw new ProviderPhoneException(ErrorCode.IDENTICAL_FIELDS, "No changes were made to the provider phone.");

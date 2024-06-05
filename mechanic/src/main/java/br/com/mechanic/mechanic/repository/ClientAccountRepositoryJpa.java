@@ -1,7 +1,7 @@
 package br.com.mechanic.mechanic.repository;
 
+import br.com.mechanic.mechanic.entity.ClientAccount;
 import br.com.mechanic.mechanic.entity.EmployeeAccount;
-import br.com.mechanic.mechanic.entity.ProviderPerson;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -11,27 +11,27 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Component
-public class EmployeeAccountRepositoryJpa implements EmployeeAccountRepositoryImpl {
+public class ClientAccountRepositoryJpa implements ClientAccountRepositoryImpl {
 
-    private final EmployeeAccountRepository repository;
+    private final ClientAccountRepository repository;
 
     @Autowired
-    public EmployeeAccountRepositoryJpa(EmployeeAccountRepository repository) {
+    public ClientAccountRepositoryJpa(ClientAccountRepository repository) {
         this.repository = repository;
     }
 
     @Override
-    public Page<EmployeeAccount> findAll(Pageable pageable) {
+    public Page<ClientAccount> findAll(Pageable pageable) {
         return repository.findAll(pageable);
     }
 
     @Override
-    public Optional<EmployeeAccount> findById(Long id) {
+    public Optional<ClientAccount> findById(Long id) {
         return repository.findById(id);
     }
 
     @Override
-    public EmployeeAccount save(EmployeeAccount entity) {
+    public ClientAccount save(ClientAccount entity) {
         if(entity.getCreateDate() == null){
             entity.setCreateDate(LocalDateTime.now());
         } else {
@@ -41,8 +41,18 @@ public class EmployeeAccountRepositoryJpa implements EmployeeAccountRepositoryIm
     }
 
     @Override
-    public Optional<EmployeeAccount> findByCpf(String cpf) {
+    public Optional<ClientAccount> findByCpf(String cpf) {
         return repository.findByCpf(cpf);
+    }
+
+    @Override
+    public Optional<ClientAccount> findByCpfOrRg(String cpf, String rg) {
+        return repository.findByCpfOrRg(cpf, rg);
+    }
+
+    @Override
+    public Optional<ClientAccount> findByRg(String rg) {
+        return repository.findByRg(rg);
     }
 
 }

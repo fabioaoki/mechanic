@@ -12,10 +12,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @Builder
-public class ProviderAddressResponseDto {
+public class ClientAddressResponseDto {
 
     private Long id;
-    private Long providerAccountId;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private ClientAccountResponseDto clientAccount;
     private String city;
     private String street;
     private String zipCode;
@@ -24,7 +25,4 @@ public class ProviderAddressResponseDto {
     private LocalDateTime lastUpdate;
     private Double latitude;
     private Double longitude;
-    private String state;
-    private String number;
-    private String neighborhood;
 }

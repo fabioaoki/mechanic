@@ -16,4 +16,5 @@ public interface EmployeeAccountRepositoryImpl {
     EmployeeAccount save(EmployeeAccount entity);
 
     Optional<EmployeeAccount> findByCpf(String cpf);
+
 }
