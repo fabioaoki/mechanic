@@ -97,7 +97,7 @@ public class EmployeeAccountService implements EmployeeAccountServiceBO {
         EmployeeAccountModel employeeAccountModel = EmployeeAccountMapper.MAPPER.toModel(getEmployee(id));
         boolean isChange = updateField(employeeAccountModel, requestDto);
         if (isChange) {
-            ProviderAccountResponseDto accountResponseDto = accountServiceBO.findById(requestDto.getProviderAccountId());
+            ProviderAccountResponseDto accountResponseDto = accountServiceBO.findById(employeeAccountModel.getProviderAccountId());
             EmployeeAccount providerPerson = employeeAccountRepository.save(EmployeeAccountMapper.MAPPER.modelToEntity(employeeAccountModel));
             return EmployeeAccountMapper.MAPPER.toDto(providerPerson, accountResponseDto);
         }
@@ -114,7 +114,17 @@ public class EmployeeAccountService implements EmployeeAccountServiceBO {
         if (Objects.nonNull(requestDto.getName()) && !requestDto.getName().isEmpty()) {
             isValidName(requestDto.getName());
             if (!employeeAccountModel.getName().equalsIgnoreCase(requestDto.getName())) {
-                employeeAccountModel.setName(requestDto.getName().trim());
+                employeeAccountModel.setName(formatName(requestDto.getName().trim()));
+                isChange = true;
+            }
+        }
+        if (Objects.nonNull(requestDto.getCpf()) && !requestDto.getCpf().isEmpty()) {
+            if (!employeeAccountModel.getCpf().equals(requestDto.getCpf())) {
+                employeeAccountModel.setCpf(requestDto.getCpf());
+                formatCpf(employeeAccountModel);
+                employeeAccountRepository.findByCpf(employeeAccountModel.getCpf()).ifPresent(clientAccount -> {
+                    throw new EmployeeAccountException(ErrorCode.ERROR_CREATED_EMPLOYEE, "CPF already registered");
+                });
                 isChange = true;
             }
         }
