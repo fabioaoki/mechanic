@@ -1,4 +1,4 @@
-package br.com.mechanic.mechanic.service;
+package br.com.mechanic.mechanic.service.client;
 
 import br.com.mechanic.mechanic.entity.client.ClientAddress;
 import br.com.mechanic.mechanic.exception.ClientAddressException;

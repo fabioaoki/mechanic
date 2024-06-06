@@ -11,5 +11,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class PlateRequest {
 
-    private String plate;
+    private String mercosulPlate;
+    private String oldPlate;
+    private String city;
 }

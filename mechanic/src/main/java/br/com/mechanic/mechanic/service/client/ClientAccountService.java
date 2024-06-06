@@ -1,4 +1,4 @@
-package br.com.mechanic.mechanic.service;
+package br.com.mechanic.mechanic.service.client;
 
 import br.com.mechanic.mechanic.entity.client.ClientAccount;
 import br.com.mechanic.mechanic.exception.ClientAccountException;
@@ -11,6 +11,8 @@ import br.com.mechanic.mechanic.request.ClientAccountRequest;
 import br.com.mechanic.mechanic.request.ClientAccountUpdateRequest;
 import br.com.mechanic.mechanic.response.ClientAccountResponseDto;
 import br.com.mechanic.mechanic.response.ClientAddressResponseDto;
+import br.com.mechanic.mechanic.response.ClientPersonResponseDto;
+import br.com.mechanic.mechanic.response.ClientPhoneResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -30,6 +32,8 @@ public class ClientAccountService implements ClientAccountServiceBO {
     private final ClientAccountRepositoryImpl clientAccountRepository;
 
     private ClientAddressServiceBO addressServiceBO;
+    private ClientPersonServiceBO personServiceBO;
+    private ClientPhoneServiceBO phoneServiceBO;
     @Transactional
     @Override
     public ClientAccountResponseDto save(ClientAccountRequest clientAccountRequest) {
@@ -45,9 +49,10 @@ public class ClientAccountService implements ClientAccountServiceBO {
         });
         log.info("Service: Saving a new client account");
         ClientAccount entity = ClientAccountMapper.MAPPER.modelToEntity(accountModel);
-        ClientAccount clientAccount = clientAccountRepository.save(entity);
-        ClientAddressResponseDto save = addressServiceBO.save(clientAccountRequest.getAddress(), clientAccount.getId());
-
+        ClientAccount clientAccount = clientAccountRepository.save(ClientAccountMapper.MAPPER.modelToEntity(accountModel));
+        ClientAddressResponseDto addressResponseDto = addressServiceBO.save(clientAccountRequest.getAddress(), clientAccount.getId());
+        ClientPersonResponseDto clientPersonResponseDto = personServiceBO.save(clientAccountRequest.getPerson(), clientAccount.getId());
+        ClientPhoneResponseDto phoneResponseDto = phoneServiceBO.save(clientAccountRequest.getPhone(), clientAccount.getId());
 
         return ClientAccountMapper.MAPPER.toDto(clientAccountRepository.save(entity), accountResponseDto);
     }

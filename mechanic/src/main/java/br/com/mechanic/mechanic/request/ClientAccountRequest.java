@@ -18,7 +18,7 @@ public class ClientAccountRequest {
     private LocalDate birthDate;
     private ClientAddressRequest address;
     private ClientPersonRequest person;
-    private ClientPhoneRequest prone;
+    private ClientPhoneRequest phone;
     private VehicleRequest vehicle;
 
 }

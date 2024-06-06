@@ -20,7 +20,10 @@ public class Plate {
     private Long id;
     @Column(name = "client_account_id")
     private Long clientAccountId;
-    private String plate;
+    @Column(name = "mercosul_plate")
+    private String mercosulPlate;
+    @Column(name = "old_plate")
+    private String oldPlate;
     @Column(name = "create_date")
     private LocalDateTime createDate;
     @Column(name = "last_update")

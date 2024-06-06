@@ -1,4 +1,4 @@
-package br.com.mechanic.mechanic.service;
+package br.com.mechanic.mechanic.service.vehicle;
 
 import br.com.mechanic.mechanic.exception.VehicleTypeException;
 import br.com.mechanic.mechanic.request.VehicleTypeRequestDto;

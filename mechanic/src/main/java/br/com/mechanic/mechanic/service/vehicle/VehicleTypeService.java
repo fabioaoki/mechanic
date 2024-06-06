@@ -1,4 +1,4 @@
-package br.com.mechanic.mechanic.service;
+package br.com.mechanic.mechanic.service.vehicle;
 
 import br.com.mechanic.mechanic.entity.vehicle.VehicleType;
 import br.com.mechanic.mechanic.exception.ErrorCode;
@@ -9,6 +9,7 @@ import br.com.mechanic.mechanic.model.VehicleTypeModel;
 import br.com.mechanic.mechanic.repository.vehicle.VehicleTypeRepositoryImpl;
 import br.com.mechanic.mechanic.request.VehicleTypeRequestDto;
 import br.com.mechanic.mechanic.response.VehicleTypeResponseDto;
+import br.com.mechanic.mechanic.service.ProviderServiceBO;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;

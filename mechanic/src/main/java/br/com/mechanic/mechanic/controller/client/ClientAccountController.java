@@ -4,7 +4,7 @@ import br.com.mechanic.mechanic.exception.*;
 import br.com.mechanic.mechanic.request.ClientAccountRequest;
 import br.com.mechanic.mechanic.request.ClientAccountUpdateRequest;
 import br.com.mechanic.mechanic.response.ClientAccountResponseDto;
-import br.com.mechanic.mechanic.service.ClientAccountServiceBO;
+import br.com.mechanic.mechanic.service.client.ClientAccountServiceBO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

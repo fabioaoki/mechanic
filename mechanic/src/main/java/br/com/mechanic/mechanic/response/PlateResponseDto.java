@@ -17,7 +17,10 @@ public class PlateResponseDto {
     private Long id;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private ClientAccountResponseDto clientAccount;
-    private String plate;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String mercosulPlate;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String oldPlate;
     private LocalDateTime createDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDateTime lastUpdate;

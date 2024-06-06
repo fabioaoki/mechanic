@@ -5,7 +5,7 @@ import br.com.mechanic.mechanic.exception.ProviderAccountException;
 import br.com.mechanic.mechanic.exception.VehicleTypeException;
 import br.com.mechanic.mechanic.request.VehicleTypeRequestDto;
 import br.com.mechanic.mechanic.response.VehicleTypeResponseDto;
-import br.com.mechanic.mechanic.service.VehicleTypeServiceBO;
+import br.com.mechanic.mechanic.service.vehicle.VehicleTypeServiceBO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

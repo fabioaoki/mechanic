@@ -1,4 +1,4 @@
-package br.com.mechanic.mechanic.service;
+package br.com.mechanic.mechanic.service.client;
 
 import br.com.mechanic.mechanic.request.ClientAddressRequest;
 import br.com.mechanic.mechanic.response.ClientAddressResponseDto;
