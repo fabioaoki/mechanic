@@ -12,6 +12,6 @@ import lombok.NoArgsConstructor;
 public class VehicleRequest {
 
     private PlateRequest plate;
-    private MarcRequest marc;
-    private ColorCarRequest color;
+    private Long marcId;
+    private Long colorId;
 }

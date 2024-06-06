@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,9 +26,11 @@ public class ClientAccountResponseDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private ClientPhoneResponseDto phone;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private PlateResponseDto car;
+    private List<PlateResponseDto> cars;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private VehicleTypeResponseDto vehicle;
+    private List<MarcResponseDto> marcs;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private List<ColorResponseDto> colors;
     private LocalDate birthDate;
     private LocalDateTime createDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)

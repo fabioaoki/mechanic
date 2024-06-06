@@ -7,8 +7,13 @@ import br.com.mechanic.mechanic.exception.ProviderAccountException;
 import br.com.mechanic.mechanic.mapper.ClientAccountMapper;
 import br.com.mechanic.mechanic.model.ClientAccountModel;
 import br.com.mechanic.mechanic.repository.client.ClientAccountRepositoryImpl;
-import br.com.mechanic.mechanic.request.*;
+import br.com.mechanic.mechanic.request.ClientAccountRequest;
+import br.com.mechanic.mechanic.request.ClientAccountUpdateRequest;
+import br.com.mechanic.mechanic.request.PlateRequest;
+import br.com.mechanic.mechanic.request.VehicleRequest;
 import br.com.mechanic.mechanic.response.*;
+import br.com.mechanic.mechanic.service.ColorServiceBO;
+import br.com.mechanic.mechanic.service.vehicle.MarcServiceBO;
 import br.com.mechanic.mechanic.service.vehicle.PlateServiceBO;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -19,6 +24,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -34,11 +40,12 @@ public class ClientAccountService implements ClientAccountServiceBO {
     private ClientPersonServiceBO personServiceBO;
     private ClientPhoneServiceBO phoneServiceBO;
     private PlateServiceBO plateServiceBO;
+    private MarcServiceBO marcServiceBO;
+    private final ColorServiceBO colorServiceBO;
+
     @Transactional
     @Override
     public ClientAccountResponseDto save(ClientAccountRequest clientAccountRequest) {
-        validClientAccountField(clientAccountRequest);
-
         ClientAccountModel accountModel = ClientAccountMapper.MAPPER.toModel(clientAccountRequest);
         accountModel.setName(formatName(accountModel.getName().trim()));
         formatCpf(accountModel);
@@ -47,11 +54,14 @@ public class ClientAccountService implements ClientAccountServiceBO {
         clientAccountRepository.findByCpfOrRg(accountModel.getCpf(), accountModel.getRg()).ifPresent(clientAccount -> {
             throw new ClientAccountException(ErrorCode.ERROR_CREATED_CLIENT, "CPF or RG already registered");
         });
+
         log.info("Service: Saving a new client account");
-        ClientAccount entity = ClientAccountMapper.MAPPER.modelToEntity(accountModel);
         ClientAccount clientAccount = clientAccountRepository.save(ClientAccountMapper.MAPPER.modelToEntity(accountModel));
+
         ClientAddressResponseDto addressResponseDto = addressServiceBO.save(clientAccountRequest.getAddress(), clientAccount.getId());
-        ClientPersonResponseDto clientPersonResponseDto = personServiceBO.save(clientAccountRequest.getPerson(), clientAccount.getId());
+
+        ClientPersonResponseDto personResponseDto = personServiceBO.save(clientAccountRequest.getPerson(), clientAccount.getId());
+
         ClientPhoneResponseDto phoneResponseDto = phoneServiceBO.save(clientAccountRequest.getPhone(), clientAccount.getId());
 
         List<PlateRequest> plateRequests = clientAccountRequest.getVehicles().stream()
@@ -59,12 +69,23 @@ public class ClientAccountService implements ClientAccountServiceBO {
                 .collect(Collectors.toList());
         List<PlateResponseDto> plateResponseList = plateServiceBO.save(plateRequests, clientAccount.getId());
 
-        List<MarcRequest> marcRequest = clientAccountRequest.getVehicles().stream()
-                .map(VehicleRequest::getMarc)
+        List<Long> marcIds = clientAccountRequest.getVehicles().stream()
+                .map(VehicleRequest::getMarcId)
                 .collect(Collectors.toList());
+        List<MarcResponseDto> marcResponseList = new ArrayList<>();
+        marcIds.forEach(marcId -> {
+            marcResponseList.add(marcServiceBO.findById(marcId));
+        });
 
+        List<Long> colorIds = clientAccountRequest.getVehicles().stream()
+                .map(VehicleRequest::getColorId)
+                .collect(Collectors.toList());
+        List<ColorResponseDto> colorResponseList = new ArrayList<>();
+        colorIds.forEach(colorId -> {
+            colorResponseList.add(colorServiceBO.findById(colorId));
+        });
 
-        return ClientAccountMapper.MAPPER.toDto(clientAccountRepository.save(entity), accountResponseDto);
+        return ClientAccountMapper.MAPPER.toDtoMaster(clientAccount, personResponseDto, addressResponseDto, phoneResponseDto, plateResponseList, marcResponseList, colorResponseList);
     }
 
     public String formatName(String name) {
@@ -101,7 +122,7 @@ public class ClientAccountService implements ClientAccountServiceBO {
         boolean isChange = updateField(accountModel, requestDto);
         if (isChange) {
             ClientAccount clientAccount = clientAccountRepository.save(ClientAccountMapper.MAPPER.modelToEntity(accountModel));
-            return ClientAccountMapper.MAPPER.toDto(clientAccount);
+            return ClientAccountMapper.MAPPER.toDtoUpdate(clientAccount);
         }
         throw new ProviderAccountException(ErrorCode.IDENTICAL_FIELDS, "No changes were made to the provider account.");
     }

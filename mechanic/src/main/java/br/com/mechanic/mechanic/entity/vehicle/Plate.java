@@ -24,6 +24,7 @@ public class Plate {
     private String mercosulPlate;
     @Column(name = "old_plate")
     private String oldPlate;
+    private String city;
     @Column(name = "create_date")
     private LocalDateTime createDate;
     @Column(name = "last_update")

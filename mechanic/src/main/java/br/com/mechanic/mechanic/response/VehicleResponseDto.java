@@ -18,9 +18,6 @@ public class VehicleResponseDto {
     private ClientAccountResponseDto clientAccount;
     private PlateResponseDto plate;
     private MarcResponseDto marc;
-    private LocalDateTime year;
-    private String name;
-    private String model;
     private ColorResponseDto color;
     private Boolean sold;
     private LocalDateTime createDate;

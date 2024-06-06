@@ -1,6 +1,6 @@
 package br.com.mechanic.mechanic.repository.provider;
 
-import br.com.mechanic.mechanic.entity.ProviderAccountType;
+import br.com.mechanic.mechanic.entity.provider.ProviderAccountType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

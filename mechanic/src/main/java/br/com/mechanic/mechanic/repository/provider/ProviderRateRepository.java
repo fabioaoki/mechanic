@@ -1,6 +1,6 @@
 package br.com.mechanic.mechanic.repository.provider;
 
-import br.com.mechanic.mechanic.entity.ProviderRate;
+import br.com.mechanic.mechanic.entity.provider.ProviderRate;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

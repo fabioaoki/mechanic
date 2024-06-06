@@ -9,7 +9,7 @@ import br.com.mechanic.mechanic.model.ClientPersonModel;
 import br.com.mechanic.mechanic.repository.client.ClientPersonRepositoryImpl;
 import br.com.mechanic.mechanic.request.ClientPersonRequest;
 import br.com.mechanic.mechanic.response.ClientPersonResponseDto;
-import br.com.mechanic.mechanic.service.ClientPersonServiceBO;
+import br.com.mechanic.mechanic.service.client.ClientPersonServiceBO;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
