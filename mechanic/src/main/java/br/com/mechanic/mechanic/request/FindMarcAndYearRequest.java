@@ -13,5 +13,5 @@ import java.time.LocalDate;
 @Builder
 public class FindMarcAndYearRequest {
     private String name;
-    private LocalDate year;
+    private String year;
 }

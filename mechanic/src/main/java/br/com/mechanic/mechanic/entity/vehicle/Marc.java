@@ -22,7 +22,9 @@ public class Marc {
     private String name;
     private String model;
     private String version;
-    private LocalDate year;
+    private String year;
+    @Column(name = "transmission_type")
+    private String transmissionType;
     @Column(name = "create_date")
     private LocalDateTime createDate;
 }

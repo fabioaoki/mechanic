@@ -9,11 +9,9 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface MarcServiceBO {
-    List<MarcResponseDto> save(final List<MarcRequest> marcRequests);
-
     Page<MarcResponseDto> findAll(final Pageable pageable);
 
     MarcResponseDto findById(final Long id);
 
-    MarcResponseDto findByNameAndYear(final FindMarcAndYearRequest request);
+    Page<MarcResponseDto> findByNameAndYear(final FindMarcAndYearRequest request, final Pageable pageable);
 }

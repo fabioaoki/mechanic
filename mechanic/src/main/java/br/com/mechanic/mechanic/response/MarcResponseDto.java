@@ -17,6 +17,7 @@ public class MarcResponseDto {
     private String name;
     private String model;
     private String version;
-    private LocalDate year;
+    private String year;
+    private String transmissionType;
     private LocalDateTime createDate;
 }
