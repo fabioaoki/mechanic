@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
@@ -14,5 +15,8 @@ import java.time.LocalDateTime;
 public class MarcResponseDto {
     private Long id;
     private String name;
+    private String model;
+    private String version;
+    private LocalDate year;
     private LocalDateTime createDate;
 }

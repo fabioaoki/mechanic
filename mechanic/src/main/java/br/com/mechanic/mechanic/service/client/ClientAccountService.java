@@ -7,10 +7,7 @@ import br.com.mechanic.mechanic.exception.ProviderAccountException;
 import br.com.mechanic.mechanic.mapper.ClientAccountMapper;
 import br.com.mechanic.mechanic.model.ClientAccountModel;
 import br.com.mechanic.mechanic.repository.client.ClientAccountRepositoryImpl;
-import br.com.mechanic.mechanic.request.ClientAccountRequest;
-import br.com.mechanic.mechanic.request.ClientAccountUpdateRequest;
-import br.com.mechanic.mechanic.request.PlateRequest;
-import br.com.mechanic.mechanic.request.VehicleRequest;
+import br.com.mechanic.mechanic.request.*;
 import br.com.mechanic.mechanic.response.*;
 import br.com.mechanic.mechanic.service.vehicle.PlateServiceBO;
 import lombok.AllArgsConstructor;
@@ -60,8 +57,12 @@ public class ClientAccountService implements ClientAccountServiceBO {
         List<PlateRequest> plateRequests = clientAccountRequest.getVehicles().stream()
                 .map(VehicleRequest::getPlate)
                 .collect(Collectors.toList());
+        List<PlateResponseDto> plateResponseList = plateServiceBO.save(plateRequests, clientAccount.getId());
 
-        List<PlateResponseDto> plateResponseDtos = plateServiceBO.save(plateRequests, clientAccount.getId());
+        List<MarcRequest> marcRequest = clientAccountRequest.getVehicles().stream()
+                .map(VehicleRequest::getMarc)
+                .collect(Collectors.toList());
+
 
         return ClientAccountMapper.MAPPER.toDto(clientAccountRepository.save(entity), accountResponseDto);
     }

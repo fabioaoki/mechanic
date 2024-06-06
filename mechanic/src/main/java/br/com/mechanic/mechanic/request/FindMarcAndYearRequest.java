@@ -11,9 +11,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Data
 @Builder
-public class MarcRequest {
+public class FindMarcAndYearRequest {
     private String name;
-    private String model;
-    private String version;
     private LocalDate year;
 }
