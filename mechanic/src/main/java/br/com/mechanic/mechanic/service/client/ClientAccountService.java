@@ -9,10 +9,10 @@ import br.com.mechanic.mechanic.model.ClientAccountModel;
 import br.com.mechanic.mechanic.repository.client.ClientAccountRepositoryImpl;
 import br.com.mechanic.mechanic.request.ClientAccountRequest;
 import br.com.mechanic.mechanic.request.ClientAccountUpdateRequest;
-import br.com.mechanic.mechanic.response.ClientAccountResponseDto;
-import br.com.mechanic.mechanic.response.ClientAddressResponseDto;
-import br.com.mechanic.mechanic.response.ClientPersonResponseDto;
-import br.com.mechanic.mechanic.response.ClientPhoneResponseDto;
+import br.com.mechanic.mechanic.request.PlateRequest;
+import br.com.mechanic.mechanic.request.VehicleRequest;
+import br.com.mechanic.mechanic.response.*;
+import br.com.mechanic.mechanic.service.vehicle.PlateServiceBO;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -22,7 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Period;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Log4j2
@@ -34,6 +36,7 @@ public class ClientAccountService implements ClientAccountServiceBO {
     private ClientAddressServiceBO addressServiceBO;
     private ClientPersonServiceBO personServiceBO;
     private ClientPhoneServiceBO phoneServiceBO;
+    private PlateServiceBO plateServiceBO;
     @Transactional
     @Override
     public ClientAccountResponseDto save(ClientAccountRequest clientAccountRequest) {
@@ -53,6 +56,12 @@ public class ClientAccountService implements ClientAccountServiceBO {
         ClientAddressResponseDto addressResponseDto = addressServiceBO.save(clientAccountRequest.getAddress(), clientAccount.getId());
         ClientPersonResponseDto clientPersonResponseDto = personServiceBO.save(clientAccountRequest.getPerson(), clientAccount.getId());
         ClientPhoneResponseDto phoneResponseDto = phoneServiceBO.save(clientAccountRequest.getPhone(), clientAccount.getId());
+
+        List<PlateRequest> plateRequests = clientAccountRequest.getVehicles().stream()
+                .map(VehicleRequest::getPlate)
+                .collect(Collectors.toList());
+
+        List<PlateResponseDto> plateResponseDtos = plateServiceBO.save(plateRequests, clientAccount.getId());
 
         return ClientAccountMapper.MAPPER.toDto(clientAccountRepository.save(entity), accountResponseDto);
     }

@@ -10,7 +10,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface PlateServiceBO {
-    PlateResponseDto save(final PlateRequest phoneRequest, final Long clientAccountId);
+    List<PlateResponseDto> save(final List<PlateRequest> plateRequests, final Long clientAccountId);
 
     Page<PlateResponseDto> findAll(final Pageable pageable);
 
@@ -18,5 +18,5 @@ public interface PlateServiceBO {
 
     Page<PlateResponseDto> findAllByClientAccountId(final Long clientAccount, final Pageable pageable);
 
-    PlateResponseDto updateProviderPlate(final Long id, final PlateRequest requestDto);
+    PlateResponseDto updatePlate(final Long id, final PlateRequest requestDto);
 }

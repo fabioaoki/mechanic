@@ -15,7 +15,8 @@ public class PlateModel {
 
     private Long id;
     private Long clientAccountId;
-    private String plate;
+    private String mercosulPlate;
+    private String oldPlate;
     private LocalDateTime createDate;
     private LocalDateTime lastUpdate;
 }
