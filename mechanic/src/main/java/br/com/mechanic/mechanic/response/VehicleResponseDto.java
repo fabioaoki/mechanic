@@ -15,11 +15,11 @@ import java.time.LocalDateTime;
 public class VehicleResponseDto {
 
     private Long id;
-    private ClientAccountResponseDto clientAccount;
-    private PlateResponseDto plate;
-    private MarcResponseDto marc;
-    private ColorResponseDto color;
-    private Boolean sold;
+    private Long clientAccountId;
+    private Long plateId;
+    private Long marcId;
+    private Long colorId;
+    private boolean sold;
     private LocalDateTime createDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDateTime lastUpdate;

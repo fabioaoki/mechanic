@@ -12,7 +12,7 @@ import lombok.NoArgsConstructor;
 public class SaveVehicleRequest {
 
     private Long plateId;
+    private Long clientAccountId;
     private Long marcId;
     private Long colorId;
-
 }

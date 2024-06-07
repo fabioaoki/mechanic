@@ -25,7 +25,7 @@ public class Vehicle {
     @Column(name = "marcId")
     private Long marcId;
     @Column(name = "color_id")
-    private String colorId;
+    private Long colorId;
     private Boolean sold;
     @Column(name = "create_date")
     private LocalDateTime createDate;

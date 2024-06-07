@@ -7,14 +7,12 @@ import br.com.mechanic.mechanic.exception.ProviderAccountException;
 import br.com.mechanic.mechanic.mapper.ClientAccountMapper;
 import br.com.mechanic.mechanic.model.ClientAccountModel;
 import br.com.mechanic.mechanic.repository.client.ClientAccountRepositoryImpl;
-import br.com.mechanic.mechanic.request.ClientAccountRequest;
-import br.com.mechanic.mechanic.request.ClientAccountUpdateRequest;
-import br.com.mechanic.mechanic.request.PlateRequest;
-import br.com.mechanic.mechanic.request.VehicleRequest;
+import br.com.mechanic.mechanic.request.*;
 import br.com.mechanic.mechanic.response.*;
 import br.com.mechanic.mechanic.service.ColorServiceBO;
 import br.com.mechanic.mechanic.service.vehicle.MarcServiceBO;
 import br.com.mechanic.mechanic.service.vehicle.PlateServiceBO;
+import br.com.mechanic.mechanic.service.vehicle.VehicleServiceBO;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -41,7 +39,8 @@ public class ClientAccountService implements ClientAccountServiceBO {
     private ClientPhoneServiceBO phoneServiceBO;
     private PlateServiceBO plateServiceBO;
     private MarcServiceBO marcServiceBO;
-    private final ColorServiceBO colorServiceBO;
+    private ColorServiceBO colorServiceBO;
+    private VehicleServiceBO vehicleServiceBO;
 
     @Transactional
     @Override
@@ -85,7 +84,14 @@ public class ClientAccountService implements ClientAccountServiceBO {
             colorResponseList.add(colorServiceBO.findById(colorId));
         });
 
-        //VEHICLE
+        plateResponseList.forEach(plateResponseDto -> {
+            marcResponseList.forEach(marcResponseDto -> {
+                colorIds.forEach(colorId -> {
+                    SaveVehicleRequest saveVehicle = SaveVehicleRequest.builder().clientAccountId(clientAccount.getId()).marcId(marcResponseDto.getId()).colorId(colorId).plateId(plateResponseDto.getId()).build();
+                    vehicleServiceBO.save(saveVehicle, true);
+                });
+            });
+        });
 
         return ClientAccountMapper.MAPPER.toDtoMaster(clientAccount, personResponseDto, addressResponseDto, phoneResponseDto, plateResponseList, marcResponseList, colorResponseList);
     }

@@ -68,10 +68,10 @@ public class VehicleTypeService implements VehicleTypeServiceBO {
         vehicleTypeRepository.save(vehicleType);
     }
 
-    private boolean updateField(VehicleTypeModel phoneModel, VehicleTypeRequestDto requestDto) {
+    private boolean updateField(VehicleTypeModel vehicleTypeModel, VehicleTypeRequestDto requestDto) {
         boolean isChange = false;
-        if (Objects.nonNull(requestDto.getName()) && !Objects.equals(phoneModel.getName(), requestDto.getName())) {
-            phoneModel.setName(requestDto.getName());
+        if (Objects.nonNull(requestDto.getName()) && !Objects.equals(vehicleTypeModel.getName(), requestDto.getName())) {
+            vehicleTypeModel.setName(requestDto.getName());
             isChange = true;
         }
         return isChange;

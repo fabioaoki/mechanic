@@ -19,5 +19,4 @@ public class ClientAccountRequest {
     private ClientPersonRequest person;
     private ClientPhoneRequest phone;
     private List<VehicleRequest> vehicles;
-
 }

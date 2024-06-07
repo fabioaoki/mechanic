@@ -11,10 +11,11 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @Builder
-public class VehicleTypeModel {
+public class VehicleModel {
 
     private Long id;
     private String name;
     private LocalDateTime createDate;
     private LocalDateTime lastUpdate;
+    private boolean use;
 }
