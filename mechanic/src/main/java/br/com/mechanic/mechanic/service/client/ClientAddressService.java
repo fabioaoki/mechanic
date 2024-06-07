@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
@@ -47,21 +48,37 @@ public class ClientAddressService implements ClientAddressServiceBO {
         this.addressRepository = addressRepository;
     }
 
+    @Transactional
     @Override
     public ClientAddressResponseDto save(ClientAddressRequest addressRequest, Long clientAccountId) {
         log.info("Service: valid address field");
         validAddressField(addressRequest);
-        saveClientAddressRequest(addressRequest, clientAccountId);
-
         log.info("Service: saving a new client address");
-        ClientAddress entity = ClientAddressMapper.MAPPER.toEntity(addressRequest);
-        entity.setClientAccountId(clientAccountId);
+        ClientAddress clientAddress = saveClientAddressRequest(addressRequest, clientAccountId);
+
+//        ClientAddress entity = ClientAddressMapper.MAPPER.toEntity(addressRequest);
+//        entity.setClientAccountId(clientAccountId);
 //            try {
 //                getGeocoding(addressRequest, entity);
 //            } catch (ClientAddressException e) {
 //                throw new ClientAddressException(ErrorCode.INVALID_FIELD, "The 'address' field is invalid.");
 //            }
-        return ClientAddressMapper.MAPPER.toDto(addressRepository.save(entity));
+        return ClientAddressMapper.MAPPER.toDto(addressRepository.save(clientAddress));
+    }
+    public String formatName(String name) {
+
+        String[] words = name.split("\\s+");
+
+        StringBuilder formattedName = new StringBuilder();
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                formattedName.append(word.substring(0, 1).toUpperCase())
+                        .append(word.substring(1).toLowerCase())
+                        .append(" ");
+            }
+        }
+
+        return formattedName.toString().trim();
     }
 
     @Override
@@ -162,16 +179,19 @@ public class ClientAddressService implements ClientAddressServiceBO {
                 });
     }
 
-    private void saveClientAddressRequest(ClientAddressRequest addressRequests, Long clientAccountId) {
+    private ClientAddress saveClientAddressRequest(ClientAddressRequest addressRequests, Long clientAccountId) {
         log.info("Service: saving a new client address");
         ClientAddress entity = ClientAddressMapper.MAPPER.toEntity(addressRequests);
         entity.setClientAccountId(clientAccountId);
+        entity.setCity(formatName(entity.getCity()));
+        entity.setStreet(formatName(entity.getStreet()));
+        entity.setNeighborhood(formatName(entity.getNeighborhood()));
 //            try {
 //                getGeocoding(addressRequest, entity);
 //            } catch (ClientAddressException e) {
 //                throw new ClientAddressException(ErrorCode.INVALID_FIELD, "The 'address' field is invalid.");
 //            }
-        addressRepository.save(entity);
+       return addressRepository.save(entity);
     }
 
     private void getGeocoding(ClientAddressRequest addressRequest, ClientAddress entity) {

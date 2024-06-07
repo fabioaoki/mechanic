@@ -14,9 +14,7 @@ import java.util.List;
 @Builder
 public class ClientAccountRequest {
     private String cpf;
-    private String name;
     private String rg;
-    private LocalDate birthDate;
     private ClientAddressRequest address;
     private ClientPersonRequest person;
     private ClientPhoneRequest phone;

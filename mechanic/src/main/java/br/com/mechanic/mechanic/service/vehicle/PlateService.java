@@ -38,7 +38,7 @@ public class PlateService implements PlateServiceBO {
             log.info("Service: Saving a new plate");
             PlateModel plateModel = PlateMapper.MAPPER.dtoToModel(plateRequest);
             plateModel.setClientAccountId(clientAccountId);
-            Plate plate = PlateMapper.MAPPER.toEntity(plateRequest);
+            Plate plate = PlateMapper.MAPPER.modelToEntity(plateModel);
             PlateResponseDto responseDto = PlateMapper.MAPPER.toDto(plateRepository.save(plate));
             log.info("Service: Plate saved with ID: {}", responseDto.getId());
             responseDtoList.add(responseDto);
@@ -145,15 +145,18 @@ public class PlateService implements PlateServiceBO {
         }
 
         if (requestDto.getMercosulPlate() != null && !requestDto.getMercosulPlate().isEmpty()) {
+            requestDto.setMercosulPlate(requestDto.getMercosulPlate().toUpperCase());
             if (!requestDto.getMercosulPlate().matches("^[A-Z]{3}\\d[A-Z]\\d{2}$")) {
                 log.error("Invalid mercosulPlate format: {}", requestDto.getMercosulPlate());
                 throw new PlateException(ErrorCode.INVALID_FIELD, "The 'mercosulPlate' field is invalid. It should be in the format 'ABC1D23'.");
             }
             log.info("Validating if Mercosul plate exists: {}", requestDto.getMercosulPlate());
             mercosulPlateIsExists(requestDto.getMercosulPlate());
+            return;
         }
 
         if (requestDto.getOldPlate() != null && !requestDto.getOldPlate().isEmpty()) {
+            requestDto.setOldPlate(requestDto.getOldPlate().toUpperCase());
             if (!requestDto.getOldPlate().matches("^[A-Z]{3}-\\d{4}$")) {
                 log.error("Invalid oldPlate format: {}", requestDto.getOldPlate());
                 throw new PlateException(ErrorCode.INVALID_FIELD, "The 'oldPlate' field is invalid. It should be in the format 'AAA-1234'.");
@@ -171,6 +174,8 @@ public class PlateService implements PlateServiceBO {
             oldPlateIsExists(requestDto.getOldPlate(), formattedCity);
         }
     }
+
+
 
     private void mercosulPlateIsExists(String mercosulPlate) {
         plateRepository.findByMercosulPlate(mercosulPlate)

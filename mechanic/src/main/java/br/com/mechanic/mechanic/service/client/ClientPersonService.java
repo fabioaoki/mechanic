@@ -15,6 +15,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.Period;
@@ -26,13 +27,14 @@ import java.util.Objects;
 public class ClientPersonService implements ClientPersonServiceBO {
 
     private final ClientPersonRepositoryImpl clientPersonRepository;
-
+    @Transactional
     @Override
     public ClientPersonResponseDto save(ClientPersonRequest personRequest, Long clientAccountId) {
         validPersonField(personRequest);
         log.info("Service: Saving a new client person");
         ClientPerson entity = ClientPersonMapper.MAPPER.toEntity(personRequest);
         entity.setClientAccountId(clientAccountId);
+        entity.setName(formatName(entity.getName()));
         return ClientPersonMapper.MAPPER.toDto(clientPersonRepository.save(entity));
     }
 

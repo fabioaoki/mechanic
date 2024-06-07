@@ -51,7 +51,11 @@ public interface ClientAccountMapper {
 
     ClientAccountModel toModel(ClientAccount entity);
 
-    ClientAccountModel toModel(ClientAccountRequest dto);
+    @Named("toModel")
+    default ClientAccountModel toModel(ClientAccountRequest dto){
+        return ClientAccountModel.builder().name(dto.getPerson().getName()).birthDate(dto.getPerson().getBirthDate())
+                .cpf(dto.getCpf()).rg(dto.getRg()).build();
+    }
 
     ClientAccount modelToEntity(ClientAccountModel entity);
 

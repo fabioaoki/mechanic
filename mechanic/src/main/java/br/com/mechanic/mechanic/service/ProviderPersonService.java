@@ -33,8 +33,10 @@ public class ProviderPersonService implements ProviderPersonServiceBO {
         log.info("Service: Saving a new provider person");
         ProviderPerson entity = ProviderPersonMapper.MAPPER.toEntity(personRequest);
         entity.setProviderAccountId(providerAccountId);
+        entity.setName(formatName(entity.getName()));
         return ProviderPersonMapper.MAPPER.toDto(providerPersonRepository.save(entity));
     }
+
 
     @Override
     public Page<ProviderPersonResponseDto> findAll(Pageable pageable) {

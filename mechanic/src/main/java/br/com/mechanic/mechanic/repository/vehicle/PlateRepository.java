@@ -10,9 +10,8 @@ import java.util.Optional;
 
 @Repository
 public interface PlateRepository extends JpaRepository<Plate, Long> {
-    Optional<Plate> findByMercosulPlate(String mercosulPlate);
+    Optional<Plate> findByMercosulPlate(String mersosulPlate);
+    Optional<Plate> findByOldPlateAndCity(String oldPlate, String city);
 
     Page<Plate> findAllByClientAccountId(Pageable pageable, Long clientAccountId);
-
-    Optional<Plate> findByOldPlateAndCity(String oldPlate, String city);
 }

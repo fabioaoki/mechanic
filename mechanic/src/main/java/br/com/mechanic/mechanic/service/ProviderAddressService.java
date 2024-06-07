@@ -161,6 +161,9 @@ public class ProviderAddressService implements ProviderAddressServiceBO {
         addressRequestList.forEach(addressRequest -> {
             ProviderAddress entity = ProviderAddressMapper.MAPPER.toEntity(addressRequest);
             entity.setProviderAccountId(providerAccountId);
+            entity.setCity(formatName(entity.getCity()));
+            entity.setStreet(formatName(entity.getStreet()));
+            entity.setNeighborhood(formatName(entity.getNeighborhood()));
 //            try {
 //                getGeocoding(addressRequest, entity);
 //            } catch (ProviderAddressException e) {
@@ -168,6 +171,21 @@ public class ProviderAddressService implements ProviderAddressServiceBO {
 //            }
             addressRepository.save(entity);
         });
+    }
+    public String formatName(String name) {
+
+        String[] words = name.split("\\s+");
+
+        StringBuilder formattedName = new StringBuilder();
+        for (String word : words) {
+            if (!word.isEmpty()) {
+                formattedName.append(word.substring(0, 1).toUpperCase())
+                        .append(word.substring(1).toLowerCase())
+                        .append(" ");
+            }
+        }
+
+        return formattedName.toString().trim();
     }
 
     private void getGeocoding(ProviderAddressRequest addressRequest, ProviderAddress entity) {

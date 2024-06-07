@@ -85,6 +85,8 @@ public class ClientAccountService implements ClientAccountServiceBO {
             colorResponseList.add(colorServiceBO.findById(colorId));
         });
 
+        //VEHICLE
+
         return ClientAccountMapper.MAPPER.toDtoMaster(clientAccount, personResponseDto, addressResponseDto, phoneResponseDto, plateResponseList, marcResponseList, colorResponseList);
     }
 
@@ -181,18 +183,18 @@ public class ClientAccountService implements ClientAccountServiceBO {
 
     private void validClientAccountField(ClientAccountRequest clientAccountRequest) {
         log.info("Service: valid client field");
-        if (clientAccountRequest.getBirthDate() == null) {
+        if (clientAccountRequest.getPerson().getName() == null) {
             throw new ClientAccountException(ErrorCode.INVALID_FIELD, "The 'birthDate' field is required.");
         }
-        validBirthDate(clientAccountRequest.getBirthDate());
+        validBirthDate(clientAccountRequest.getPerson().getBirthDate());
 
         if (clientAccountRequest.getCpf().isEmpty() || clientAccountRequest.getCpf().trim().isEmpty()) {
             throw new ClientAccountException(ErrorCode.INVALID_FIELD, "The 'cpf' field is required.");
         }
-        if (clientAccountRequest.getName().isEmpty() || clientAccountRequest.getName().trim().isEmpty()) {
+        if (clientAccountRequest.getPerson().getName().isEmpty() || clientAccountRequest.getPerson().getName().trim().isEmpty()) {
             throw new ClientAccountException(ErrorCode.INVALID_FIELD, "The 'name' field is required.");
         }
-        isValidName(clientAccountRequest.getName());
+        isValidName(clientAccountRequest.getPerson().getName());
 
         if (clientAccountRequest.getRg().isEmpty() || clientAccountRequest.getRg().trim().isEmpty()) {
             throw new ClientAccountException(ErrorCode.INVALID_FIELD, "The 'rg' field is required.");

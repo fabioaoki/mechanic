@@ -16,6 +16,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Objects;
 
@@ -28,6 +29,7 @@ public class ClientPhoneService implements ClientPhoneServiceBO {
 
     private final ClientPhoneRepositoryImpl phoneRepository;
 
+    @Transactional
     @Override
     public ClientPhoneResponseDto save(ClientPhoneRequest phone, Long clientAccountId) {
         log.info("Service: valid phone field");
