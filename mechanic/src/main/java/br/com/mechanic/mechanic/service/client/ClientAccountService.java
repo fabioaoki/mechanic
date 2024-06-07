@@ -45,54 +45,95 @@ public class ClientAccountService implements ClientAccountServiceBO {
     @Transactional
     @Override
     public ClientAccountResponseDto save(ClientAccountRequest clientAccountRequest) {
+        log.info("Start saving client account.");
+
+        // Mapear e preparar o modelo da conta do cliente
         ClientAccountModel accountModel = ClientAccountMapper.MAPPER.toModel(clientAccountRequest);
         accountModel.setName(formatName(accountModel.getName().trim()));
         formatCpf(accountModel);
         accountModel.setRg(accountModel.getRg().replaceAll("[^\\d]", ""));
 
+        log.info("Checking if CPF or RG is already registered: CPF={}, RG={}", accountModel.getCpf(), accountModel.getRg());
         clientAccountRepository.findByCpfOrRg(accountModel.getCpf(), accountModel.getRg()).ifPresent(clientAccount -> {
+            log.error("CPF or RG already registered: CPF={}, RG={}", accountModel.getCpf(), accountModel.getRg());
             throw new ClientAccountException(ErrorCode.ERROR_CREATED_CLIENT, "CPF or RG already registered");
         });
 
-        log.info("Service: Saving a new client account");
+        log.info("Saving new client account to the database.");
         ClientAccount clientAccount = clientAccountRepository.save(ClientAccountMapper.MAPPER.modelToEntity(accountModel));
+        log.info("Client account saved with ID: {}", clientAccount.getId());
 
+        // Salvar endereço, pessoa e telefone
+        log.info("Saving client address.");
         ClientAddressResponseDto addressResponseDto = addressServiceBO.save(clientAccountRequest.getAddress(), clientAccount.getId());
+        log.info("Client address saved.");
 
+        log.info("Saving client person details.");
         ClientPersonResponseDto personResponseDto = personServiceBO.save(clientAccountRequest.getPerson(), clientAccount.getId());
+        log.info("Client person details saved.");
 
+        log.info("Saving client phone details.");
         ClientPhoneResponseDto phoneResponseDto = phoneServiceBO.save(clientAccountRequest.getPhone(), clientAccount.getId());
+        log.info("Client phone details saved.");
 
+        // Processar placas
+        log.info("Processing and saving plates.");
         List<PlateRequest> plateRequests = clientAccountRequest.getVehicles().stream()
                 .map(VehicleRequest::getPlate)
                 .collect(Collectors.toList());
         List<PlateResponseDto> plateResponseList = plateServiceBO.save(plateRequests, clientAccount.getId());
+        log.info("Plates processed and saved.");
 
+        // Processar marcas
+        log.info("Processing and saving marcs.");
         List<Long> marcIds = clientAccountRequest.getVehicles().stream()
                 .map(VehicleRequest::getMarcId)
                 .collect(Collectors.toList());
         List<MarcResponseDto> marcResponseList = new ArrayList<>();
         marcIds.forEach(marcId -> {
-            marcResponseList.add(marcServiceBO.findById(marcId));
+            MarcResponseDto marcResponseDto = marcServiceBO.findById(marcId);
+            marcResponseList.add(marcResponseDto);
+            log.info("Marc saved with ID: {}", marcResponseDto.getId());
         });
 
+        // Processar cores
+        log.info("Processing and saving colors.");
         List<Long> colorIds = clientAccountRequest.getVehicles().stream()
                 .map(VehicleRequest::getColorId)
                 .collect(Collectors.toList());
         List<ColorResponseDto> colorResponseList = new ArrayList<>();
         colorIds.forEach(colorId -> {
-            colorResponseList.add(colorServiceBO.findById(colorId));
+            ColorResponseDto colorResponseDto = colorServiceBO.findById(colorId);
+            colorResponseList.add(colorResponseDto);
+            log.info("Color saved with ID: {}", colorResponseDto.getId());
         });
 
+        if (plateResponseList.size() != marcResponseList.size() || plateResponseList.size() != colorResponseList.size()) {
+            log.error("Mismatch in sizes of lists: Plates={}, Marcs={}, Colors={}",
+                    plateResponseList.size(), marcResponseList.size(), colorResponseList.size());
+            throw new ClientAccountException(ErrorCode.INVALID_FIELD, "Mismatch in sizes of lists: Plates, Marcs, and Colors must have the same number of elements.");
+        }
+        // Processar veículos
+        log.info("Processing and saving vehicles.");
         plateResponseList.forEach(plateResponseDto -> {
             marcResponseList.forEach(marcResponseDto -> {
                 colorIds.forEach(colorId -> {
-                    SaveVehicleRequest saveVehicle = SaveVehicleRequest.builder().clientAccountId(clientAccount.getId()).marcId(marcResponseDto.getId()).colorId(colorId).plateId(plateResponseDto.getId()).build();
+                    log.info("Saving vehicle with Plate ID: {}, Marc ID: {}, Color ID: {}",
+                            plateResponseDto.getId(), marcResponseDto.getId(), colorId);
+                    SaveVehicleRequest saveVehicle = SaveVehicleRequest.builder()
+                            .clientAccountId(clientAccount.getId())
+                            .marcId(marcResponseDto.getId())
+                            .colorId(colorId)
+                            .plateId(plateResponseDto.getId())
+                            .build();
                     vehicleServiceBO.save(saveVehicle, true);
+                    log.info("Vehicle saved with Plate ID: {}, Marc ID: {}, Color ID: {}",
+                            plateResponseDto.getId(), marcResponseDto.getId(), colorId);
                 });
             });
         });
 
+        log.info("Client account saved successfully with all related entities.");
         return ClientAccountMapper.MAPPER.toDtoMaster(clientAccount, personResponseDto, addressResponseDto, phoneResponseDto, plateResponseList, marcResponseList, colorResponseList);
     }
 

@@ -37,20 +37,26 @@ public class ClientAccountController {
         } catch (ClientAccountException e) {
             log.error("ClientAccountException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
-        }catch (ClientAddressException e) {
+        } catch (ClientAddressException e) {
             log.error("ClientAddressException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
-        }catch (ClientPersonException e) {
+        } catch (ClientPersonException e) {
             log.error("ClientPersonException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
-        }catch (ClientPhoneException e) {
+        } catch (ClientPhoneException e) {
             log.error("ClientPhoneException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
-        }catch (MarcException e) {
+        } catch (MarcException e) {
             log.error("MarcException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
-        }catch (PlateException e) {
+        } catch (PlateException e) {
             log.error("PlateException: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
+        } catch (ColorException e) {
+            log.error("ColorException: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
+        } catch (VehicleException e) {
+            log.error("VehicleException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
         }
     }
@@ -111,6 +117,20 @@ public class ClientAccountController {
     }
 
     private static ErrorResponse getErrorResponse(PlateException e) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setErrorCode(e.getErrorCode());
+        errorResponse.setMessage(e.getMessage());
+        return errorResponse;
+    }
+
+    private static ErrorResponse getErrorResponse(ColorException e) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setErrorCode(e.getErrorCode());
+        errorResponse.setMessage(e.getMessage());
+        return errorResponse;
+    }
+
+    private static ErrorResponse getErrorResponse(VehicleException e) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setErrorCode(e.getErrorCode());
         errorResponse.setMessage(e.getMessage());
