@@ -98,7 +98,6 @@ public class ClientAddressService implements ClientAddressServiceBO {
         ClientAddressModel addressModel = ClientAddressMapper.MAPPER.toModel(getAddress(id));
         boolean isChange = updateField(addressModel, requestDto);
         if (isChange) {
-            findAddress(addressModel);
             ClientAddress clientAddress = addressRepository.save(ClientAddressMapper.MAPPER.modelToEntity(addressModel));
             return ClientAddressMapper.MAPPER.toDto(clientAddress);
         }
@@ -168,16 +167,8 @@ public class ClientAddressService implements ClientAddressServiceBO {
         if (addressRequest.getState() == null) {
             throw new ClientAddressException(ErrorCode.INVALID_FIELD, "The 'state' field is required and cannot be empty.");
         }
-        findAddress(ClientAddressMapper.MAPPER.requestToModel(addressRequest));
     }
 
-    private void findAddress(ClientAddressModel addressRequest) {
-        addressRepository.findByAddress(addressRequest.getCity(), addressRequest.getStreet(), addressRequest.getZipCode().replaceAll("\\s", ""),
-                        addressRequest.getState().toString(), addressRequest.getNumber(), addressRequest.getNeighborhood())
-                .ifPresent(address -> {
-                    throw new ClientAddressException(ErrorCode.ERROR_CREATED_ADDRESS, "address already registered");
-                });
-    }
 
     private ClientAddress saveClientAddressRequest(ClientAddressRequest addressRequests, Long clientAccountId) {
         log.info("Service: saving a new client address");
