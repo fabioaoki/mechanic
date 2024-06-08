@@ -42,7 +42,7 @@ public class ColorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getEColorById(@PathVariable Long id) {
+    public ResponseEntity<?> getColorById(@PathVariable Long id) {
         try {
             log.info("Fetching color with id: " + id);
             return ResponseEntity.ok(colorServiceBO.findById(id));
