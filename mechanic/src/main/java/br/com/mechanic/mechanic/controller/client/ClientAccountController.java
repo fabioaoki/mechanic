@@ -46,7 +46,7 @@ public class ClientAccountController {
         } catch (ClientPhoneException e) {
             log.error("ClientPhoneException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
-        } catch (MarcException e) {
+        } catch (ModelException e) {
             log.error("MarcException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
         } catch (PlateException e) {
@@ -109,7 +109,7 @@ public class ClientAccountController {
         return errorResponse;
     }
 
-    private static ErrorResponse getErrorResponse(MarcException e) {
+    private static ErrorResponse getErrorResponse(ModelException e) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setErrorCode(e.getErrorCode());
         errorResponse.setMessage(e.getMessage());

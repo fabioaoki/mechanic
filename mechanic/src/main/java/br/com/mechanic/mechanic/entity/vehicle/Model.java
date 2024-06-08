@@ -4,17 +4,16 @@ package br.com.mechanic.mechanic.entity.vehicle;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "marc")
+@Table(name = "model")
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @Data
 @EqualsAndHashCode(callSuper = false)
-public class Marc {
+public class Model {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

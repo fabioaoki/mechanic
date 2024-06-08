@@ -47,7 +47,6 @@ public class ClientAccountService implements ClientAccountServiceBO {
     public ClientAccountResponseDto save(ClientAccountRequest clientAccountRequest) {
         log.info("Start saving client account.");
 
-        // Mapear e preparar o modelo da conta do cliente
         ClientAccountModel accountModel = ClientAccountMapper.MAPPER.toModel(clientAccountRequest);
         accountModel.setName(formatName(accountModel.getName().trim()));
         formatCpf(accountModel);
@@ -63,7 +62,6 @@ public class ClientAccountService implements ClientAccountServiceBO {
         ClientAccount clientAccount = clientAccountRepository.save(ClientAccountMapper.MAPPER.modelToEntity(accountModel));
         log.info("Client account saved with ID: {}", clientAccount.getId());
 
-        // Salvar endereço, pessoa e telefone
         log.info("Saving client address.");
         ClientAddressResponseDto addressResponseDto = addressServiceBO.save(clientAccountRequest.getAddress(), clientAccount.getId());
         log.info("Client address saved.");
@@ -76,7 +74,6 @@ public class ClientAccountService implements ClientAccountServiceBO {
         ClientPhoneResponseDto phoneResponseDto = phoneServiceBO.save(clientAccountRequest.getPhone(), clientAccount.getId());
         log.info("Client phone details saved.");
 
-        // Processar placas
         log.info("Processing and saving plates.");
         List<PlateRequest> plateRequests = clientAccountRequest.getVehicles().stream()
                 .map(VehicleRequest::getPlate)
@@ -84,7 +81,6 @@ public class ClientAccountService implements ClientAccountServiceBO {
         List<PlateResponseDto> plateResponseList = plateServiceBO.save(plateRequests, clientAccount.getId());
         log.info("Plates processed and saved.");
 
-        // Processar marcas
         log.info("Processing and saving marcs.");
         List<Long> marcIds = clientAccountRequest.getVehicles().stream()
                 .map(VehicleRequest::getMarcId)
@@ -96,7 +92,6 @@ public class ClientAccountService implements ClientAccountServiceBO {
             log.info("Marc saved with ID: {}", marcResponseDto.getId());
         });
 
-        // Processar cores
         log.info("Processing and saving colors.");
         List<Long> colorIds = clientAccountRequest.getVehicles().stream()
                 .map(VehicleRequest::getColorId)
@@ -113,7 +108,6 @@ public class ClientAccountService implements ClientAccountServiceBO {
                     plateResponseList.size(), marcResponseList.size(), colorResponseList.size());
             throw new ClientAccountException(ErrorCode.INVALID_FIELD, "Mismatch in sizes of lists: Plates, Marcs, and Colors must have the same number of elements.");
         }
-        // Processar veículos
         log.info("Processing and saving vehicles.");
         plateResponseList.forEach(plateResponseDto -> {
             marcResponseList.forEach(marcResponseDto -> {

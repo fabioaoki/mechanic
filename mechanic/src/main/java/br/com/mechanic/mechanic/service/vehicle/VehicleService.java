@@ -10,7 +10,6 @@ import br.com.mechanic.mechanic.repository.vehicle.VehicleRepositoryImpl;
 import br.com.mechanic.mechanic.request.SaveVehicleRequest;
 import br.com.mechanic.mechanic.response.VehicleResponseDto;
 import br.com.mechanic.mechanic.service.ColorServiceBO;
-import br.com.mechanic.mechanic.service.client.ClientAccountServiceBO;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
