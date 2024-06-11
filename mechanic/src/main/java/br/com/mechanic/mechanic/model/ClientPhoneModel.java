@@ -14,7 +14,7 @@ import java.time.LocalDateTime;
 public class ClientPhoneModel {
 
     private Long id;
-    private Long providerAccountId;
+    private Long clientAccountId;
     private Long area;
     private String number;
     private LocalDateTime createDate;

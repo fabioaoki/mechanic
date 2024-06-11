@@ -11,6 +11,7 @@ public interface ClientPersonRepositoryImpl {
     Page<ClientPerson> findAll(Pageable pageable);
 
     Optional<ClientPerson> findById(Long id);
+    Optional<ClientPerson> findByClientAccountId(Long id);
 
     ClientPerson save(ClientPerson entity);
 }

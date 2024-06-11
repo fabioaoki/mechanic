@@ -8,6 +8,7 @@ import br.com.mechanic.mechanic.mapper.ClientAddressMapper;
 import br.com.mechanic.mechanic.model.ClientAddressModel;
 import br.com.mechanic.mechanic.repository.client.ClientAddressRepositoryImpl;
 import br.com.mechanic.mechanic.request.ClientAddressRequest;
+import br.com.mechanic.mechanic.response.ClientAddressResponseByControllerDto;
 import br.com.mechanic.mechanic.response.ClientAddressResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -82,33 +83,38 @@ public class ClientAddressService implements ClientAddressServiceBO {
     }
 
     @Override
-    public Page<ClientAddressResponseDto> findAll(Pageable pageable) {
+    public Page<ClientAddressResponseByControllerDto> findAll(Pageable pageable) {
         log.info("Retrieving list of providers address");
-        return addressRepository.findAll(pageable).map(ClientAddressMapper.MAPPER::toDto);
+        return addressRepository.findAll(pageable).map(ClientAddressMapper.MAPPER::controllerToDto);
     }
 
     @Override
-    public ClientAddressResponseDto findById(Long id) {
-        return ClientAddressMapper.MAPPER.toDto(getAddress(id));
+    public ClientAddressResponseByControllerDto findByClientAccountId(Long clientAccountId) {
+        return ClientAddressMapper.MAPPER.controllerToDto(getAddressByClientAccountId(clientAccountId));
     }
 
     @Override
-    public ClientAddressResponseDto updateClientAddress(Long id, ClientAddressRequest requestDto) {
+    public ClientAddressResponseByControllerDto findById(Long id) {
+        return ClientAddressMapper.MAPPER.controllerToDto(getAddress(id));
+    }
+
+    @Override
+    public ClientAddressResponseByControllerDto updateClientAddress(Long id, ClientAddressRequest requestDto) {
         log.info("Service update address by id: {}", id);
         ClientAddressModel addressModel = ClientAddressMapper.MAPPER.toModel(getAddress(id));
         boolean isChange = updateField(addressModel, requestDto);
         if (isChange) {
             ClientAddress clientAddress = addressRepository.save(ClientAddressMapper.MAPPER.modelToEntity(addressModel));
-            return ClientAddressMapper.MAPPER.toDto(clientAddress);
+            return ClientAddressMapper.MAPPER.controllerToDto(clientAddress);
         }
         throw new ClientAddressException(ErrorCode.IDENTICAL_FIELDS, "No changes were made to the provider address.");
     }
 
     @Override
-    public Optional<ClientAddressResponseDto> findByProviderAccountId(Long clientAccount) {
+    public Optional<ClientAddressResponseByControllerDto> findByProviderAccountId(Long clientAccount) {
         log.info("Retrieving of address by clientAccount");
         return addressRepository.findByClientAccountId(clientAccount)
-                .map(ClientAddressMapper.MAPPER::toDto)
+                .map(ClientAddressMapper.MAPPER::controllerToDto)
                 .or(() -> {
                     log.error("Client address not found by clientAccountId: {}", clientAccount);
                     throw new ProviderAccountTypeException(ErrorCode.ERROR_CLIENT_ADDRESS_NOT_FOUND, "Client address not found by clientAccountId: " + clientAccount);
@@ -118,7 +124,7 @@ public class ClientAddressService implements ClientAddressServiceBO {
     private boolean updateField(ClientAddressModel addressModel, ClientAddressRequest requestDto) {
         boolean isChange = false;
         if (Objects.nonNull(requestDto.getStreet()) && !Objects.equals(addressModel.getStreet(), requestDto.getStreet())) {
-            addressModel.setStreet(requestDto.getStreet().trim());
+            addressModel.setStreet(formatName(requestDto.getStreet().trim()));
             isChange = true;
         }
         if (Objects.nonNull(requestDto.getNumber()) && !Objects.equals(addressModel.getNumber(), requestDto.getNumber())) {
@@ -126,7 +132,7 @@ public class ClientAddressService implements ClientAddressServiceBO {
             isChange = true;
         }
         if (Objects.nonNull(requestDto.getNeighborhood()) && !Objects.equals(addressModel.getNeighborhood(), requestDto.getNeighborhood())) {
-            addressModel.setNeighborhood(requestDto.getNeighborhood().trim());
+            addressModel.setNeighborhood(formatName(requestDto.getNeighborhood().trim()));
             isChange = true;
         }
         if (Objects.nonNull(requestDto.getZipCode()) && !Objects.equals(addressModel.getZipCode(), requestDto.getZipCode())) {
@@ -134,7 +140,7 @@ public class ClientAddressService implements ClientAddressServiceBO {
             isChange = true;
         }
         if (Objects.nonNull(requestDto.getCity()) && !Objects.equals(addressModel.getCity(), requestDto.getCity())) {
-            addressModel.setCity(requestDto.getCity().trim());
+            addressModel.setCity(formatName(requestDto.getCity().trim()));
             isChange = true;
         }
         if (Objects.nonNull(requestDto.getState()) && !Objects.equals(addressModel.getState(), requestDto.getState())) {
@@ -146,6 +152,9 @@ public class ClientAddressService implements ClientAddressServiceBO {
 
     private ClientAddress getAddress(Long id) {
         return addressRepository.findById(id).orElseThrow(() -> new ClientAddressException(ErrorCode.ERROR_CLIENT_ADDRESS_NOT_FOUND, "Client address not found by id: " + id));
+    }
+    private ClientAddress getAddressByClientAccountId(Long clientAccountId) {
+        return addressRepository.findByClientAccountId(clientAccountId).orElseThrow(() -> new ClientAddressException(ErrorCode.ERROR_CLIENT_ADDRESS_NOT_FOUND, "Client address not found by clientAccountId: " + clientAccountId));
     }
 
     private void validAddressField(ClientAddressRequest addressRequest) throws ClientAddressException {

@@ -52,13 +52,13 @@ public class ClientPhoneService implements ClientPhoneServiceBO {
     }
 
     @Override
-    public ClientPhoneResponseDto findByClientAccountId(Long providerAccountId) {
-        log.info("Retrieving phone by providerAccountId: {}", providerAccountId);
+    public ClientPhoneResponseDto findByClientAccountId(Long clientAccountId) {
+        log.info("Retrieving phone by clientAccount: {}", clientAccountId);
 
-        ClientPhone phone = phoneRepository.findByClientAccountId(providerAccountId)
+        ClientPhone phone = phoneRepository.findByClientAccountId(clientAccountId)
                 .orElseThrow(() -> {
-                    log.error("Client account not found by id: {}", providerAccountId);
-                    return new ClientPhoneException(ErrorCode.ERROR_CLIENT_ACCOUNT_NOT_FOUND, "Client account not found by id: " + providerAccountId);
+                    log.error("Client account not found by id: {}", clientAccountId);
+                    return new ClientPhoneException(ErrorCode.ERROR_CLIENT_ACCOUNT_NOT_FOUND, "Client account not found by id: " + clientAccountId);
                 });
 
         return ClientPhoneMapper.MAPPER.toDto(phone);
@@ -94,7 +94,7 @@ public class ClientPhoneService implements ClientPhoneServiceBO {
     }
 
     private ClientPhone getPhone(Long id) {
-        return phoneRepository.findById(id).orElseThrow(() -> new ClientPhoneException(ErrorCode.VEHICLE_TYPE_EXCEPTION, "Client phone not found by id: " + id));
+        return phoneRepository.findById(id).orElseThrow(() -> new ClientPhoneException(ErrorCode.ERROR_CLIENT_PHONE_NOT_FOUND, "Client phone not found by id: " + id));
     }
 
     private void validPhoneField(ClientPhoneRequest phone) {

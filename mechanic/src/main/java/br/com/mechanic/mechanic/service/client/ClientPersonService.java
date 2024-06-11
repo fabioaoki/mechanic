@@ -8,6 +8,7 @@ import br.com.mechanic.mechanic.mapper.ClientPersonMapper;
 import br.com.mechanic.mechanic.model.ClientPersonModel;
 import br.com.mechanic.mechanic.repository.client.ClientPersonRepositoryImpl;
 import br.com.mechanic.mechanic.request.ClientPersonRequest;
+import br.com.mechanic.mechanic.response.ClientPersonResponseByControllerDto;
 import br.com.mechanic.mechanic.response.ClientPersonResponseDto;
 import br.com.mechanic.mechanic.service.client.ClientPersonServiceBO;
 import lombok.AllArgsConstructor;
@@ -39,24 +40,28 @@ public class ClientPersonService implements ClientPersonServiceBO {
     }
 
     @Override
-    public Page<ClientPersonResponseDto> findAll(Pageable pageable) {
+    public Page<ClientPersonResponseByControllerDto> findAll(Pageable pageable) {
         log.info("Retrieving list of client persons");
-        return clientPersonRepository.findAll(pageable).map(ClientPersonMapper.MAPPER::toDto);
+        return clientPersonRepository.findAll(pageable).map(ClientPersonMapper.MAPPER::byControllerToDto);
     }
 
     @Override
-    public ClientPersonResponseDto findById(Long id) {
-        return ClientPersonMapper.MAPPER.toDto(getPerson(id));
+    public ClientPersonResponseByControllerDto findById(Long id) {
+        return ClientPersonMapper.MAPPER.byControllerToDto(getPerson(id));
+    }
+    @Override
+    public ClientPersonResponseByControllerDto findByClientAccountId(Long id) {
+        return ClientPersonMapper.MAPPER.byControllerToDto(getPerson(id));
     }
 
     @Override
-    public ClientPersonResponseDto updateClientPerson(Long id, ClientPersonRequest requestDto) {
+    public ClientPersonResponseByControllerDto updateClientPerson(Long id, ClientPersonRequest requestDto) {
         log.info("Service update person by id: {}", id);
         ClientPersonModel personModel = ClientPersonMapper.MAPPER.toModel(getPerson(id));
         boolean isChange = updateField(personModel, requestDto);
         if (isChange) {
             ClientPerson clientPerson = clientPersonRepository.save(ClientPersonMapper.MAPPER.modelToEntity(personModel));
-            return ClientPersonMapper.MAPPER.toDto(clientPerson);
+            return ClientPersonMapper.MAPPER.byControllerToDto(clientPerson);
         }
         throw new ClientAccountException(ErrorCode.IDENTICAL_FIELDS, "No changes were made to the client account.");
     }
@@ -106,6 +111,10 @@ public class ClientPersonService implements ClientPersonServiceBO {
 
     private ClientPerson getPerson(Long id) {
         return clientPersonRepository.findById(id).orElseThrow(() -> new ClientPersonException(ErrorCode.ERROR_PROVIDER_PERSON_NOT_FOUND, "Provider person not found by id: " + id));
+    }
+
+    private ClientPerson getPersonByClientAccount(Long clientAccountId) {
+        return clientPersonRepository.findById(clientAccountId).orElseThrow(() -> new ClientPersonException(ErrorCode.ERROR_PROVIDER_PERSON_NOT_FOUND, "Provider person not found by clientAccountId: " + clientAccountId));
     }
 
     private void validPersonField(ClientPersonRequest personRequest) {

@@ -1,6 +1,7 @@
 package br.com.mechanic.mechanic.service.client;
 
 import br.com.mechanic.mechanic.request.ClientAddressRequest;
+import br.com.mechanic.mechanic.response.ClientAddressResponseByControllerDto;
 import br.com.mechanic.mechanic.response.ClientAddressResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,11 +11,13 @@ import java.util.Optional;
 public interface ClientAddressServiceBO {
     ClientAddressResponseDto save(ClientAddressRequest addressRequest, Long clientAccountId);
 
-    Page<ClientAddressResponseDto> findAll(final Pageable pageable);
+    Page<ClientAddressResponseByControllerDto> findAll(final Pageable pageable);
 
-    ClientAddressResponseDto findById(Long id);
+    ClientAddressResponseByControllerDto findByClientAccountId(Long id);
 
-    ClientAddressResponseDto updateClientAddress(Long id, ClientAddressRequest addressRequest);
+    ClientAddressResponseByControllerDto findById(Long id);
 
-    Optional<ClientAddressResponseDto> findByProviderAccountId(Long clientAccount);
+    ClientAddressResponseByControllerDto updateClientAddress(Long id, ClientAddressRequest addressRequest);
+
+    Optional<ClientAddressResponseByControllerDto> findByProviderAccountId(Long clientAccount);
 }

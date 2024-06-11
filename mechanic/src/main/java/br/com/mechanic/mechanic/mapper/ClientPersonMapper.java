@@ -6,6 +6,7 @@ import br.com.mechanic.mechanic.model.ClientPersonModel;
 import br.com.mechanic.mechanic.model.ProviderPersonModel;
 import br.com.mechanic.mechanic.request.ClientPersonRequest;
 import br.com.mechanic.mechanic.request.ProviderPersonRequest;
+import br.com.mechanic.mechanic.response.ClientPersonResponseByControllerDto;
 import br.com.mechanic.mechanic.response.ClientPersonResponseDto;
 import br.com.mechanic.mechanic.response.ProviderPersonResponseDto;
 import org.mapstruct.Mapper;
@@ -19,6 +20,8 @@ public interface ClientPersonMapper {
     ClientPerson toEntity(ClientPersonRequest dto);
 
     ClientPersonResponseDto toDto(ClientPerson save);
+
+    ClientPersonResponseByControllerDto byControllerToDto(ClientPerson save);
 
     ClientPersonModel toModel(ClientPerson save);
 

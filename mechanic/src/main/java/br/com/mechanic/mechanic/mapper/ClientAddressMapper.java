@@ -4,6 +4,7 @@ import br.com.mechanic.mechanic.entity.client.ClientAddress;
 import br.com.mechanic.mechanic.enuns.StateEnum;
 import br.com.mechanic.mechanic.model.ClientAddressModel;
 import br.com.mechanic.mechanic.request.ClientAddressRequest;
+import br.com.mechanic.mechanic.response.ClientAddressResponseByControllerDto;
 import br.com.mechanic.mechanic.response.ClientAddressResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -23,6 +24,7 @@ public interface ClientAddressMapper {
 //    ClientAddress toEntity(ClientAddressRequest dto);
 
     ClientAddressResponseDto toDto(ClientAddress entity);
+    ClientAddressResponseByControllerDto controllerToDto(ClientAddress entity);
 
     @Named("toEntity")
     default ClientAddress toEntity(ClientAddressRequest dto) {

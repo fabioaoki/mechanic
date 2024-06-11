@@ -6,20 +6,19 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
-public class ClientPhoneResponseDto {
+public class ClientPersonResponseByControllerDto {
 
     private Long id;
-    @JsonInclude(JsonInclude.Include.NON_NULL)
-    private ClientAccountResponseDto clientAccount;
-    private String area;
-    private String number;
     private Long clientAccountId;
+    private String name;
+    private LocalDate birthDate;
     private LocalDateTime createDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDateTime lastUpdate;

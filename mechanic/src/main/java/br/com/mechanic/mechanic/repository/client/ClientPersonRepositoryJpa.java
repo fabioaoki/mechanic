@@ -30,6 +30,11 @@ public class ClientPersonRepositoryJpa implements ClientPersonRepositoryImpl {
     }
 
     @Override
+    public Optional<ClientPerson> findByClientAccountId(Long id) {
+        return repository.findByClientAccountId(id);
+    }
+
+    @Override
     public ClientPerson save(ClientPerson entity) {
         if (entity.getCreateDate() == null) {
             entity.setCreateDate(LocalDateTime.now());
