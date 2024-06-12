@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @Log4j2
-@RequestMapping("/marc")
-public class MarcController {
+@RequestMapping("/model")
+public class ModelController {
 
     @Autowired
     private ModelServiceBO modelServiceBO;
