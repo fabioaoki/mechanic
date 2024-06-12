@@ -74,6 +74,14 @@ public class ClientAccountService implements ClientAccountServiceBO {
         ClientPhoneResponseDto phoneResponseDto = phoneServiceBO.save(clientAccountRequest.getPhone(), clientAccount.getId());
         log.info("Client phone details saved.");
 
+        clientAccountRequest.getVehicles().forEach(vehicleRequest -> {
+            if (Objects.isNull(vehicleRequest.getPlate()) ||
+                    Objects.isNull(vehicleRequest.getColorId()) ||
+                    Objects.isNull(vehicleRequest.getMarcId())) {
+                throw new ClientAccountException(ErrorCode.INVALID_FIELD, "Mismatch in sizes of lists: Plates, Marcs, and Colors must have the same number of elements.");
+            }
+        });
+
         log.info("Processing and saving plates.");
         List<PlateRequest> plateRequests = clientAccountRequest.getVehicles().stream()
                 .map(VehicleRequest::getPlate)
@@ -103,29 +111,29 @@ public class ClientAccountService implements ClientAccountServiceBO {
             log.info("Color saved with ID: {}", colorResponseDto.getId());
         });
 
-        if (plateResponseList.size() != marcResponseList.size() || plateResponseList.size() != colorResponseList.size()) {
-            log.error("Mismatch in sizes of lists: Plates={}, Marcs={}, Colors={}",
-                    plateResponseList.size(), marcResponseList.size(), colorResponseList.size());
-            throw new ClientAccountException(ErrorCode.INVALID_FIELD, "Mismatch in sizes of lists: Plates, Marcs, and Colors must have the same number of elements.");
-        }
+//        if (plateResponseList.size() != marcResponseList.size() || plateResponseList.size() != colorResponseList.size()) {
+//            log.error("Mismatch in sizes of lists: Plates={}, Marcs={}, Colors={}",
+//                    plateResponseList.size(), marcResponseList.size(), colorResponseList.size());
+//            throw new ClientAccountException(ErrorCode.INVALID_FIELD, "Mismatch in sizes of lists: Plates, Marcs, and Colors must have the same number of elements.");
+//        }
         log.info("Processing and saving vehicles.");
-        plateResponseList.forEach(plateResponseDto -> {
-            marcResponseList.forEach(marcResponseDto -> {
-                colorIds.forEach(colorId -> {
-                    log.info("Saving vehicle with Plate ID: {}, Marc ID: {}, Color ID: {}",
-                            plateResponseDto.getId(), marcResponseDto.getId(), colorId);
-                    SaveVehicleRequest saveVehicle = SaveVehicleRequest.builder()
-                            .clientAccountId(clientAccount.getId())
-                            .marcId(marcResponseDto.getId())
-                            .colorId(colorId)
-                            .plateId(plateResponseDto.getId())
-                            .build();
-                    vehicleServiceBO.save(saveVehicle, true);
-                    log.info("Vehicle saved with Plate ID: {}, Marc ID: {}, Color ID: {}",
-                            plateResponseDto.getId(), marcResponseDto.getId(), colorId);
-                });
-            });
-        });
+
+        for (int i = 0; i < plateResponseList.size(); i++) {
+            log.info("Saving vehicle with Plate ID: {}, Marc ID: {}, Color ID: {}",
+                    plateResponseList.get(i).getId(),
+                    marcResponseList.get(i).getId(),
+                    colorIds.get(i));
+
+            SaveVehicleRequest saveVehicleRequest = SaveVehicleRequest.builder()
+                    .clientAccountId(clientAccount.getId())
+                    .marcId(marcResponseList.get(i).getId())
+                    .colorId(colorIds.get(i))
+                    .plateId(plateResponseList.get(i).getId())
+                    .build();
+
+            vehicleServiceBO.save(saveVehicleRequest, true);
+            log.info("Vehicle saved successfully with Plate ID: {}", plateResponseList.get(i).getId());
+        }
 
         log.info("Client account saved successfully with all related entities.");
         return ClientAccountMapper.MAPPER.toDtoMaster(clientAccount, personResponseDto, addressResponseDto, phoneResponseDto, plateResponseList, marcResponseList, colorResponseList);
