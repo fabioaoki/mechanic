@@ -15,6 +15,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -172,6 +173,7 @@ public class ProviderAddressService implements ProviderAddressServiceBO {
             addressRepository.save(entity);
         });
     }
+
     public String formatName(String name) {
 
         String[] words = name.split("\\s+");
@@ -188,7 +190,7 @@ public class ProviderAddressService implements ProviderAddressServiceBO {
         return formattedName.toString().trim();
     }
 
-    private void getGeocoding(ProviderAddressRequest addressRequest, ProviderAddress entity) {
+    public void getGeocoding(ProviderAddressRequest addressRequest, ProviderAddress entity) {
 
         String address = formatAddress(addressRequest);
         String url = geocodingUrl + "?address=" + address + "&key=" + apiKey;
@@ -198,15 +200,25 @@ public class ProviderAddressService implements ProviderAddressServiceBO {
             try (CloseableHttpResponse response = httpClient.execute(request)) {
                 String jsonResponse = EntityUtils.toString(response.getEntity());
                 JSONObject jsonObject = new JSONObject(jsonResponse);
-                JSONObject location = jsonObject.getJSONArray("results")
-                        .getJSONObject(0)
+
+                String status = jsonObject.getString("status");
+                if (!"OK".equals(status)) {
+                    throw new ProviderAddressException(ErrorCode.ERROR_CREATED_ADDRESS, "Geocoding API returned status: " + status);
+                }
+
+                JSONArray results = jsonObject.getJSONArray("results");
+                if (results.length() == 0) {
+                    throw new ProviderAddressException(ErrorCode.ERROR_CREATED_ADDRESS, "No results found for the given address.");
+                }
+
+                JSONObject location = results.getJSONObject(0)
                         .getJSONObject("geometry")
                         .getJSONObject("location");
                 entity.setLatitude(location.getDouble("lat"));
                 entity.setLongitude(location.getDouble("lng"));
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new ProviderAddressException(ErrorCode.ERROR_CREATED_ADDRESS, "Error occurred while fetching geocoding data");
         }
     }
 
