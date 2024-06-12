@@ -26,7 +26,7 @@ public class VehicleService implements VehicleServiceBO {
     private final VehicleRepositoryImpl vehicleRepository;
     private final ClientAccountRepositoryImpl clientAccountRepository;
     private final PlateServiceBO plateServiceBO;
-    private final MarcServiceBO marcServiceBO;
+    private final ModelServiceBO modelServiceBO;
     private final ColorServiceBO colorServiceBO;
 
 
@@ -37,7 +37,7 @@ public class VehicleService implements VehicleServiceBO {
         if(!viaClientController){
             clientAccountRepository.findById(requestDto.getClientAccountId());
             plateServiceBO.findById(requestDto.getPlateId());
-            marcServiceBO.findById(requestDto.getMarcId());
+            modelServiceBO.findById(requestDto.getMarcId());
             colorServiceBO.findById(requestDto.getColorId());
         }
         log.info("Service: Saving a new vehicle");

@@ -10,7 +10,7 @@ import br.com.mechanic.mechanic.repository.client.ClientAccountRepositoryImpl;
 import br.com.mechanic.mechanic.request.*;
 import br.com.mechanic.mechanic.response.*;
 import br.com.mechanic.mechanic.service.ColorServiceBO;
-import br.com.mechanic.mechanic.service.vehicle.MarcServiceBO;
+import br.com.mechanic.mechanic.service.vehicle.ModelServiceBO;
 import br.com.mechanic.mechanic.service.vehicle.PlateServiceBO;
 import br.com.mechanic.mechanic.service.vehicle.VehicleServiceBO;
 import lombok.AllArgsConstructor;
@@ -38,7 +38,7 @@ public class ClientAccountService implements ClientAccountServiceBO {
     private ClientPersonServiceBO personServiceBO;
     private ClientPhoneServiceBO phoneServiceBO;
     private PlateServiceBO plateServiceBO;
-    private MarcServiceBO marcServiceBO;
+    private ModelServiceBO modelServiceBO;
     private ColorServiceBO colorServiceBO;
     private VehicleServiceBO vehicleServiceBO;
 
@@ -77,7 +77,7 @@ public class ClientAccountService implements ClientAccountServiceBO {
         clientAccountRequest.getVehicles().forEach(vehicleRequest -> {
             if (Objects.isNull(vehicleRequest.getPlate()) ||
                     Objects.isNull(vehicleRequest.getColorId()) ||
-                    Objects.isNull(vehicleRequest.getMarcId())) {
+                    Objects.isNull(vehicleRequest.getModelId())) {
                 throw new ClientAccountException(ErrorCode.INVALID_FIELD, "Mismatch in sizes of lists: Plates, Marcs, and Colors must have the same number of elements.");
             }
         });
@@ -90,14 +90,14 @@ public class ClientAccountService implements ClientAccountServiceBO {
         log.info("Plates processed and saved.");
 
         log.info("Processing and saving marcs.");
-        List<Long> marcIds = clientAccountRequest.getVehicles().stream()
-                .map(VehicleRequest::getMarcId)
+        List<Long> modelIds = clientAccountRequest.getVehicles().stream()
+                .map(VehicleRequest::getModelId)
                 .collect(Collectors.toList());
-        List<MarcResponseDto> marcResponseList = new ArrayList<>();
-        marcIds.forEach(marcId -> {
-            MarcResponseDto marcResponseDto = marcServiceBO.findById(marcId);
-            marcResponseList.add(marcResponseDto);
-            log.info("Marc saved with ID: {}", marcResponseDto.getId());
+        List<ModelResponseDto> marcResponseList = new ArrayList<>();
+        modelIds.forEach(modelId -> {
+            ModelResponseDto modelResponseDto = modelServiceBO.findById(modelId);
+            marcResponseList.add(modelResponseDto);
+            log.info("Model saved with ID: {}", modelResponseDto.getId());
         });
 
         log.info("Processing and saving colors.");

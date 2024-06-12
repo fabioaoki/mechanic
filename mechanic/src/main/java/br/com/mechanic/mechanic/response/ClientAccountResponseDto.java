@@ -27,7 +27,7 @@ public class ClientAccountResponseDto {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<PlateResponseDto> cars;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private List<MarcResponseDto> marcs;
+    private List<ModelResponseDto> models;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<ColorResponseDto> colors;
     private LocalDateTime createDate;

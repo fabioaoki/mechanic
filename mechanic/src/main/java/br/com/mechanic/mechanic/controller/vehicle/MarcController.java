@@ -2,8 +2,8 @@ package br.com.mechanic.mechanic.controller.vehicle;
 
 import br.com.mechanic.mechanic.exception.ModelException;
 import br.com.mechanic.mechanic.exception.ErrorResponse;
-import br.com.mechanic.mechanic.response.MarcResponseDto;
-import br.com.mechanic.mechanic.service.vehicle.MarcServiceBO;
+import br.com.mechanic.mechanic.response.ModelResponseDto;
+import br.com.mechanic.mechanic.service.vehicle.ModelServiceBO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,20 +18,20 @@ import org.springframework.web.bind.annotation.*;
 public class MarcController {
 
     @Autowired
-    private MarcServiceBO marcServiceBO;
+    private ModelServiceBO modelServiceBO;
 
     @GetMapping
-    public ResponseEntity<Page<MarcResponseDto>> findAll(
+    public ResponseEntity<Page<ModelResponseDto>> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        return ResponseEntity.ok(marcServiceBO.findAll(PageRequest.of(page, size)));
+        return ResponseEntity.ok(modelServiceBO.findAll(PageRequest.of(page, size)));
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getModelById(@PathVariable Long id) {
         try {
             log.info("Fetching model with id: " + id);
-            return ResponseEntity.ok(marcServiceBO.findById(id));
+            return ResponseEntity.ok(modelServiceBO.findById(id));
         } catch (ModelException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
         }
@@ -43,7 +43,7 @@ public class MarcController {
                                           @RequestParam(defaultValue = "20") int size) {
         try {
             log.info("Fetching model with model: {} and year: {}", model, year);
-            return ResponseEntity.ok(marcServiceBO.findByModelAndYear(model, year, PageRequest.of(page, size)));
+            return ResponseEntity.ok(modelServiceBO.findByModelAndYear(model, year, PageRequest.of(page, size)));
         } catch (ModelException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
         }
@@ -55,7 +55,7 @@ public class MarcController {
                                           @RequestParam(defaultValue = "20") int size) {
         try {
             log.info("Fetching model with marc: {} and year: {}", marc, year);
-            return ResponseEntity.ok(marcServiceBO.findByMarcAndYear(marc, year, PageRequest.of(page, size)));
+            return ResponseEntity.ok(modelServiceBO.findByMarcAndYear(marc, year, PageRequest.of(page, size)));
         } catch (ModelException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
         }

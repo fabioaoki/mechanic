@@ -21,7 +21,7 @@ public interface ClientAccountMapper {
 
     @Named("toDtoPageMaster")
     default ClientAccountResponseDto toDtoMaster(ClientAccount entity, ClientPersonResponseDto personDto, ClientAddressResponseDto clientAddressDto,
-                                                 ClientPhoneResponseDto phoneDto, List<PlateResponseDto> plateResponseDtoList, List<MarcResponseDto> marcResponseDtoList,
+                                                 ClientPhoneResponseDto phoneDto, List<PlateResponseDto> plateResponseDtoList, List<ModelResponseDto> modelResponseDtoList,
                                                  List<ColorResponseDto> colorResponseDtoList) {
         return ClientAccountResponseDto.builder()
                 .id(entity.getId())
@@ -33,7 +33,7 @@ public interface ClientAccountMapper {
                 .address(clientAddressDto)
                 .phone(phoneDto)
                 .cars(plateResponseDtoList)
-                .marcs(marcResponseDtoList)
+                .models(modelResponseDtoList)
                 .colors(colorResponseDtoList)
                 .build();
     }
