@@ -17,7 +17,7 @@ public class EquipmentOutResponseDto {
 
     private Long id;
     private Long providerAccountId;
-    private EquipmentResponseDto equipmentId;
+    private EquipmentResponseDto equipment;
     private Long transactionId;
     private BigDecimal amount;
     private Boolean reversal;

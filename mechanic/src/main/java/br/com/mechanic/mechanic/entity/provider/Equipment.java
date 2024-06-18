@@ -22,4 +22,6 @@ public class Equipment {
     private LocalDateTime createDate;
     @Column(name = "last_update")
     private LocalDateTime lastUpdate;
+    @Column(name = "provider_service_identifier_id")
+    private Long providerServiceIdentifierId;
 }

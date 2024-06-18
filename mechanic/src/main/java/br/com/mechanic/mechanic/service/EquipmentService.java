@@ -46,13 +46,13 @@ public class EquipmentService implements EquipmentServiceBO {
 
     @Override
     public EquipmentResponseDto findById(Long id) {
-        return EquipmentMapper.MAPPER.toDto(getTypeService(id));
+        return EquipmentMapper.MAPPER.toDto(getEquipment(id));
     }
 
     @Override
     public EquipmentResponseDto updateEquipmentName(Long id, EquipmentRequestDto requestDto) throws EquipmentException {
         log.info("Service update equipment by id: {}", id);
-        EquipmentModel equipmentModel = EquipmentMapper.MAPPER.toModel(getTypeService(id));
+        EquipmentModel equipmentModel = EquipmentMapper.MAPPER.toModel(getEquipment(id));
         boolean isChange = updateField(equipmentModel, requestDto);
         if (isChange) {
             equipmentModel.setName(formatName(equipmentModel.getName().trim()));
@@ -61,6 +61,11 @@ public class EquipmentService implements EquipmentServiceBO {
             return EquipmentMapper.MAPPER.toDto(equipment);
         }
         throw new EquipmentException(ErrorCode.IDENTICAL_FIELDS, "No changes were made to the equipment .");
+    }
+
+    @Override
+    public EquipmentResponseDto findByProviderServiceIdentifierId(Long providerServiceIdentifierId) {
+        return EquipmentMapper.MAPPER.toDto(getEquipmentByProviderServiceIdentifierId(providerServiceIdentifierId));
     }
 
     private boolean updateField(EquipmentModel equipmentModel, EquipmentRequestDto requestDto) {
@@ -72,8 +77,12 @@ public class EquipmentService implements EquipmentServiceBO {
         return isChange;
     }
 
-    private Equipment getTypeService(Long id) {
+    private Equipment getEquipment(Long id) {
         return equipmentRepository.findById(id).orElseThrow(() -> new EquipmentException(ErrorCode.TYPE_SERVICE_NOT_FOUND, "equipment not found by id: " + id));
+    }
+
+    private Equipment getEquipmentByProviderServiceIdentifierId(Long providerServiceIdentifierId) {
+        return equipmentRepository.findByProviderServiceIdentifierId(providerServiceIdentifierId).orElseThrow(() -> new EquipmentException(ErrorCode.TYPE_SERVICE_NOT_FOUND, "equipment not found by id: " + providerServiceIdentifierId));
     }
 
     private void validTypeServiceField(EquipmentRequestDto requestDto) {

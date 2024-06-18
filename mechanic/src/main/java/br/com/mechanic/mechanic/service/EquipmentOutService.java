@@ -18,7 +18,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Log4j2
@@ -39,7 +42,7 @@ public class EquipmentOutService implements EquipmentOutServiceBO {
         haveEquipment(requestDto);
 
         EquipmentOut equipmentOut = equipmentOutRepository.save(EquipmentOutMapper.MAPPER.modelToEntity(EquipmentOutMapper.MAPPER.requestToModel(requestDto)));
-        EquipmentOutMapper.MAPPER.toDto(equipmentOut, equipmentResponseDto);
+        EquipmentOutResponseDto dto = EquipmentOutMapper.MAPPER.toDto(equipmentOut, equipmentResponseDto);
 
         return null;
     }
@@ -84,6 +87,14 @@ public class EquipmentOutService implements EquipmentOutServiceBO {
             return EquipmentOutMapper.MAPPER.toDto(equipmentOut, equipmentResponseDto);
         }
         throw new EquipmentException(ErrorCode.IDENTICAL_FIELDS, "No changes were made to the equipmentIn.");
+    }
+
+    @Override
+    public List<EquipmentOutResponseDto> findByProviderAccountAndEquipmentId(Long providerAccountId, Long id, LocalDateTime createDate) {
+        List<EquipmentOut> outList = equipmentOutRepository.findByProviderAccountAndEquipmentId(providerAccountId, id, createDate);
+        return outList.stream()
+                .map(EquipmentOutMapper.MAPPER::toDto)
+                .collect(Collectors.toList());
     }
 
     private boolean updateField(EquipmentOutModel equipmentInModel, EquipmentOutUpdateRequest outUpdateRequest) {

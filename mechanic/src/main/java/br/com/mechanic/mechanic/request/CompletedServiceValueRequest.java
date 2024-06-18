@@ -5,11 +5,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
-public class EquipmentRequestDto {
-    private String name;
-    private Long equipmentServiceIdentifierId;
+public class CompletedServiceValueRequest {
+    private Long employeeAccountId;
+    private Long providerServiceId;
+    private BigDecimal Amount;
 }

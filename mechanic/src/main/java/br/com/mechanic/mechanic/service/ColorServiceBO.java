@@ -14,4 +14,5 @@ public interface ColorServiceBO {
 
     ColorResponseDto findById(Long id);
 
+    ColorResponseDto findByColor(String color);
 }

@@ -14,4 +14,6 @@ public interface EquipmentRepositoryImpl {
     Page<Equipment> findAll(Pageable pageable);
 
     Optional<Equipment> findById(Long id);
+
+    Optional<Equipment> findByProviderServiceIdentifierId(Long providerServiceIdentifierId);
 }

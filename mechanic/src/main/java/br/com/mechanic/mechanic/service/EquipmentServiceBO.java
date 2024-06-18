@@ -15,4 +15,5 @@ public interface EquipmentServiceBO {
 
     EquipmentResponseDto updateEquipmentName(Long id, EquipmentRequestDto requestDto) throws EquipmentException;
 
+    EquipmentResponseDto findByProviderServiceIdentifierId(Long providerServiceIdentifierId);
 }

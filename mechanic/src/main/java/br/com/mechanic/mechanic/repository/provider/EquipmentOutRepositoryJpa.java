@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -41,6 +42,11 @@ public class EquipmentOutRepositoryJpa implements EquipmentOutRepositoryImpl {
     @Override
     public Optional<EquipmentOut> findById(Long id) {
         return repository.findById(id);
+    }
+
+    @Override
+    public List<EquipmentOut> findByProviderAccountAndEquipmentId(Long providerAccountId, Long id, LocalDateTime createDate) {
+        return repository.findByProviderAccountIdAndEquipmentIdAndCreateDateGreaterThanEqualAndReversalIsFalse(providerAccountId, id, createDate);
     }
 
     @Override

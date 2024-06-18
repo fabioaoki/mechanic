@@ -3,6 +3,7 @@ package br.com.mechanic.mechanic.mapper;
 import br.com.mechanic.mechanic.entity.provider.EquipmentIn;
 import br.com.mechanic.mechanic.model.EquipmentInModel;
 import br.com.mechanic.mechanic.request.EquipmentInRequest;
+import br.com.mechanic.mechanic.request.EquipmentInUpdateRequest;
 import br.com.mechanic.mechanic.request.EquipmentRequestDto;
 import br.com.mechanic.mechanic.response.EquipmentInResponseDto;
 import org.mapstruct.Mapper;
@@ -45,4 +46,6 @@ public interface EquipmentInMapper {
                 .amount(dto.getAmount().setScale(2, RoundingMode.HALF_UP))
                 .build();
     }
+
+    EquipmentInUpdateRequest mapperUpdate(EquipmentInResponseDto equipmentInResponse);
 }

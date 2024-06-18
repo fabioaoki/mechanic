@@ -4,6 +4,8 @@ import br.com.mechanic.mechanic.entity.provider.EquipmentOut;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface EquipmentOutRepositoryImpl {
@@ -16,4 +18,6 @@ public interface EquipmentOutRepositoryImpl {
     Page<EquipmentOut> findAllByProviderAccountId(final Pageable pageable, final Long providerAccountId);
 
     Optional<EquipmentOut> findById(final Long id);
+
+    List<EquipmentOut> findByProviderAccountAndEquipmentId(Long providerAccountId, Long id, LocalDateTime createDate);
 }

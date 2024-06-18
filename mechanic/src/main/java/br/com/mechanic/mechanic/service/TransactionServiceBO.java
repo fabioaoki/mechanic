@@ -4,15 +4,13 @@ import br.com.mechanic.mechanic.request.EquipmentOutRequest;
 import br.com.mechanic.mechanic.request.EquipmentOutUpdateRequest;
 import br.com.mechanic.mechanic.response.EquipmentOutResponseDto;
 import br.com.mechanic.mechanic.response.EquipmentOutResponseDtoPage;
-import br.com.mechanic.mechanic.response.EquipmentOutUpdateResponseDto;
-import br.com.mechanic.mechanic.response.EquipmentResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface EquipmentOutServiceBO {
+public interface TransactionServiceBO {
     EquipmentOutResponseDto save(final EquipmentOutRequest equipmentOutRequest);
 
     Page<EquipmentOutResponseDtoPage> findAll(final Pageable pageable);

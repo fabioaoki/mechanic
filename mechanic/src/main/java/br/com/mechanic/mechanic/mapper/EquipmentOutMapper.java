@@ -22,7 +22,7 @@ public interface EquipmentOutMapper {
     @Named("toDto")
    default EquipmentOutResponseDto toDto(EquipmentOut entity, EquipmentResponseDto equipmentResponseDto){
         return EquipmentOutResponseDto.builder()
-                .equipmentId(equipmentResponseDto)
+                .equipment(equipmentResponseDto)
                 .amount(entity.getAmount())
                 .createDate(entity.getCreateDate())
                 .lastUpdate(entity.getLastUpdate())
@@ -57,4 +57,6 @@ public interface EquipmentOutMapper {
     }
 
     EquipmentOutResponseDtoPage toDtoPage(EquipmentOut equipmentOut);
+
+    EquipmentOutResponseDto toDto(EquipmentOut equipmentOut);
 }

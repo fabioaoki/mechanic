@@ -39,6 +39,11 @@ public class EquipmentRepositoryJpa implements EquipmentRepositoryImpl {
     }
 
     @Override
+    public Optional<Equipment> findByProviderServiceIdentifierId(Long providerServiceIdentifierId) {
+        return repository.findByProviderServiceIdentifierId(providerServiceIdentifierId);
+    }
+
+    @Override
     public Optional<Equipment> findByName(String name) {
         return repository.findByName(name);
     }

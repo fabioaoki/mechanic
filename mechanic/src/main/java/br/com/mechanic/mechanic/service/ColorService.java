@@ -43,10 +43,7 @@ public class ColorService implements ColorServiceBO {
             String formattedColor = ColorUtil.formatColor(color);
 
             // Validar se essa cor existe no repositório
-            colorRepository.findByColor(formattedColor).ifPresent(existingColor -> {
-                log.error("Color already registered: {}", formattedColor);
-                throw new ColorException(ErrorCode.ERROR_CREATED_COLOR, "Color already registered");
-            });
+            validColorName(formattedColor);
 
             // Salvar no repositório
             Color entity = colorRepository.save(ColorMapper.MAPPER.toEntity(formattedColor));
@@ -57,6 +54,13 @@ public class ColorService implements ColorServiceBO {
 
         log.info("All colors processed and saved");
         return colors;
+    }
+
+    private void validColorName(String formattedColor) {
+        colorRepository.findByColor(formattedColor).ifPresent(existingColor -> {
+            log.error("Color already registered: {}", formattedColor);
+            throw new ColorException(ErrorCode.ERROR_CREATED_COLOR, "Color already registered");
+        });
     }
 
     @Override
@@ -81,6 +85,15 @@ public class ColorService implements ColorServiceBO {
         dto.setColor(colorName);
         log.info("Color retrieved by id: {} - {}", id, colorName);
         return dto;
+    }
+
+    @Override
+    public ColorResponseDto findByColor(String color) {
+        String formattedColor = ColorUtil.formatColor(color);
+        return ColorMapper.MAPPER.toDto(colorRepository.findByColor(formattedColor).orElseThrow(() -> {
+            log.error("Color not found by name: {}", formattedColor);
+            return new ColorException(ErrorCode.ERROR_COLOR_NOT_FOUND, "Color not found by id: " + formattedColor);
+        }));
     }
 
     private Color getColorById(Long id) {
