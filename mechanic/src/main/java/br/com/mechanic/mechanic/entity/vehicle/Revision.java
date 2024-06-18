@@ -4,6 +4,7 @@ package br.com.mechanic.mechanic.entity.vehicle;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
@@ -22,12 +23,16 @@ public class Revision {
     private Long transactionId;
     @Column(name = "provider_service_id")
     private Long providerServiceId;
+    @Column(name = "provider_account_id")
+    private Long providerAccountId;
+    @Column(name = "client_account_id")
+    private Long clientAccountId;
     @Column(name = "start_date")
-    private LocalDateTime startDate;
+    private LocalDate startDate;
     @Column(name = "return_date")
-    private LocalDateTime returnDate;
+    private LocalDate returnDate;
     @Column(name = "end_date")
-    private LocalDateTime endDate;
+    private LocalDate endDate;
     @Column(name = "is_deleted")
     private Boolean isDeleted;
 }

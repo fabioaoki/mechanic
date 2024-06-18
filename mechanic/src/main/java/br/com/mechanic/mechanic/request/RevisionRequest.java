@@ -5,16 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
 public class RevisionRequest {
-    private Long providerAccountId;
-    private Long employeeAccountId;
+    private Long transactionId;
     private Long providerServiceId;
-    private Long vehicleTypeId;
-    private Long colorId;
-    private Long plateId;
-    private Long modelId;
+    private Long providerAccountId;
+    private Long clientAccountId;
+    private LocalDate startDate;
+    private LocalDate endDate;
 }

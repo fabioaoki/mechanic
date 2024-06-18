@@ -54,13 +54,28 @@ public class CompletedServicesController {
         } catch (ColorException e) {
             log.error("ColorException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
+        } catch (EquipmentException e) {
+            log.error("EquipmentException: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
+        } catch (TransactionException e) {
+            log.error("TransactionException: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
+        } catch (ClientAccountException e) {
+            log.error("ClientAccountException: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
+        } catch (RevisionException e) {
+            log.error("RevisionException: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
+        } catch (VehicleTypeException e) {
+            log.error("VehicleTypeException: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getEquipmentInById(@PathVariable Long id) {
         try {
-            log.info("Fetching equipmentIn with id: " + id);
+            log.info("Fetching equipmentIn with id: {}", id);
             return ResponseEntity.ok(completedServiceManagerBO.findById(id));
         } catch (CompletedServiceException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
@@ -75,38 +90,6 @@ public class CompletedServicesController {
         try {
             return ResponseEntity.ok(completedServiceManagerBO.findAllByProviderAccountId(providerAccountId, PageRequest.of(page, size)));
         } catch (CompletedServiceException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
-        }
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<?> updateEquipmentOut(@PathVariable Long id, @RequestBody CompletedServiceRequest requestDto) {
-        try {
-            log.info("Updating equipmentOut with id: " + id);
-            return ResponseEntity.ok(completedServiceManagerBO.updateCompletedService(id, requestDto));
-        } catch (CompletedServiceException e) {
-            log.error("CompletedServiceException: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
-        } catch (ProviderAccountException e) {
-            log.error("ProviderAccountException: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
-        } catch (EmployeeAccountException e) {
-            log.error("EmployeeAccountException: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
-        } catch (ProviderServiceException e) {
-            log.error("ProviderServiceException: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
-        } catch (ModelException e) {
-            log.error("ModelException: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
-        } catch (PlateException e) {
-            log.error("PlateException: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
-        } catch (ColorException e) {
-            log.error("ColorException: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
-        } catch (EquipmentException e) {
-            log.error("EquipmentException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
         }
     }
@@ -168,6 +151,27 @@ public class CompletedServicesController {
     }
 
     private static ErrorResponse getErrorResponse(EquipmentException e) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setErrorCode(e.getErrorCode());
+        errorResponse.setMessage(e.getMessage());
+        return errorResponse;
+    }
+
+    private static ErrorResponse getErrorResponse(TransactionException e) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setErrorCode(e.getErrorCode());
+        errorResponse.setMessage(e.getMessage());
+        return errorResponse;
+    }
+
+    private static ErrorResponse getErrorResponse(ClientAccountException e) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setErrorCode(e.getErrorCode());
+        errorResponse.setMessage(e.getMessage());
+        return errorResponse;
+    }
+
+    private static ErrorResponse getErrorResponse(RevisionException e) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setErrorCode(e.getErrorCode());
         errorResponse.setMessage(e.getMessage());

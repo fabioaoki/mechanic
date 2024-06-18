@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -16,5 +17,7 @@ public class CompletedServiceValueModel {
 
     private Long employeeAccountId;
     private Long providerServiceId;
+    private LocalDate startDate;
+    private LocalDate endDate;
     private BigDecimal Amount;
 }

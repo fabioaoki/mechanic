@@ -14,5 +14,5 @@ import java.math.BigDecimal;
 public class EquipmentOutRequest {
     private Long providerAccountId;
     private Long equipmentId;
-    private BigDecimal amount;
+    private Long completedServiceId;
 }

@@ -10,8 +10,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
-import java.math.RoundingMode;
-
 @Mapper
 public interface EquipmentOutMapper {
 
@@ -20,13 +18,12 @@ public interface EquipmentOutMapper {
     EquipmentOut toEntity(EquipmentOutRequest dto);
 
     @Named("toDto")
-   default EquipmentOutResponseDto toDto(EquipmentOut entity, EquipmentResponseDto equipmentResponseDto){
+    default EquipmentOutResponseDto toDto(EquipmentOut entity, EquipmentResponseDto equipmentResponseDto) {
         return EquipmentOutResponseDto.builder()
                 .equipment(equipmentResponseDto)
-                .amount(entity.getAmount())
                 .createDate(entity.getCreateDate())
                 .lastUpdate(entity.getLastUpdate())
-                .transactionId(entity.getTransactionId())
+                .completedServiceId(entity.getCompletedServiceId())
                 .providerAccountId(entity.getProviderAccountId())
                 .id(entity.getId())
                 .build();
@@ -38,8 +35,8 @@ public interface EquipmentOutMapper {
                 .id(entity.getId())
                 .providerAccountId(entity.getProviderAccountId())
                 .equipmentId(entity.getEquipmentId())
-                .amount(entity.getAmount().setScale(2, RoundingMode.HALF_UP))
                 .reversal(entity.getReversal())
+                .completedServiceId(entity.getCompletedServiceId())
                 .createDate(entity.getCreateDate())
                 .lastUpdate(entity.getLastUpdate())
                 .build();
@@ -52,11 +49,17 @@ public interface EquipmentOutMapper {
         return EquipmentOutModel.builder()
                 .providerAccountId(dto.getProviderAccountId())
                 .equipmentId(dto.getEquipmentId())
-                .amount(dto.getAmount().setScale(2, RoundingMode.HALF_UP))
+                .completedServiceId(dto.getCompletedServiceId())
+                .completedServiceId(dto.getCompletedServiceId())
                 .build();
     }
 
     EquipmentOutResponseDtoPage toDtoPage(EquipmentOut equipmentOut);
 
     EquipmentOutResponseDto toDto(EquipmentOut equipmentOut);
+
+    @Named("completedServiceToEquipmentOut")
+    default EquipmentOutRequest completedServiceToEquipmentOut(Long providerAccountId, Long completedServiceId, Long equipmentId) {
+        return EquipmentOutRequest.builder().equipmentId(equipmentId).completedServiceId(completedServiceId).providerAccountId(providerAccountId).build();
+    }
 }

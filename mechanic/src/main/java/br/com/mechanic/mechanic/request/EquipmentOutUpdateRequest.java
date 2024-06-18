@@ -13,5 +13,4 @@ import java.math.BigDecimal;
 @Builder
 public class EquipmentOutUpdateRequest {
     private Long equipmentId;
-    private BigDecimal amount;
 }

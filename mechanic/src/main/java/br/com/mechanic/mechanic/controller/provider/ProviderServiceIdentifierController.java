@@ -30,7 +30,7 @@ public class ProviderServiceIdentifierController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getProvideServiceIdentifierById(@PathVariable Long id) {
         try {
-            log.info("Fetching provider service identifier with id: " + id);
+            log.info("Fetching provider service identifier with id: {}" , id);
             return ResponseEntity.ok(serviceIdentifierBO.findById(id));
         } catch (ProviderServiceIdentifierException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
@@ -40,7 +40,7 @@ public class ProviderServiceIdentifierController {
     @GetMapping("/name/{identifier}")
     public ResponseEntity<?> getProviderServiceIdentifierByIdentifier(@PathVariable String identifier) {
         try {
-            log.info("Fetching provider service identifier with identifier: " + identifier);
+            log.info("Fetching provider service identifier with identifier: {}" , identifier);
             return ResponseEntity.ok(serviceIdentifierBO.getTypeServiceByName(identifier));
         } catch (ProviderServiceIdentifierException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));

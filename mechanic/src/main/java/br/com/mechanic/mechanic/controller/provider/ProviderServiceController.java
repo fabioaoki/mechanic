@@ -31,7 +31,7 @@ public class ProviderServiceController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getProviderServiceById(@PathVariable Long id) {
         try {
-            log.info("Fetching provider service with id: " + id);
+            log.info("Fetching provider service with id: {}" , id);
             return ResponseEntity.ok(providerServiceBO.findById(id));
         } catch (ProviderServiceException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
@@ -65,7 +65,7 @@ public class ProviderServiceController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProviderService(@PathVariable Long id) throws ProviderAccountException {
         try {
-            log.info("Deleting provider service with id: " + id);
+            log.info("Deleting provider service with id: {}" , id);
             providerServiceBO.isUsed(id, false);
             return ResponseEntity.ok().build();
         } catch (ProviderServiceException e) {
@@ -76,7 +76,7 @@ public class ProviderServiceController {
     @PutMapping("active/{id}")
     public ResponseEntity<?> activeProviderService(@PathVariable Long id) {
         try {
-            log.info("Activating provider account with id: " + id);
+            log.info("Activating provider account with id: {}" , id);
             providerServiceBO.isUsed(id, true);
             return ResponseEntity.ok().build();
         } catch (ProviderServiceException e) {
@@ -87,7 +87,7 @@ public class ProviderServiceController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProviderService(@PathVariable Long id, @RequestBody ProviderServiceUpdateRequestDto requestDto) {
         try {
-            log.info("Updating provider account with id: " + id);
+            log.info("Updating provider account with id: {}" , id);
             return ResponseEntity.ok(providerServiceBO.updateProviderServiceIdentifier(id, requestDto));
         } catch (ProviderServiceException e) {
             log.error("ProviderServiceException: {}", e.getMessage());

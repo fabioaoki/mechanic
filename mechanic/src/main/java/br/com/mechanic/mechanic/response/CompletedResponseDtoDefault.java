@@ -1,4 +1,4 @@
-package br.com.mechanic.mechanic.model;
+package br.com.mechanic.mechanic.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,13 +12,16 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Data
 @Builder
-public class EquipmentOutModel {
+public class CompletedResponseDtoDefault {
 
-    private Long id;
     private Long providerAccountId;
-    private Long equipmentId;
-    private Long completedServiceId;
-    private Boolean reversal;
+    private Long employeeAccountId;
+    private Long providerServiceId;
+    private Long vehicleTypeId;
+    private Long colorId;
+    private Long plateId;
+    private Long modelId;
     private LocalDateTime createDate;
     private LocalDateTime lastUpdate;
+    private BigDecimal amount;
 }

@@ -32,7 +32,7 @@ public class ProviderAddressController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getProviderAddressById(@PathVariable Long id) {
         try {
-            log.info("Fetching provider address with id: " + id);
+            log.info("Fetching provider address with id: {}" , id);
             return ResponseEntity.ok(addressServiceBO.findById(id));
         } catch (ProviderAddressException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
@@ -53,7 +53,7 @@ public class ProviderAddressController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProviderAddress(@PathVariable Long id,@RequestBody ProviderAddressRequest requestDto) {
         try {
-            log.info("Updating provider address with id: " + id);
+            log.info("Updating provider address with id: {}" , id);
             return ResponseEntity.ok(addressServiceBO.updateProviderAddress(id, requestDto));
         } catch (ProviderAddressException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));

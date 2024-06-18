@@ -17,7 +17,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
@@ -42,9 +41,7 @@ public class EquipmentOutService implements EquipmentOutServiceBO {
         haveEquipment(requestDto);
 
         EquipmentOut equipmentOut = equipmentOutRepository.save(EquipmentOutMapper.MAPPER.modelToEntity(EquipmentOutMapper.MAPPER.requestToModel(requestDto)));
-        EquipmentOutResponseDto dto = EquipmentOutMapper.MAPPER.toDto(equipmentOut, equipmentResponseDto);
-
-        return null;
+        return EquipmentOutMapper.MAPPER.toDto(equipmentOut, equipmentResponseDto);
     }
 
     private void haveEquipment(EquipmentOutRequest requestDto) {
@@ -103,14 +100,6 @@ public class EquipmentOutService implements EquipmentOutServiceBO {
             equipmentInModel.setEquipmentId(outUpdateRequest.getEquipmentId());
             isChange = true;
         }
-        if (Objects.nonNull(outUpdateRequest.getAmount()) && outUpdateRequest.getAmount().compareTo(BigDecimal.ZERO) != 0) {
-            BigDecimal currentAmount = equipmentInModel.getAmount();
-            BigDecimal newAmount = outUpdateRequest.getAmount();
-            if (currentAmount == null || currentAmount.compareTo(newAmount) != 0) {
-                equipmentInModel.setAmount(newAmount);
-                isChange = true;
-            }
-        }
         return isChange;
     }
 
@@ -129,9 +118,5 @@ public class EquipmentOutService implements EquipmentOutServiceBO {
         ProviderAccountResponseDto accountResponseDto = accountServiceBO.findById(requestDto.getProviderAccountId());
         if (accountResponseDto.getStatus().equals(ProviderAccountStatusEnum.CANCEL))
             throw new ProviderAccountException(ErrorCode.ERROR_PROVIDER_ACCOUNT_STATUS_IS_CANCEL, "Accounts already canceled");
-
-        if (Objects.isNull(requestDto.getAmount()) || requestDto.getAmount().compareTo(BigDecimal.ZERO) == 0) {
-            throw new EquipmentException(ErrorCode.INVALID_FIELD, "The 'amount' field is required and cannot be empty or zero.");
-        }
     }
 }

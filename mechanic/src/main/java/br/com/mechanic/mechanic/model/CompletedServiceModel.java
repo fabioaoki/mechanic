@@ -5,6 +5,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.List;
 
 @NoArgsConstructor
@@ -15,9 +17,11 @@ public class CompletedServiceModel {
 
     private Long id;
     private Long providerAccountId;
+    private Long clientAccountId;
     private List<CompletedServiceValueModel> serviceValueRequests;
     private Long vehicleTypeId;
     private Long colorId;
     private Long plateId;
     private Long modelId;
+    private BigDecimal workmanshipAmount;
 }

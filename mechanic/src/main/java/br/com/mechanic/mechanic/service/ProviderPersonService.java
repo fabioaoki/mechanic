@@ -51,7 +51,7 @@ public class ProviderPersonService implements ProviderPersonServiceBO {
 
     @Override
     public ProviderPersonResponseDto updateProviderPerson(Long id, ProviderPersonUpdateRequest requestDto) {
-        log.info("Service update person by id: {}", id);
+        log.info("Service update person by id: {}" , id);
         ProviderPersonModel personModel = ProviderPersonMapper.MAPPER.toModel(getPerson(id));
         boolean isChange = updateField(personModel, requestDto);
         if (isChange) {

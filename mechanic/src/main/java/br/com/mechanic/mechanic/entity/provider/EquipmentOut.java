@@ -23,9 +23,8 @@ public class EquipmentOut {
     private Long providerAccountId;
     @Column(name = "equipment_id")
     private Long equipmentId;
-    @Column(name = "transaction_id")
-    private Long transactionId;
-    private BigDecimal amount;
+    @Column(name = "completed_service_id")
+    private Long completedServiceId;
     private Boolean reversal;
     @Column(name = "create_date")
     private LocalDateTime createDate;

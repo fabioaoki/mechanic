@@ -34,7 +34,7 @@ public class ProviderPersonController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getProviderAccountById(@PathVariable Long id) {
         try {
-            log.info("Fetching provider person with id: " + id);
+            log.info("Fetching provider person with id: {}" , id);
             return ResponseEntity.ok(personServiceBO.findById(id));
         } catch (ProviderPersonException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
@@ -44,7 +44,7 @@ public class ProviderPersonController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProviderAccount(@PathVariable Long id,@RequestBody ProviderPersonUpdateRequest requestDto) {
         try {
-            log.info("Updating provider person with id: " + id);
+            log.info("Updating provider person with id: {}" , id);
             return ResponseEntity.ok(personServiceBO.updateProviderPerson(id, requestDto));
         } catch (ProviderPersonException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));

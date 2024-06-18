@@ -31,7 +31,7 @@ public class EquipmentController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getEquipmentById(@PathVariable Long id) {
         try {
-            log.info("Fetching equipment with id: " + id);
+            log.info("Fetching equipment with id: {}" , id);
             return ResponseEntity.ok(equipmentServiceBO.findById(id));
         } catch (EquipmentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
@@ -53,7 +53,7 @@ public class EquipmentController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateTypeService(@PathVariable Long id, @RequestBody EquipmentRequestDto requestDto) {
         try {
-            log.info("Updating equipment with id: " + id);
+            log.info("Updating equipment with id: {}" , id);
             return ResponseEntity.ok(equipmentServiceBO.updateEquipmentName(id, requestDto));
         } catch (EquipmentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));

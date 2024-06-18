@@ -67,7 +67,7 @@ public class ProviderAccountController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProviderAccount(@PathVariable Long id) throws ProviderAccountException {
         try {
-            log.info("Deleting provider account with id: " + id);
+            log.info("Deleting provider account with id: {}" , id);
             providerAccountServiceBO.changeStatus(id, ProviderAccountStatusEnum.CANCEL);
             return ResponseEntity.ok().build();
         } catch (ProviderAccountException e) {
@@ -78,7 +78,7 @@ public class ProviderAccountController {
     @PutMapping("active/{id}")
     public ResponseEntity<?> activeProviderAccount(@PathVariable Long id) {
         try {
-            log.info("Activating provider account with id: " + id);
+            log.info("Activating provider account with id: {}" , id);
             providerAccountServiceBO.changeStatus(id, ProviderAccountStatusEnum.ACTIVE);
             return ResponseEntity.ok().build();
         } catch (ProviderAccountException e) {
@@ -89,7 +89,7 @@ public class ProviderAccountController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProviderAccount(@PathVariable Long id, @RequestBody ProviderAccountUpdateRequestDto requestDto) {
         try {
-            log.info("Updating provider account with id: " + id);
+            log.info("Updating provider account with id: {}" , id);
             return ResponseEntity.ok(providerAccountServiceBO.updateProviderAccount(id, requestDto));
         } catch (ProviderAccountException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));

@@ -31,7 +31,7 @@ public class ProviderPhoneController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getProviderPhoneById(@PathVariable Long id) {
         try {
-            log.info("Fetching provider phone with id: " + id);
+            log.info("Fetching provider phone with id: {}" , id);
             return ResponseEntity.ok(phoneServiceBO.findById(id));
         } catch (ProviderPhoneException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
@@ -52,7 +52,7 @@ public class ProviderPhoneController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProviderAddress(@PathVariable Long id,@RequestBody ProviderPhoneRequest requestDto) {
         try {
-            log.info("Updating provider phones with id: " + id);
+            log.info("Updating provider phones with id: {}" , id);
             return ResponseEntity.ok(phoneServiceBO.updateProviderPhone(id, requestDto));
         } catch (ProviderPhoneException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));

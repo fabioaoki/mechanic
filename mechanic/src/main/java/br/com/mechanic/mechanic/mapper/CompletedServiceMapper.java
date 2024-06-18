@@ -1,6 +1,6 @@
 package br.com.mechanic.mechanic.mapper;
 
-import br.com.mechanic.mechanic.entity.provider.CompletedServices;
+import br.com.mechanic.mechanic.entity.provider.CompletedService;
 import br.com.mechanic.mechanic.entity.provider.emloyee.EmployeeAccount;
 import br.com.mechanic.mechanic.model.CompletedServiceModel;
 import br.com.mechanic.mechanic.model.EmployeeAccountModel;
@@ -23,27 +23,15 @@ public interface CompletedServiceMapper {
 
     EmployeeAccount toEntity(EmployeeAccountRequest dto);
 
-    @Named("toDtoPage")
-    default EmployeeAccountResponseDtoPage toDtoPage(EmployeeAccount entity) {
-        return EmployeeAccountResponseDtoPage.builder()
-                .id(entity.getId())
-                .name(entity.getName())
-                .role(entity.getRole())
-                .birthDate(entity.getBirthDate())
-                .providerAccountId(entity.getProviderAccountId())
-                .lastUpdate(entity.getLastUpdate())
-                .createDate(entity.getCreateDate())
-                .cpf(entity.getCpf().replaceFirst("(\\d{3})(\\d{3})(\\d{3})(\\d{2})", "$1.$2.$3-$4"))
-                .build();
-    }
+    CompletedResponseDtoDefault toDtoDefault(CompletedService entity);
 
     EmployeeAccountModel toModel(EmployeeAccount entity);
 
     CompletedServiceModel toModel(CompletedServiceRequest dto);
 
     @Named("modelToEntity")
-    default CompletedServices modelToEntity(CompletedServiceModel model, ProviderServiceResponseDto serviceResponseDto, EmployeeAccountResponseDto employeeResponse, BigDecimal amount) {
-        return CompletedServices.builder().colorId(model.getColorId()).plateId(model.getPlateId()).amount(amount.setScale(2, RoundingMode.HALF_UP)).modelId(model.getModelId()).vehicleTypeId(model.getVehicleTypeId())
+    default CompletedService modelToEntity(CompletedServiceModel model, ProviderServiceResponseDto serviceResponseDto, EmployeeAccountResponseDto employeeResponse, BigDecimal amount) {
+        return CompletedService.builder().colorId(model.getColorId()).plateId(model.getPlateId()).amount(amount.setScale(2, RoundingMode.HALF_UP)).modelId(model.getModelId()).vehicleTypeId(model.getVehicleTypeId())
                 .providerAccountId(model.getProviderAccountId()).providerServiceId(serviceResponseDto.getProviderAccountId()).employeeAccountId(employeeResponse.getId())
                 .build();
     }

@@ -48,7 +48,7 @@ public class EquipmentInController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getEquipmentInById(@PathVariable Long id) {
         try {
-            log.info("Fetching equipmentIn with id: " + id);
+            log.info("Fetching equipmentIn with id: {}" , id);
             return ResponseEntity.ok(equipmentInServiceBO.findById(id));
         } catch (EquipmentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
