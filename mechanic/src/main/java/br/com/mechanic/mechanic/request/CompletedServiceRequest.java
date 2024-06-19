@@ -21,6 +21,7 @@ public class CompletedServiceRequest {
     private String color;
     private Long plateId;
     private Long modelId;
+    private Long installments;
     private BigDecimal workmanshipAmount;
 
 }

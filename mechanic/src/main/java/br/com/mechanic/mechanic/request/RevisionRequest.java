@@ -16,6 +16,5 @@ public class RevisionRequest {
     private Long providerServiceId;
     private Long providerAccountId;
     private Long clientAccountId;
-    private LocalDate startDate;
     private LocalDate endDate;
 }

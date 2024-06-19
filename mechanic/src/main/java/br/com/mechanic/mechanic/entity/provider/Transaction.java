@@ -20,8 +20,6 @@ public class Transaction {
     private Long id;
     @Column(name = "provider_account_id")
     private Long providerAccountId;
-    @Column(name = "provider_service_id")
-    private Long providerServiceId;
     @Column(name = "completed_services_id")
     private Long[] completedServicesId; // Alterado para array de inteiros
     @Column(name = "vehicle_type_id")
@@ -39,6 +37,7 @@ public class Transaction {
     @Column(name = "workmanship_amount")
     private Float workmanshipAmount;
     private Float amount;
+    private Long installments;
     @Column(name = "create_date")
     private LocalDateTime createDate;
     @Column(name = "last_update")

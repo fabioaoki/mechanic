@@ -15,7 +15,5 @@ import java.time.LocalDate;
 public class CompletedServiceValueRequest {
     private Long employeeAccountId;
     private Long providerServiceId;
-    private LocalDate startDate;
     private LocalDate endDate;
-    private BigDecimal Amount;
 }

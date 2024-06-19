@@ -23,5 +23,6 @@ public class CompletedServiceModel {
     private Long colorId;
     private Long plateId;
     private Long modelId;
+    private Long installments;
     private BigDecimal workmanshipAmount;
 }

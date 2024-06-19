@@ -9,6 +9,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
+import java.math.BigDecimal;
+
 @Mapper
 public interface RevisionMapper {
 
@@ -26,7 +28,6 @@ public interface RevisionMapper {
     default RevisionRequest transactionToRequest(CompletedServiceValueModel completedServiceValueModel, Long transactionId, Long providerAccountId, Long clientAccountId){
         return RevisionRequest.builder()
                 .providerServiceId(completedServiceValueModel.getProviderServiceId())
-                .startDate(completedServiceValueModel.getStartDate())
                 .endDate(completedServiceValueModel.getEndDate()).
                 providerAccountId(providerAccountId).
                 transactionId(transactionId).clientAccountId(clientAccountId).build();

@@ -17,7 +17,5 @@ public class CompletedServiceValueModel {
 
     private Long employeeAccountId;
     private Long providerServiceId;
-    private LocalDate startDate;
     private LocalDate endDate;
-    private BigDecimal Amount;
 }

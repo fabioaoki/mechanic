@@ -89,6 +89,9 @@ public class EquipmentService implements EquipmentServiceBO {
         if (Objects.isNull(requestDto.getName()) || requestDto.getName().trim().isEmpty()) {
             throw new EquipmentException(ErrorCode.INVALID_FIELD, "The 'name' field is required and cannot be empty.");
         }
+        if (Objects.isNull(requestDto.getProviderServiceIdentifierId())) {
+            throw new EquipmentException(ErrorCode.INVALID_FIELD, "The 'providerServiceIdentifierId' field is required and cannot be empty.");
+        }
         equipmentIsExists(requestDto.getName());
     }
 

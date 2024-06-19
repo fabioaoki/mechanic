@@ -17,5 +17,5 @@ public class CompletedServiceValueResponse {
     private String providerService;
     private LocalDate startDate;
     private LocalDate endDate;
-    private BigDecimal Amount;
+    private BigDecimal amount;
 }

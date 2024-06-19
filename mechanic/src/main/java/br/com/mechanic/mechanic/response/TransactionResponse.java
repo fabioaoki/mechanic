@@ -26,6 +26,7 @@ public class TransactionResponse {
     private BigDecimal workmanshipAmount;
     private BigDecimal amount;
     private String vehicleName;
+    private Long installments;
     private LocalDateTime createDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDateTime lastUpdate;

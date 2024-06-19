@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -54,9 +55,9 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
 
         ProviderAccountResponseDto providerAccount = accountServiceBO.findById(completedServiceRequest.getProviderAccountId());
         log.info("Retrieved provider account status: {}", providerAccount.getStatus());
-        if (providerAccount.getStatus().equals(ProviderAccountStatusEnum.CANCEL)) {
+        if (providerAccount.getStatus().equals(ProviderAccountStatusEnum.CANCEL) || providerAccount.getStatus().equals(ProviderAccountStatusEnum.INITIAL_BLOCK)) {
             log.error("Provider account status is canceled");
-            throw new ProviderAccountException(ErrorCode.ERROR_PROVIDER_ACCOUNT_STATUS_IS_CANCEL, "The 'providerAccountStatus' is canceled.");
+            throw new ProviderAccountException(ErrorCode.ERROR_PROVIDER_ACCOUNT_STATUS_IS_CANCEL, "The 'providerAccountStatus' is canceled or block.");
         }
 
         log.debug("Starting mapping of completed service request to model");
@@ -108,7 +109,7 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
             log.debug("Checking equipment availability");
             List<EquipmentOutResponseDto> outList = equipmentOutServiceBO.findByProviderAccountAndEquipmentId(completedServiceRequest.getProviderAccountId(), equipmentResponseDto.getId(), equipmentResponseDto.getCreateDate());
 
-            if (equipmentIn <= outList.size()) {
+            if (outList.size() <= equipmentIn) {
                 if (equipmentInResponse.isFinish()) {
                     log.error("Insufficient equipment for creating completed service");
                     throw new EquipmentException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "Missing equipment, it is necessary to include equipment.");
@@ -116,10 +117,12 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
                 CompletedServiceValueResponse serviceValueResponse = new CompletedServiceValueResponse();
                 serviceValueResponse.setProviderService(providerServiceResponseDto.getService().getIdentifier());
                 serviceValueResponse.setEmployeeAccount(employeeAccountResponseDto.getName());
-                serviceValueResponse.setAmount(completedServiceValueModel.getAmount());
+                serviceValueResponse.setAmount(equipmentInResponse.getAmount());
+                serviceValueResponse.setStartDate(LocalDate.now());
+                serviceValueResponse.setEndDate(completedServiceValueModel.getEndDate());
                 responseList.add(serviceValueResponse);
 
-                CompletedService completedServices = CompletedServiceMapper.MAPPER.modelToEntity(completedServiceModel, providerServiceResponseDto, employeeAccountResponseDto, completedServiceValueModel.getAmount());
+                CompletedService completedServices = CompletedServiceMapper.MAPPER.modelToEntity(completedServiceModel, providerServiceResponseDto, employeeAccountResponseDto, equipmentInResponse.getAmount());
                 CompletedService completedService = completedServiceRepository.save(completedServices);
                 completedServiceIds.add(completedService.getId());
                 log.info("Saved completed service for employee account ID: {}", employeeAccountResponseDto.getId());
@@ -135,8 +138,10 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
         log.debug("Converting completed service IDs list to array");
         Long[] completedServiceIdsArray = completedServiceIds.toArray(new Long[0]);
         log.debug("Starting transaction service save operation");
+        BigDecimal totalAmount = equipmentValueRef.get().setScale(2, RoundingMode.HALF_UP).add(completedServiceRequest.getWorkmanshipAmount());
         TransactionResponse transactionResponse = transactionServiceBO.save(TransactionMapper.MAPPER.completedRequestToTransactionRequest(completedServiceModel, completedServiceIdsArray,
-                equipmentValueRef.get().setScale(2, RoundingMode.HALF_UP), model.getModel()));
+                totalAmount, model.getModel()));
+
 
         log.debug("Processing revisions for service value requests");
         completedServiceModel.getServiceValueRequests().forEach(completedServiceValueModel -> {
@@ -146,9 +151,8 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
         });
 
         log.info("Completed service creation process successfully");
-        return CompletedServiceMapper.MAPPER.toDto(colorResponseDto.getColor(), providerAccount.getWorkshop(), vehicleType.getName(), plate, model.getModel(), model.getName(), responseList);
+        return CompletedServiceMapper.MAPPER.toDto(colorResponseDto.getColor(), providerAccount.getWorkshop(), vehicleType.getName(), plate, model.getModel(), model.getName(), responseList, completedServiceModel.getInstallments(), totalAmount);
     }
-
 
 
     @Override
@@ -180,6 +184,9 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
         if (Objects.isNull(completedServiceRequest.getClientAccountId())) {
             throw new ClientAccountException(ErrorCode.INVALID_FIELD, "The 'clientAccount' field is required and cannot be empty.");
         }
+        if (Objects.isNull(completedServiceRequest.getInstallments())) {
+            throw new ClientAccountException(ErrorCode.INVALID_FIELD, "The 'installments' field is required and cannot be empty.");
+        }
         if (Objects.isNull(completedServiceRequest.getColor()) || completedServiceRequest.getColor().trim().isEmpty()) {
             throw new ColorException(ErrorCode.INVALID_FIELD, "The 'color' field is required and cannot be empty.");
         }
@@ -188,9 +195,6 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
         }
         if (Objects.isNull(completedServiceRequest.getPlateId())) {
             throw new ColorException(ErrorCode.INVALID_FIELD, "The 'plateId' field is required and cannot be empty.");
-        }
-        if (Objects.isNull(completedServiceRequest.getVehicleTypeId())) {
-            throw new VehicleTypeException(ErrorCode.INVALID_FIELD, "The 'vehicleTypeId' field is required and cannot be empty.");
         }
         if (completedServiceRequest.getServiceValueRequests() == null || completedServiceRequest.getServiceValueRequests().isEmpty()) {
             throw new ProviderServiceException(ErrorCode.INVALID_FIELD, "The 'serviceValueRequest' field is required and cannot be empty.");
@@ -204,9 +208,6 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
             }
             if (Objects.isNull(completedServiceValueRequest.getEmployeeAccountId())) {
                 throw new EmployeeAccountException(ErrorCode.INVALID_FIELD, "The 'employeeAccountId' field is required and cannot be empty.");
-            }
-            if (Objects.isNull(completedServiceValueRequest.getAmount()) || completedServiceValueRequest.getAmount().compareTo(BigDecimal.ZERO) == 0) {
-                throw new CompletedServiceException(ErrorCode.INVALID_FIELD, "The 'amount' field is required and cannot be empty or zero.");
             }
         });
     }

@@ -32,12 +32,12 @@ public interface CompletedServiceMapper {
     @Named("modelToEntity")
     default CompletedService modelToEntity(CompletedServiceModel model, ProviderServiceResponseDto serviceResponseDto, EmployeeAccountResponseDto employeeResponse, BigDecimal amount) {
         return CompletedService.builder().colorId(model.getColorId()).plateId(model.getPlateId()).amount(amount.setScale(2, RoundingMode.HALF_UP)).modelId(model.getModelId()).vehicleTypeId(model.getVehicleTypeId())
-                .providerAccountId(model.getProviderAccountId()).providerServiceId(serviceResponseDto.getProviderAccountId()).employeeAccountId(employeeResponse.getId())
+                .providerAccountId(model.getProviderAccountId()).providerServiceId(serviceResponseDto.getId()).employeeAccountId(employeeResponse.getId())
                 .build();
     }
 
     @Named("toDto")
-    default CompletedResponseDto toDto(String color, String workshop, String vehicleName, PlateResponseDto plate, String model, String marc, List<CompletedServiceValueResponse> responseList) {
+    default CompletedResponseDto toDto(String color, String workshop, String vehicleName, PlateResponseDto plate, String model, String marc, List<CompletedServiceValueResponse> responseList, Long installments, BigDecimal totalAmount) {
         String plateValue = (plate.getOldPlate() == null || plate.getOldPlate().isEmpty()) ? plate.getMercosulPlate() : plate.getOldPlate();
         return CompletedResponseDto.builder()
                 .vehicleType(vehicleName)
@@ -45,8 +45,10 @@ public interface CompletedServiceMapper {
                 .workshop(workshop)
                 .model(model)
                 .marc(marc)
+                .installments(installments)
                 .createDate(LocalDateTime.now())
                 .serviceValue(responseList)
+                .totalAmountPayable(totalAmount)
                 .plate(plateValue).build();
     }
 }

@@ -17,4 +17,5 @@ public class EquipmentModel {
     private String name;
     private LocalDateTime createDate;
     private LocalDateTime lastUpdate;
+    private Long providerServiceIdentifierId;
 }

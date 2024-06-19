@@ -8,9 +8,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
-import java.lang.reflect.Array;
 import java.math.BigDecimal;
-import java.util.List;
 
 @Mapper
 public interface TransactionMapper {
@@ -32,7 +30,8 @@ public interface TransactionMapper {
                 .amount(equipmentValue).rewardId(0L)
                 .workmanshipAmount(completedServiceModel
                 .getWorkmanshipAmount())
+                .installments(completedServiceModel.getInstallments())
                 .vehicleName(vehicleName)
-                .completedServiceId(completedServiceIds).build();
+                .completedServiceIds(completedServiceIds).build();
     }
 }

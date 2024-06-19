@@ -16,7 +16,7 @@ public class EquipmentResponseDto {
 
     private Long id;
     private String name;
-    private ProviderServiceIdentifierResponseDto identifier;
+    private Long providerServiceIdentifierId;
     private LocalDateTime createDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDateTime lastUpdate;

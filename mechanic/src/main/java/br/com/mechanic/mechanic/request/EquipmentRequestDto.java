@@ -11,5 +11,5 @@ import lombok.NoArgsConstructor;
 @Builder
 public class EquipmentRequestDto {
     private String name;
-    private Long equipmentServiceIdentifierId;
+    private Long providerServiceIdentifierId;
 }
