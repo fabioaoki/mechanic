@@ -17,5 +17,7 @@ public class CompletedServiceValueModel {
 
     private Long employeeAccountId;
     private Long providerServiceId;
+    private Long quantity;
+    private BigDecimal mileageForInspection;
     private LocalDate endDate;
 }

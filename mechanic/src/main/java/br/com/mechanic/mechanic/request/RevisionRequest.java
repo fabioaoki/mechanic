@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @NoArgsConstructor
@@ -17,4 +18,6 @@ public class RevisionRequest {
     private Long providerAccountId;
     private Long clientAccountId;
     private LocalDate endDate;
+    private BigDecimal mileageForInspection;
+    private BigDecimal mileage;
 }

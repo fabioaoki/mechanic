@@ -20,8 +20,8 @@ public class Transaction {
     private Long id;
     @Column(name = "provider_account_id")
     private Long providerAccountId;
-    @Column(name = "completed_services_id")
-    private Long[] completedServicesId; // Alterado para array de inteiros
+    @Column(name = "completed_services_ids")
+    private String completedServiceIds;
     @Column(name = "vehicle_type_id")
     private Long vehicleTypeId;
     @Column(name = "plate_id")

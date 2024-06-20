@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Log4j2
@@ -83,18 +84,27 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
         completedServiceModel.setColorId(colorResponseDto.getId());
 
         List<Long> completedServiceIds = new ArrayList<>();
+        Long[] completedServicesIds = new Long[completedServiceRequest.getServiceValueRequests().size()];
         List<CompletedServiceValueResponse> responseList = new ArrayList<>();
         AtomicReference<BigDecimal> equipmentValueRef = new AtomicReference<>(BigDecimal.ZERO);
 
         log.debug("Processing service value requests");
-        completedServiceModel.getServiceValueRequests().forEach(completedServiceValueModel -> {
-            log.debug("Fetching employee account details for employee account ID: {}", completedServiceValueModel.getEmployeeAccountId());
-            EmployeeAccountResponseDto employeeAccountResponseDto = employeeAccountServiceBO.findById(completedServiceValueModel.getEmployeeAccountId());
+        completedServiceModel.getServiceValueRequests().forEach(serviceValueModelRequest -> {
+            log.debug("Fetching employee account details for employee account ID: {}", serviceValueModelRequest.getEmployeeAccountId());
+            EmployeeAccountResponseDto employeeAccountResponseDto = employeeAccountServiceBO.findById(serviceValueModelRequest.getEmployeeAccountId());
             log.info("Retrieved employee account name: {}", employeeAccountResponseDto.getName());
 
-            log.debug("Fetching provider service details for service ID: {}", completedServiceValueModel.getProviderServiceId());
-            ProviderServiceResponseDto providerServiceResponseDto = providerServiceBO.findById(completedServiceValueModel.getProviderServiceId());
+            if (!completedServiceModel.getProviderAccountId().equals(employeeAccountResponseDto.getProviderAccountId().getId())) {
+                throw new ProviderAccountException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "ProviderAccount different from employer providerAccount.");
+            }
+
+            log.debug("Fetching provider service details for service ID: {}", serviceValueModelRequest.getProviderServiceId());
+            ProviderServiceResponseDto providerServiceResponseDto = providerServiceBO.findById(serviceValueModelRequest.getProviderServiceId());
             log.info("Retrieved provider service details for service ID: {}", providerServiceResponseDto.getService().getIdentifier());
+
+            if (!providerServiceResponseDto.getVehicleTypeId().equals(completedServiceRequest.getVehicleTypeId())) {
+                throw new ProviderServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "Type of equipment not compatible with vehicle.");
+            }
 
             log.debug("Fetching equipment details for equipment ID: {}", providerServiceResponseDto.getService().getId());
             EquipmentResponseDto equipmentResponseDto = equipmentServiceBO.findByProviderServiceIdentifierId(providerServiceResponseDto.getService().getId());
@@ -103,7 +113,10 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
             EquipmentInResponseDto equipmentInResponse = equipmentInServiceBO.findByProviderAccountAndEquipmentId(completedServiceRequest.getProviderAccountId(), equipmentResponseDto.getId());
             long equipmentIn = equipmentInResponse.getQuantity() - 1;
             BigDecimal current = equipmentValueRef.get();
-            BigDecimal updated = current.add(equipmentInResponse.getAmount());
+            BigDecimal updated = current.add(
+                    equipmentInResponse.getAmount()
+                            .multiply(new BigDecimal(serviceValueModelRequest.getQuantity()))
+            );
             equipmentValueRef.set(updated);
 
             log.debug("Checking equipment availability");
@@ -117,41 +130,67 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
                 CompletedServiceValueResponse serviceValueResponse = new CompletedServiceValueResponse();
                 serviceValueResponse.setProviderService(providerServiceResponseDto.getService().getIdentifier());
                 serviceValueResponse.setEmployeeAccount(employeeAccountResponseDto.getName());
-                serviceValueResponse.setAmount(equipmentInResponse.getAmount());
                 serviceValueResponse.setStartDate(LocalDate.now());
-                serviceValueResponse.setEndDate(completedServiceValueModel.getEndDate());
+                serviceValueResponse.setEndDate(serviceValueModelRequest.getEndDate());
+                serviceValueResponse.setAmount(equipmentInResponse.getAmount().multiply(BigDecimal.valueOf(serviceValueModelRequest.getQuantity())));
+                serviceValueResponse.setQuantity(serviceValueModelRequest.getQuantity());
+                serviceValueResponse.setUnitPrice(equipmentInResponse.getAmount());
+                serviceValueResponse.setMileageForInspection(serviceValueModelRequest.getMileageForInspection());
                 responseList.add(serviceValueResponse);
 
-                CompletedService completedServices = CompletedServiceMapper.MAPPER.modelToEntity(completedServiceModel, providerServiceResponseDto, employeeAccountResponseDto, equipmentInResponse.getAmount());
-                CompletedService completedService = completedServiceRepository.save(completedServices);
-                completedServiceIds.add(completedService.getId());
-                log.info("Saved completed service for employee account ID: {}", employeeAccountResponseDto.getId());
-                equipmentOutServiceBO.save(EquipmentOutMapper.MAPPER.completedServiceToEquipmentOut(completedServiceRequest.getProviderAccountId(), completedService.getId(), equipmentResponseDto.getId()));
-            }
-            if (equipmentIn == outList.size()) {
-                equipmentInResponse.setFinish(true);
-                log.debug("Updating equipment in status to finish");
-                equipmentInServiceBO.updateEquipmentIn(equipmentInResponse.getId(), EquipmentInMapper.MAPPER.mapperUpdate(equipmentInResponse));
+                long quantity = serviceValueModelRequest.getQuantity();
+                boolean isFinish = false;
+
+                for (int i = 0; i < quantity; i++) {
+                    if(isFinish){
+                        throw new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "Missing equipment, it is necessary to include equipment.");
+                    }
+                    CompletedService completedServices = CompletedServiceMapper.MAPPER.modelToEntity(
+                            completedServiceModel,
+                            providerServiceResponseDto,
+                            employeeAccountResponseDto,
+                            equipmentInResponse.getAmount()
+                    );
+                    CompletedService completedServiceEntity = completedServiceRepository.save(completedServices);
+                    completedServiceIds.add(completedServiceEntity.getId());
+                    log.info("Saved completed service for employee account ID: {}", employeeAccountResponseDto.getId());
+                    equipmentOutServiceBO.save(
+                            EquipmentOutMapper.MAPPER.completedServiceToEquipmentOut(
+                                    completedServiceRequest.getProviderAccountId(),
+                                    completedServiceEntity.getId(),
+                                    equipmentResponseDto.getId()
+                            )
+                    );
+                    if (equipmentIn == outList.size() + i) {
+                        equipmentInResponse.setFinish(true);
+                        isFinish = true;
+                        log.debug("Updating equipment in status to finish");
+                        equipmentInServiceBO.finish(equipmentInResponse.getId());
+                    }
+                }
+
             }
         });
 
-        log.debug("Converting completed service IDs list to array");
-        Long[] completedServiceIdsArray = completedServiceIds.toArray(new Long[0]);
+        log.debug("Converting completed service IDs list to String");
+        String completedIds = completedServiceIds.stream()
+                .map(String::valueOf)
+                .collect(Collectors.joining(","));
         log.debug("Starting transaction service save operation");
         BigDecimal totalAmount = equipmentValueRef.get().setScale(2, RoundingMode.HALF_UP).add(completedServiceRequest.getWorkmanshipAmount());
-        TransactionResponse transactionResponse = transactionServiceBO.save(TransactionMapper.MAPPER.completedRequestToTransactionRequest(completedServiceModel, completedServiceIdsArray,
+        TransactionResponse transactionResponse = transactionServiceBO.save(TransactionMapper.MAPPER.completedRequestToTransactionRequest(completedServiceModel, completedIds,
                 totalAmount, model.getModel()));
 
 
         log.debug("Processing revisions for service value requests");
         completedServiceModel.getServiceValueRequests().forEach(completedServiceValueModel -> {
             log.debug("Creating revision request for transaction ID: {}", transactionResponse.getId());
-            RevisionRequest revisionRequest = RevisionMapper.MAPPER.transactionToRequest(completedServiceValueModel, transactionResponse.getId(), completedServiceRequest.getProviderAccountId(), completedServiceRequest.getClientAccountId());
+            RevisionRequest revisionRequest = RevisionMapper.MAPPER.transactionToRequest(completedServiceValueModel, transactionResponse.getId(), completedServiceRequest.getProviderAccountId(), completedServiceRequest.getClientAccountId(), completedServiceRequest.getMileage());
             revisionServiceBO.save(revisionRequest);
         });
 
         log.info("Completed service creation process successfully");
-        return CompletedServiceMapper.MAPPER.toDto(colorResponseDto.getColor(), providerAccount.getWorkshop(), vehicleType.getName(), plate, model.getModel(), model.getName(), responseList, completedServiceModel.getInstallments(), totalAmount);
+        return CompletedServiceMapper.MAPPER.toDto(colorResponseDto.getColor(), providerAccount.getWorkshop(), vehicleType.getName(), plate, model.getModel(), model.getName(), responseList, completedServiceModel.getInstallments(), totalAmount, completedServiceRequest.getMileage());
     }
 
 
@@ -208,6 +247,12 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
             }
             if (Objects.isNull(completedServiceValueRequest.getEmployeeAccountId())) {
                 throw new EmployeeAccountException(ErrorCode.INVALID_FIELD, "The 'employeeAccountId' field is required and cannot be empty.");
+            }
+            if (Objects.isNull(completedServiceValueRequest.getQuantity())) {
+                throw new CompletedServiceException(ErrorCode.INVALID_FIELD, "The 'quantity' field is required and cannot be empty.");
+            }
+            if (Objects.isNull(completedServiceValueRequest.getEndDate())) {
+                throw new CompletedServiceException(ErrorCode.INVALID_FIELD, "The 'endDate' field is required.");
             }
         });
     }

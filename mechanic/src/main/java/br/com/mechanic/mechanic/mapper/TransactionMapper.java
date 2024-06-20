@@ -9,6 +9,7 @@ import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 
 @Mapper
 public interface TransactionMapper {
@@ -20,7 +21,7 @@ public interface TransactionMapper {
     TransactionResponse toDto(Transaction entity);
 
     @Named("completedRequestToTransactionRequest")
-    default TransactionRequest completedRequestToTransactionRequest(CompletedServiceModel completedServiceModel, Long[] completedServiceIds, BigDecimal equipmentValue, String vehicleName) {
+    default TransactionRequest completedRequestToTransactionRequest(CompletedServiceModel completedServiceModel, String completedServiceIds, BigDecimal equipmentValue, String vehicleName) {
         return TransactionRequest.builder()
                 .clientAccountId(completedServiceModel.getClientAccountId())
                 .providerAccountId(completedServiceModel.getProviderAccountId())
@@ -29,7 +30,7 @@ public interface TransactionMapper {
                 .vehicleTypeId(completedServiceModel.getVehicleTypeId())
                 .amount(equipmentValue).rewardId(0L)
                 .workmanshipAmount(completedServiceModel
-                .getWorkmanshipAmount())
+                .getWorkmanshipAmount().setScale(2, RoundingMode.HALF_UP))
                 .installments(completedServiceModel.getInstallments())
                 .vehicleName(vehicleName)
                 .completedServiceIds(completedServiceIds).build();

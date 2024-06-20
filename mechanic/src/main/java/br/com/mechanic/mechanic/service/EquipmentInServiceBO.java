@@ -16,6 +16,7 @@ public interface EquipmentInServiceBO {
     Page<EquipmentInResponseDto> findAllByProviderAccountId(final Long providerAccountId, final Pageable pageable);
 
     EquipmentInResponseDto updateEquipmentIn(final Long id, final EquipmentInUpdateRequest requestDto);
+    void finish(final Long id);
 
     EquipmentInResponseDto findByProviderAccountAndEquipmentId(Long providerAccountId, Long equipmentId);
 }

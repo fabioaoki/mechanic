@@ -87,6 +87,13 @@ public class EquipmentInService implements EquipmentInServiceBO {
     }
 
     @Override
+    public void finish(Long id) {
+        EquipmentInModel equipmentInModel = EquipmentInMapper.MAPPER.toModel(getEquipmentById(id));
+        equipmentInModel.setFinish(true);
+        equipmentInRepository.save(EquipmentInMapper.MAPPER.modelToEntity(equipmentInModel));
+    }
+
+    @Override
     public EquipmentInResponseDto findByProviderAccountAndEquipmentId(Long providerAccountId, Long equipmentId) {
         EquipmentIn equipmentIn = equipmentInRepository.findByProviderAccountIdAndEquipmentId(providerAccountId, equipmentId)
                 .orElseThrow(() -> new EquipmentException(ErrorCode.ERROR_EQUIPMENT_NOT_FOUND, "Equipment not found by id: " + equipmentId));

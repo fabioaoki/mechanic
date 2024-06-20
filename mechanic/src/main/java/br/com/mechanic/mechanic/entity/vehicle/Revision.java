@@ -4,6 +4,7 @@ package br.com.mechanic.mechanic.entity.vehicle;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -35,4 +36,7 @@ public class Revision {
     private LocalDate endDate;
     @Column(name = "is_deleted")
     private Boolean isDeleted;
+    private BigDecimal mileage;
+    @Column(name = "mileage_for_inspection")
+    private BigDecimal mileageForInspection;
 }

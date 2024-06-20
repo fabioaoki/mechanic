@@ -26,8 +26,6 @@ public class TransactionService implements TransactionServiceBO {
         return TransactionMapper.MAPPER.toDto(transactionRepository.save(TransactionMapper.MAPPER.toEntity(requestDto)));
     }
 
-
-
     @Override
     public Page<TransactionResponse> findAll(Pageable pageable) {
         log.info("Retrieving list of transactions");

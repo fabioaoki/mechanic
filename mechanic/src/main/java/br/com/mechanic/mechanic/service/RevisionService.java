@@ -25,6 +25,9 @@ public class RevisionService implements RevisionServiceBO {
     @Override
     public RevisionResponse save(RevisionRequest revisionRequest) {
         log.info("Service: Saving a new revision");
+        if (revisionRequest.getMileage().compareTo(revisionRequest.getMileageForInspection()) > 0) {
+            throw new RevisionException(ErrorCode.INVALID_FIELD, "Future mileage cannot be less than current mileage.");
+        }
         Revision entity = RevisionMapper.MAPPER.toEntity(revisionRequest);
         validEndDate(revisionRequest.getEndDate());
         return RevisionMapper.MAPPER.toDto(revisionRepository.save(entity));

@@ -17,5 +17,8 @@ public class CompletedServiceValueResponse {
     private String providerService;
     private LocalDate startDate;
     private LocalDate endDate;
+    private BigDecimal mileageForInspection;
     private BigDecimal amount;
+    private BigDecimal unitPrice;
+    private Long quantity;
 }

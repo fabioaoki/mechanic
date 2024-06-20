@@ -23,6 +23,7 @@ public class CompletedResponseDto {
     private String model;
     private String marc;
     private Long installments;
+    private BigDecimal mileage;
     private LocalDateTime createDate;
     private BigDecimal totalAmountPayable;
 }

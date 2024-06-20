@@ -37,7 +37,7 @@ public interface CompletedServiceMapper {
     }
 
     @Named("toDto")
-    default CompletedResponseDto toDto(String color, String workshop, String vehicleName, PlateResponseDto plate, String model, String marc, List<CompletedServiceValueResponse> responseList, Long installments, BigDecimal totalAmount) {
+    default CompletedResponseDto toDto(String color, String workshop, String vehicleName, PlateResponseDto plate, String model, String marc, List<CompletedServiceValueResponse> responseList, Long installments, BigDecimal totalAmount, BigDecimal mileage) {
         String plateValue = (plate.getOldPlate() == null || plate.getOldPlate().isEmpty()) ? plate.getMercosulPlate() : plate.getOldPlate();
         return CompletedResponseDto.builder()
                 .vehicleType(vehicleName)
@@ -49,6 +49,7 @@ public interface CompletedServiceMapper {
                 .createDate(LocalDateTime.now())
                 .serviceValue(responseList)
                 .totalAmountPayable(totalAmount)
+                .mileage(mileage)
                 .plate(plateValue).build();
     }
 }

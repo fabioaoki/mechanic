@@ -13,7 +13,7 @@ import java.math.BigDecimal;
 @Builder
 public class TransactionRequest {
     private Long providerAccountId;
-    private Long[] completedServiceIds;
+    private String completedServiceIds;
     private Long vehicleTypeId;
     private Long plateId;
     private Long colorId;

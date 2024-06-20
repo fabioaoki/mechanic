@@ -22,6 +22,7 @@ public class CompletedServiceRequest {
     private Long plateId;
     private Long modelId;
     private Long installments;
+    private BigDecimal mileage;
     private BigDecimal workmanshipAmount;
 
 }

@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 public class TransactionResponse {
     private Long id;
     private Long providerAccountId;
-    private Array completedServiceId;
+    private String completedServiceIds;
     private Long vehicleTypeId;
     private Long plateId;
     private Long colorId;

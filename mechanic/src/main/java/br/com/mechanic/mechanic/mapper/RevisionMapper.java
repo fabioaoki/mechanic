@@ -25,11 +25,13 @@ public interface RevisionMapper {
     Revision modelToEntity(RevisionModel save);
 
     @Named("transactionToRequest")
-    default RevisionRequest transactionToRequest(CompletedServiceValueModel completedServiceValueModel, Long transactionId, Long providerAccountId, Long clientAccountId){
+    default RevisionRequest transactionToRequest(CompletedServiceValueModel completedServiceValueModel, Long transactionId, Long providerAccountId, Long clientAccountId, BigDecimal mileage){
         return RevisionRequest.builder()
                 .providerServiceId(completedServiceValueModel.getProviderServiceId())
-                .endDate(completedServiceValueModel.getEndDate()).
-                providerAccountId(providerAccountId).
-                transactionId(transactionId).clientAccountId(clientAccountId).build();
+                .endDate(completedServiceValueModel.getEndDate())
+                .providerAccountId(providerAccountId)
+                .mileageForInspection(completedServiceValueModel.getMileageForInspection())
+                .mileage(mileage)
+                .transactionId(transactionId).clientAccountId(clientAccountId).build();
     }
 }
