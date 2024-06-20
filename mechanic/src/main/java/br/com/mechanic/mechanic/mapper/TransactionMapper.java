@@ -28,9 +28,8 @@ public interface TransactionMapper {
                 .plateId(completedServiceModel.getPlateId())
                 .colorId(completedServiceModel.getColorId())
                 .vehicleTypeId(completedServiceModel.getVehicleTypeId())
-                .amount(equipmentValue).rewardId(0L)
-                .workmanshipAmount(completedServiceModel
-                .getWorkmanshipAmount().setScale(2, RoundingMode.HALF_UP))
+                .amount(equipmentValue.setScale(2, RoundingMode.HALF_UP)).rewardId(0L)
+                .workmanshipAmount(completedServiceModel.getWorkmanshipAmount().setScale(2, RoundingMode.HALF_UP))
                 .installments(completedServiceModel.getInstallments())
                 .vehicleName(vehicleName)
                 .completedServiceIds(completedServiceIds).build();

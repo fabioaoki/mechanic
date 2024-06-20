@@ -4,6 +4,7 @@ package br.com.mechanic.mechanic.entity.provider;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -35,8 +36,8 @@ public class Transaction {
     @Column(name = "vehicle_name")
     private String vehicleName;
     @Column(name = "workmanship_amount")
-    private Float workmanshipAmount;
-    private Float amount;
+    private BigDecimal workmanshipAmount;
+    private BigDecimal amount;
     private Long installments;
     @Column(name = "create_date")
     private LocalDateTime createDate;
