@@ -75,6 +75,9 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
 
         log.debug("Fetching plate information for plate ID: {}", completedServiceRequest.getPlateId());
         PlateResponseDto plate = plateServiceBO.findById(completedServiceRequest.getPlateId());
+        if(!plate.getClientAccount().getId().equals(completedServiceRequest.getClientAccountId())){
+            throw new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "PlateAccountId different from clientAccountId.");
+        }
         log.info("Retrieved plate information");
 
         log.debug("Fetching model information for model ID: {}", completedServiceRequest.getModelId());
@@ -84,7 +87,6 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
         completedServiceModel.setColorId(colorResponseDto.getId());
 
         List<Long> completedServiceIds = new ArrayList<>();
-        Long[] completedServicesIds = new Long[completedServiceRequest.getServiceValueRequests().size()];
         List<CompletedServiceValueResponse> responseList = new ArrayList<>();
         AtomicReference<BigDecimal> equipmentValueRef = new AtomicReference<>(BigDecimal.ZERO);
 
