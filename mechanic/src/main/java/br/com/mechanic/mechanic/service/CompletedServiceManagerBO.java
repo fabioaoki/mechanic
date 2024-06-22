@@ -1,10 +1,13 @@
 package br.com.mechanic.mechanic.service;
 
 import br.com.mechanic.mechanic.request.CompletedServiceRequest;
+import br.com.mechanic.mechanic.response.CompletedResponseByProviderAccountDto;
 import br.com.mechanic.mechanic.response.CompletedResponseDto;
 import br.com.mechanic.mechanic.response.CompletedResponseDtoDefault;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+
+import java.util.concurrent.CompletableFuture;
 
 public interface CompletedServiceManagerBO {
     CompletedResponseDto save(final CompletedServiceRequest completedServiceRequest);
@@ -13,5 +16,7 @@ public interface CompletedServiceManagerBO {
 
     CompletedResponseDtoDefault findById(final Long id);
 
-    Page<CompletedResponseDtoDefault> findAllByProviderAccountId(final Long providerAccountId, final Pageable pageable);
+    Page<CompletedResponseByProviderAccountDto> findAllByProviderAccountId(final Long providerAccountId, final Pageable pageable);
+
+    Page<CompletedResponseDto> findAllByClientAccountId(final Long providerAccountId, final Pageable pageable);
 }

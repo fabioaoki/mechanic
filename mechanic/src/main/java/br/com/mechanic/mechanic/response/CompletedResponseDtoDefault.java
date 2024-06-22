@@ -17,6 +17,7 @@ public class CompletedResponseDtoDefault {
     private Long providerAccountId;
     private Long employeeAccountId;
     private Long providerServiceId;
+    private Long transactionId;
     private Long vehicleTypeId;
     private Long colorId;
     private Long plateId;

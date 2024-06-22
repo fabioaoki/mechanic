@@ -15,6 +15,7 @@ import br.com.mechanic.mechanic.service.vehicle.VehicleTypeServiceBO;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +26,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -75,7 +77,7 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
 
         log.debug("Fetching plate information for plate ID: {}", completedServiceRequest.getPlateId());
         PlateResponseDto plate = plateServiceBO.findById(completedServiceRequest.getPlateId());
-        if(!plate.getClientAccount().getId().equals(completedServiceRequest.getClientAccountId())){
+        if (!plate.getClientAccountId().equals(completedServiceRequest.getClientAccountId())) {
             throw new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "PlateAccountId different from clientAccountId.");
         }
         log.info("Retrieved plate information");
@@ -144,7 +146,7 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
                 boolean isFinish = false;
 
                 for (int i = 0; i < quantity; i++) {
-                    if(isFinish){
+                    if (isFinish) {
                         throw new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "Missing equipment, it is necessary to include equipment.");
                     }
                     CompletedService completedServices = CompletedServiceMapper.MAPPER.modelToEntity(
@@ -183,6 +185,7 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
         TransactionResponse transactionResponse = transactionServiceBO.save(TransactionMapper.MAPPER.completedRequestToTransactionRequest(completedServiceModel, completedIds,
                 totalAmount, model.getModel()));
 
+        completedServiceRepository.setTransactionIds(completedServiceIds, transactionResponse.getId());
 
         log.debug("Processing revisions for service value requests");
         completedServiceModel.getServiceValueRequests().forEach(completedServiceValueModel -> {
@@ -208,9 +211,31 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
     }
 
     @Override
-    public Page<CompletedResponseDtoDefault> findAllByProviderAccountId(Long providerAccountId, Pageable pageable) {
-        log.info("Retrieving list of completedServices by providerAccountId");
-        return completedServiceRepository.findAllByProviderAccountId(pageable, providerAccountId).map(CompletedServiceMapper.MAPPER::toDtoDefault);
+    public Page<CompletedResponseByProviderAccountDto> findAllByProviderAccountId(Long providerAccountId, Pageable pageable) {
+        log.info("Retrieving list of completed services by providerAccountId: {}", providerAccountId);
+        ProviderAccountResponseDto providerAccount = accountServiceBO.findById(providerAccountId);
+
+        return completedServiceRepository.findAllByProviderAccountId(pageable, providerAccountId)
+                .map(completedResponseDtoDefault -> {
+                    EmployeeAccountResponseDto employeeResponse = employeeAccountServiceBO.findById(completedResponseDtoDefault.getEmployeeAccountId());
+                    ProviderServiceResponseDto serviceResponseDto = providerServiceBO.findById(completedResponseDtoDefault.getProviderServiceId());
+                    EquipmentResponseDto equipmentResponseDto = equipmentServiceBO.findByProviderServiceIdentifierId(serviceResponseDto.getService().getId());
+                    EquipmentInResponseDto equipmentInResponse = equipmentInServiceBO.findByProviderAccountAndEquipmentId(providerAccountId, equipmentResponseDto.getId());
+                    TransactionResponse transactionResponse = transactionServiceBO.findById(completedResponseDtoDefault.getTransactionId());
+                    ModelResponseDto modelResponseDto = modelServiceBO.findById(completedResponseDtoDefault.getModelId());
+                    VehicleTypeResponseDto vehicleType = vehicleTypeServiceBO.findById(completedResponseDtoDefault.getVehicleTypeId());
+
+                    return CompletedServiceMapper.MAPPER.byProviderAccountId(providerAccount, employeeResponse.getName(), serviceResponseDto,
+                            equipmentResponseDto.getName(), equipmentInResponse.getAmount(), transactionResponse.getWorkmanshipAmount(),
+                            modelResponseDto, vehicleType.getName(), completedResponseDtoDefault.getCreateDate().toLocalDate());
+                });
+    }
+
+    @Override
+    public Page<CompletedResponseDto> findAllByClientAccountId(Long providerAccountId, Pageable pageable) {
+        log.info("Retrieving list of completedServices by clientAccountId");
+
+        return null;
     }
 
     private CompletedService getCompletedService(Long id) {

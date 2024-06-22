@@ -16,7 +16,7 @@ public class PlateResponseDto {
 
     private Long id;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private ClientAccountResponseDto clientAccount;
+    private Long clientAccountId;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private String mercosulPlate;
     @JsonInclude(JsonInclude.Include.NON_NULL)

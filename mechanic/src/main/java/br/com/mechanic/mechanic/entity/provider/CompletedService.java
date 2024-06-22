@@ -27,6 +27,8 @@ public class CompletedService {
     private Long providerServiceId;
     @Column(name = "vehicle_type_id")
     private Long vehicleTypeId;
+    @Column(name = "transaction_id")
+    private Long transactionId;
     @Column(name = "color_id")
     private Long colorId;
     @Column(name = "plate_id")

@@ -13,6 +13,7 @@ import org.mapstruct.factory.Mappers;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -24,6 +25,16 @@ public interface CompletedServiceMapper {
     EmployeeAccount toEntity(EmployeeAccountRequest dto);
 
     CompletedResponseDtoDefault toDtoDefault(CompletedService entity);
+
+    @Named("byProviderAccountId")
+    default CompletedResponseByProviderAccountDto byProviderAccountId(ProviderAccountResponseDto providerResponseDto,
+                                                                      String employeeName, ProviderServiceResponseDto serviceResponseDto,
+                                                                      String equipmentName,
+                                                                      BigDecimal equipmentValue, BigDecimal workmanshipAmount,
+                                                                      ModelResponseDto modelResponseDto, String vehicleType, LocalDate createDate) {
+        return CompletedResponseByProviderAccountDto.builder().workshop(providerResponseDto).employeeName(employeeName)
+                .service(serviceResponseDto.getService().getIdentifier()).vehicleType(vehicleType).model(modelResponseDto.getModel()).name(modelResponseDto.getName()).version(modelResponseDto.getVersion()).year(modelResponseDto.getYear()).equipmentValue(equipmentValue).equipmentName(equipmentName).workmanshipAmount(workmanshipAmount).createDate(createDate).build();
+    }
 
     EmployeeAccountModel toModel(EmployeeAccount entity);
 

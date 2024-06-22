@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -39,8 +40,12 @@ public class CompletedServiceRepositoryJpa implements CompletedServiceRepository
     }
 
     @Override
+    public void setTransactionIds(List<Long> completedServiceIds, Long transactionId) {
+        repository.setTransactionIds(completedServiceIds, transactionId);
+    }
+
+    @Override
     public Optional<CompletedService> findById(Long id) {
         return repository.findById(id);
     }
-
 }
