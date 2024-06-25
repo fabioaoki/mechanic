@@ -9,6 +9,7 @@ import br.com.mechanic.mechanic.repository.client.ClientAccountRepositoryImpl;
 import br.com.mechanic.mechanic.repository.vehicle.VehicleRepositoryImpl;
 import br.com.mechanic.mechanic.request.SaveVehicleRequest;
 import br.com.mechanic.mechanic.response.VehicleResponseDto;
+import br.com.mechanic.mechanic.response.VehicleTypeResponseDto;
 import br.com.mechanic.mechanic.service.ColorServiceBO;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -28,6 +29,7 @@ public class VehicleService implements VehicleServiceBO {
     private final PlateServiceBO plateServiceBO;
     private final ModelServiceBO modelServiceBO;
     private final ColorServiceBO colorServiceBO;
+    private final VehicleTypeServiceBO vehicleTypeServiceBO;
 
 
     @Override
@@ -37,8 +39,9 @@ public class VehicleService implements VehicleServiceBO {
         if(!viaClientController){
             clientAccountRepository.findById(requestDto.getClientAccountId());
             plateServiceBO.findById(requestDto.getPlateId());
-            modelServiceBO.findById(requestDto.getMarcId());
+            modelServiceBO.findById(requestDto.getModelId());
             colorServiceBO.findById(requestDto.getColorId());
+            vehicleTypeServiceBO.findById(requestDto.getVehicleTypeId());
         }
         log.info("Service: Saving a new vehicle");
         Vehicle vehicle = VehicleMapper.MAPPER.toEntity(requestDto);
@@ -49,6 +52,11 @@ public class VehicleService implements VehicleServiceBO {
     @Override
     public void sold(Long id, boolean sold) {
 
+    }
+
+    @Override
+    public VehicleResponseDto findByPlateId(Long plateId) {
+        return VehicleMapper.MAPPER.toDto(vehicleRepository.vehicleIsExists(plateId).orElseThrow(() -> new VehicleException(ErrorCode.VEHICLE_TYPE_EXCEPTION, "Vehicle type not found by plateId: " + plateId)));
     }
 
     @Override
@@ -74,18 +82,25 @@ public class VehicleService implements VehicleServiceBO {
 
     private void validVehicleField(SaveVehicleRequest requestDto) {
         if (Objects.isNull(requestDto.getClientAccountId()) || requestDto.getClientAccountId() == 0) {
-            throw new EquipmentException(ErrorCode.INVALID_FIELD, "The 'clientAccountId' field is required and cannot be empty or zero.");
+            throw new VehicleException(ErrorCode.INVALID_FIELD, "The 'clientAccountId' field is required and cannot be empty or zero.");
         }
-        if (Objects.isNull(requestDto.getMarcId()) || requestDto.getMarcId() == 0) {
-            throw new EquipmentException(ErrorCode.INVALID_FIELD, "The 'marcId' field is required and cannot be empty or zero.");
+        if (Objects.isNull(requestDto.getModelId()) || requestDto.getModelId() == 0) {
+            throw new VehicleException(ErrorCode.INVALID_FIELD, "The 'marcId' field is required and cannot be empty or zero.");
         }
         if (Objects.isNull(requestDto.getPlateId()) || requestDto.getPlateId() == 0) {
-            throw new EquipmentException(ErrorCode.INVALID_FIELD, "The 'plateId' field is required and cannot be empty or zero.");
+            throw new VehicleException(ErrorCode.INVALID_FIELD, "The 'plateId' field is required and cannot be empty or zero.");
         }
+        if (Objects.isNull(requestDto.getVehicleTypeId()) || requestDto.getVehicleTypeId() == 0) {
+            throw new VehicleException(ErrorCode.INVALID_FIELD, "The 'vehicleTypeId' field is required and cannot be empty or zero.");
+        }
+        getVehicleType(requestDto.getVehicleTypeId());
         if (Objects.isNull(requestDto.getColorId()) || requestDto.getColorId() == 0) {
-            throw new EquipmentException(ErrorCode.INVALID_FIELD, "The 'colorId' field is required and cannot be empty or zero.");
+            throw new VehicleException(ErrorCode.INVALID_FIELD, "The 'colorId' field is required and cannot be empty or zero.");
         }
         vehicleIsExists(requestDto.getPlateId());
+    }
+    private void getVehicleType(Long vehicleTypeId) {
+        vehicleTypeServiceBO.findById(vehicleTypeId);
     }
 
     private void vehicleIsExists(Long plateId) {

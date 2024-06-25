@@ -19,4 +19,5 @@ public interface VehicleRepositoryImpl {
     Optional<Vehicle> vehicleIsExists(Long plateId);
 
     Page<Vehicle> findAllByClientAccountId(Pageable pageable, Long clientAccountId);
+
 }

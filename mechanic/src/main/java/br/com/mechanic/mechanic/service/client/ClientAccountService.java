@@ -13,6 +13,7 @@ import br.com.mechanic.mechanic.service.ColorServiceBO;
 import br.com.mechanic.mechanic.service.vehicle.ModelServiceBO;
 import br.com.mechanic.mechanic.service.vehicle.PlateServiceBO;
 import br.com.mechanic.mechanic.service.vehicle.VehicleServiceBO;
+import br.com.mechanic.mechanic.service.vehicle.VehicleTypeServiceBO;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -41,11 +42,14 @@ public class ClientAccountService implements ClientAccountServiceBO {
     private ModelServiceBO modelServiceBO;
     private ColorServiceBO colorServiceBO;
     private VehicleServiceBO vehicleServiceBO;
+    private VehicleTypeServiceBO vehicleTypeServiceBO;
 
     @Transactional
     @Override
     public ClientAccountResponseDto save(ClientAccountRequest clientAccountRequest) {
         log.info("Start saving client account.");
+
+        validClientAccountField(clientAccountRequest);
 
         ClientAccountModel accountModel = ClientAccountMapper.MAPPER.toModel(clientAccountRequest);
         accountModel.setName(formatName(accountModel.getName().trim()));
@@ -77,8 +81,8 @@ public class ClientAccountService implements ClientAccountServiceBO {
         clientAccountRequest.getVehicles().forEach(vehicleRequest -> {
             if (Objects.isNull(vehicleRequest.getPlate()) ||
                     Objects.isNull(vehicleRequest.getColorId()) ||
-                    Objects.isNull(vehicleRequest.getModelId())) {
-                throw new ClientAccountException(ErrorCode.INVALID_FIELD, "Mismatch in sizes of lists: Plates, Marcs, and Colors must have the same number of elements.");
+                    Objects.isNull(vehicleRequest.getModelId()) || Objects.isNull(vehicleRequest.getVehicleId())) {
+                throw new ClientAccountException(ErrorCode.INVALID_FIELD, "Mismatch in sizes of lists: Plates, Marcs, vehicleType and Colors must have the same number of elements.");
             }
         });
 
@@ -111,6 +115,16 @@ public class ClientAccountService implements ClientAccountServiceBO {
             log.info("Color saved with ID: {}", colorResponseDto.getId());
         });
 
+        log.info("Processing and saving vehicleType.");
+        List<Long> vehicleTypeIds = clientAccountRequest.getVehicles().stream()
+                .map(VehicleRequest::getVehicleId)
+                .collect(Collectors.toList());
+        List<VehicleTypeResponseDto> vehicleTypeResponseList = new ArrayList<>();
+        vehicleTypeIds.forEach(vehicleTypeId -> {
+            VehicleTypeResponseDto vehicleTypeResponseDto = vehicleTypeServiceBO.findById(vehicleTypeId);
+            vehicleTypeResponseList.add(vehicleTypeResponseDto);
+        });
+
 //        if (plateResponseList.size() != marcResponseList.size() || plateResponseList.size() != colorResponseList.size()) {
 //            log.error("Mismatch in sizes of lists: Plates={}, Marcs={}, Colors={}",
 //                    plateResponseList.size(), marcResponseList.size(), colorResponseList.size());
@@ -126,9 +140,10 @@ public class ClientAccountService implements ClientAccountServiceBO {
 
             SaveVehicleRequest saveVehicleRequest = SaveVehicleRequest.builder()
                     .clientAccountId(clientAccount.getId())
-                    .marcId(marcResponseList.get(i).getId())
+                    .modelId(marcResponseList.get(i).getId())
                     .colorId(colorIds.get(i))
                     .plateId(plateResponseList.get(i).getId())
+                    .vehicleTypeId(vehicleTypeResponseList.get(i).getId())
                     .build();
 
             vehicleServiceBO.save(saveVehicleRequest, true);
@@ -232,23 +247,25 @@ public class ClientAccountService implements ClientAccountServiceBO {
 
     private void validClientAccountField(ClientAccountRequest clientAccountRequest) {
         log.info("Service: valid client field");
-        if (clientAccountRequest.getPerson().getName() == null) {
-            throw new ClientAccountException(ErrorCode.INVALID_FIELD, "The 'birthDate' field is required.");
-        }
-        validBirthDate(clientAccountRequest.getPerson().getBirthDate());
-
         if (clientAccountRequest.getCpf().isEmpty() || clientAccountRequest.getCpf().trim().isEmpty()) {
             throw new ClientAccountException(ErrorCode.INVALID_FIELD, "The 'cpf' field is required.");
         }
-        if (clientAccountRequest.getPerson().getName().isEmpty() || clientAccountRequest.getPerson().getName().trim().isEmpty()) {
-            throw new ClientAccountException(ErrorCode.INVALID_FIELD, "The 'name' field is required.");
-        }
-        isValidName(clientAccountRequest.getPerson().getName());
 
         if (clientAccountRequest.getRg().isEmpty() || clientAccountRequest.getRg().trim().isEmpty()) {
             throw new ClientAccountException(ErrorCode.INVALID_FIELD, "The 'rg' field is required.");
         }
         validRg(clientAccountRequest.getRg());
+
+        if (clientAccountRequest.getPerson().getName().isEmpty() || clientAccountRequest.getPerson().getName().trim().isEmpty()) {
+            throw new ClientAccountException(ErrorCode.INVALID_FIELD, "The 'name' field is required.");
+        }
+        isValidName(clientAccountRequest.getPerson().getName());
+        if (clientAccountRequest.getPerson().getBirthDate() == null) {
+            throw new ClientAccountException(ErrorCode.INVALID_FIELD, "The 'birthDate' field is required.");
+        }
+        validBirthDate(clientAccountRequest.getPerson().getBirthDate());
+
+
     }
 
     private static void validRg(String rg) {

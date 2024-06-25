@@ -11,6 +11,7 @@ import br.com.mechanic.mechanic.request.RevisionRequest;
 import br.com.mechanic.mechanic.response.*;
 import br.com.mechanic.mechanic.service.vehicle.ModelServiceBO;
 import br.com.mechanic.mechanic.service.vehicle.PlateServiceBO;
+import br.com.mechanic.mechanic.service.vehicle.VehicleServiceBO;
 import br.com.mechanic.mechanic.service.vehicle.VehicleTypeServiceBO;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -48,6 +49,7 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
     private final EquipmentOutServiceBO equipmentOutServiceBO;
     private final TransactionServiceBO transactionServiceBO;
     private final RevisionServiceBO revisionServiceBO;
+    private final VehicleServiceBO vehicleServiceBO;
 
     @Transactional
     @Override
@@ -80,6 +82,13 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
         if (!plate.getClientAccountId().equals(completedServiceRequest.getClientAccountId())) {
             throw new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "PlateAccountId different from clientAccountId.");
         }
+
+        VehicleResponseDto vehiclePlateResponse = vehicleServiceBO.findByPlateId(completedServiceRequest.getPlateId());
+        if (!vehiclePlateResponse.getModelId().equals(completedServiceRequest.getModelId()) | !colorResponseDto.getColor().equals(formatColor(completedServiceRequest.getColor()))
+                | !vehiclePlateResponse.getVehicleTypeId().equals(completedServiceRequest.getVehicleTypeId())) {
+            throw new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "Model, vehicleTypeId or color is different from clientAccountId.");
+        }
+
         log.info("Retrieved plate information");
 
         log.debug("Fetching model information for model ID: {}", completedServiceRequest.getModelId());
@@ -196,6 +205,11 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
 
         log.info("Completed service creation process successfully");
         return CompletedServiceMapper.MAPPER.toDto(colorResponseDto.getColor(), providerAccount.getWorkshop(), vehicleType.getName(), plate, model.getModel(), model.getName(), responseList, completedServiceModel.getInstallments(), totalAmount, completedServiceRequest.getMileage());
+    }
+
+    public static String formatColor(String color) {
+        color = color.trim().toLowerCase();
+        return color.substring(0, 1).toUpperCase() + color.substring(1).toLowerCase();
     }
 
 

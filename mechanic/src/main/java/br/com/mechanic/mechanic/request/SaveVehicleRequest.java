@@ -13,6 +13,7 @@ public class SaveVehicleRequest {
 
     private Long plateId;
     private Long clientAccountId;
-    private Long marcId;
+    private Long modelId;
     private Long colorId;
+    private Long vehicleTypeId;
 }

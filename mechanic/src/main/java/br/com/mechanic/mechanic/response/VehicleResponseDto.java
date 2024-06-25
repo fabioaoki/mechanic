@@ -17,9 +17,10 @@ public class VehicleResponseDto {
     private Long id;
     private Long clientAccountId;
     private Long plateId;
-    private Long marcId;
+    private Long modelId;
     private Long colorId;
     private boolean sold;
+    private Long vehicleTypeId;
     private LocalDateTime createDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDateTime lastUpdate;

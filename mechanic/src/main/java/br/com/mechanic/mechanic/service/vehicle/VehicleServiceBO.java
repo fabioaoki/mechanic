@@ -16,4 +16,6 @@ public interface VehicleServiceBO {
     VehicleResponseDto save(final SaveVehicleRequest vehicleTypeRequestDto, boolean viaClientController) throws VehicleTypeException;
 
     void sold(final Long id, final boolean sold);
+
+    VehicleResponseDto findByPlateId(Long plateId);
 }

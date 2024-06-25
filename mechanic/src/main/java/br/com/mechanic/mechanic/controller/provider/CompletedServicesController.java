@@ -92,6 +92,9 @@ public class CompletedServicesController {
         } catch (CompletedServiceException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
         }
+        catch (ProviderAccountException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
+        }
     }
 
     private static ErrorResponse getErrorResponse(CompletedServiceException e) {

@@ -22,10 +22,12 @@ public class Vehicle {
     private Long plateId;
     @Column(name = "client_account_id")
     private Long clientAccountId;
-    @Column(name = "marcId")
-    private Long marcId;
+    @Column(name = "model_id")
+    private Long modelId;
     @Column(name = "color_id")
     private Long colorId;
+    @Column(name = "vehicle_type_id")
+    private Long vehicleTypeId;
     private Boolean sold;
     @Column(name = "create_date")
     private LocalDateTime createDate;

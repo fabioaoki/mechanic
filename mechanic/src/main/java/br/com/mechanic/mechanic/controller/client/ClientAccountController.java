@@ -58,13 +58,16 @@ public class ClientAccountController {
         } catch (VehicleException e) {
             log.error("VehicleException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
+        } catch (VehicleTypeException e) {
+            log.error("VehicleException: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
         }
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getClientAccountById(@PathVariable Long id) {
         try {
-            log.info("Fetching client account with id: {}" , id);
+            log.info("Fetching client account with id: {}", id);
             return ResponseEntity.ok(clientAccountServiceBO.findById(id));
         } catch (ClientAccountException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
@@ -74,7 +77,7 @@ public class ClientAccountController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateClientAccount(@PathVariable Long id, @RequestBody ClientAccountUpdateRequest requestDto) {
         try {
-            log.info("Updating client account with id: {}" , id);
+            log.info("Updating client account with id: {}", id);
             return ResponseEntity.ok(clientAccountServiceBO.updateClientAccount(id, requestDto));
         } catch (ClientAccountException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
@@ -131,6 +134,13 @@ public class ClientAccountController {
     }
 
     private static ErrorResponse getErrorResponse(VehicleException e) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setErrorCode(e.getErrorCode());
+        errorResponse.setMessage(e.getMessage());
+        return errorResponse;
+    }
+
+    private static ErrorResponse getErrorResponse(VehicleTypeException e) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setErrorCode(e.getErrorCode());
         errorResponse.setMessage(e.getMessage());
