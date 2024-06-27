@@ -213,6 +213,12 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
         return color.substring(0, 1).toUpperCase() + color.substring(1).toLowerCase();
     }
 
+    @Override
+    public List<EmployeeServiceCountDto> getCompletedServiceCountByEmployee(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        log.info("Fetching completed service count for providerAccountId: {}, from: {}, to: {}", providerAccountId, startDate, endDate);
+        accountServiceBO.findById(providerAccountId);
+        return completedServiceRepository.countFirstCompletedServiceByEmployee(providerAccountId, startDate, endDate);
+    }
 
     @Override
     public Page<CompletedResponseDtoDefault> findAll(Pageable pageable) {
