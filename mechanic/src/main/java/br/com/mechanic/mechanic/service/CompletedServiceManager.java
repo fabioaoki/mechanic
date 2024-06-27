@@ -3,7 +3,10 @@ package br.com.mechanic.mechanic.service;
 import br.com.mechanic.mechanic.entity.provider.CompletedService;
 import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import br.com.mechanic.mechanic.exception.*;
-import br.com.mechanic.mechanic.mapper.*;
+import br.com.mechanic.mechanic.mapper.CompletedServiceMapper;
+import br.com.mechanic.mechanic.mapper.EquipmentOutMapper;
+import br.com.mechanic.mechanic.mapper.RevisionMapper;
+import br.com.mechanic.mechanic.mapper.TransactionMapper;
 import br.com.mechanic.mechanic.model.CompletedServiceModel;
 import br.com.mechanic.mechanic.repository.provider.CompletedServiceRepositoryImpl;
 import br.com.mechanic.mechanic.request.CompletedServiceRequest;
@@ -16,7 +19,6 @@ import br.com.mechanic.mechanic.service.vehicle.VehicleTypeServiceBO;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +29,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -225,11 +226,11 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
     }
 
     @Override
-    public Page<CompletedResponseByProviderAccountDto> findAllByProviderAccountId(Long providerAccountId, Pageable pageable) {
+    public Page<CompletedResponseByProviderAccountDto> findAllByProviderAccountId(Long providerAccountId, Pageable pageable, LocalDate startDate, LocalDate endDate) {
         log.info("Retrieving list of completed services by providerAccountId: {}", providerAccountId);
         ProviderAccountResponseDto providerAccount = accountServiceBO.findById(providerAccountId);
 
-        return completedServiceRepository.findAllByProviderAccountId(pageable, providerAccountId)
+        return completedServiceRepository.findAllByProviderAccountId(pageable, providerAccountId, startDate, endDate)
                 .map(completedResponseDtoDefault -> {
                     EmployeeAccountResponseDto employeeResponse = employeeAccountServiceBO.findById(completedResponseDtoDefault.getEmployeeAccountId());
                     ProviderServiceResponseDto serviceResponseDto = providerServiceBO.findById(completedResponseDtoDefault.getProviderServiceId());
