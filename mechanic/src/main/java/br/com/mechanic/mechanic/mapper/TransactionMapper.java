@@ -21,14 +21,14 @@ public interface TransactionMapper {
     TransactionResponse toDto(Transaction entity);
 
     @Named("completedRequestToTransactionRequest")
-    default TransactionRequest completedRequestToTransactionRequest(CompletedServiceModel completedServiceModel, String completedServiceIds, BigDecimal equipmentValue, String vehicleName) {
+    default TransactionRequest completedRequestToTransactionRequest(CompletedServiceModel completedServiceModel, String completedServiceIds, BigDecimal totalAmount, String vehicleName) {
         return TransactionRequest.builder()
                 .clientAccountId(completedServiceModel.getClientAccountId())
                 .providerAccountId(completedServiceModel.getProviderAccountId())
                 .plateId(completedServiceModel.getPlateId())
                 .colorId(completedServiceModel.getColorId())
                 .vehicleTypeId(completedServiceModel.getVehicleTypeId())
-                .amount(equipmentValue.setScale(2, RoundingMode.HALF_UP)).rewardId(0L)
+                .amount(totalAmount.setScale(2, RoundingMode.HALF_UP)).rewardId(0L)
                 .workmanshipAmount(completedServiceModel.getWorkmanshipAmount().setScale(2, RoundingMode.HALF_UP))
                 .installments(completedServiceModel.getInstallments())
                 .vehicleName(vehicleName)

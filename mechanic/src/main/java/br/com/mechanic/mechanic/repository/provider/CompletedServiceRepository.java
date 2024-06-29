@@ -35,7 +35,7 @@ public interface CompletedServiceRepository extends JpaRepository<CompletedServi
             "INNER JOIN mechanic.vehicle_type vt ON c.vehicle_type_id = vt.id " +
             "WHERE c.provider_account_id = :providerAccountId " +
             "AND c.create_date BETWEEN :startDate AND :endDate GROUP BY vt.name, ea.name, psi.identifier", nativeQuery = true)
-    List<Object[]> countCompletedServicesByEmployeeAccountIdAndOptionalDate(@Param("providerAccountId") Long providerAccountId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
+    List<Object[]> countCompletedServicesByEmployeeAccountIdAndDate(@Param("providerAccountId") Long providerAccountId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
     @Query(value = "SELECT ea.name, psi.identifier, vt.name as typeOfCar, COUNT(c) " +
             "FROM mechanic.completed_service c " +
@@ -47,18 +47,45 @@ public interface CompletedServiceRepository extends JpaRepository<CompletedServi
             "GROUP BY vt.name, ea.name, psi.identifier", nativeQuery = true)
     List<Object[]> findServiceCountsByProviderAccount(@Param("providerAccountId") Long providerAccountId);
 
-    @Query("SELECT c.providerServiceId, COUNT(c) FROM CompletedService c WHERE c.providerAccountId = :providerAccountId AND (c.createDate BETWEEN :startDate AND :endDate OR :startDate IS NULL OR :endDate IS NULL) GROUP BY c.providerServiceId")
-    List<Object[]> countCompletedServicesByProviderServiceIdAndOptionalDate(Long providerAccountId, LocalDateTime startDate, LocalDateTime endDate);
+    @Query(value = "SELECT psi.identifier, vt.name as typeOfCar, COUNT(c), sum(t.workmanship_amount) as workmanshipAmount, sum(t.amount - t.workmanship_amount) as equipmentValue " +
+            "FROM mechanic.completed_service c " +
+            "INNER JOIN mechanic.provider_service ps ON c.provider_service_id = ps.id " +
+            "INNER JOIN mechanic.provider_service_identifier psi ON ps.identifier_id = psi.id " +
+            "INNER JOIN mechanic.vehicle_type vt ON c.vehicle_type_id = vt.id " +
+            "inner join mechanic.transaction t on c.transaction_id = t.id " +
+            "WHERE c.provider_account_id = :providerAccountId " +
+            "GROUP BY vt.name, psi.identifier", nativeQuery = true)
+    List<Object[]> countCompletedServicesByProviderServiceId(@Param("providerAccountId") Long providerAccountId);
 
-    @Query("SELECT c.vehicleTypeId, COUNT(c) FROM CompletedService c WHERE c.providerAccountId = :providerAccountId AND (c.createDate BETWEEN :startDate AND :endDate OR :startDate IS NULL OR :endDate IS NULL) GROUP BY c.vehicleTypeId")
-    List<Object[]> countCompletedServicesByVehicleTypeIdAndOptionalDate(Long providerAccountId, LocalDateTime startDate, LocalDateTime endDate);
+    @Query(value = "SELECT psi.identifier, vt.name as typeOfCar, COUNT(c), sum(t.workmanship_amount) as workmanshipAmount, sum(t.amount - t.workmanship_amount) as equipmentValue " +
+            "FROM mechanic.completed_service c " +
+            "INNER JOIN mechanic.provider_service ps ON c.provider_service_id = ps.id " +
+            "INNER JOIN mechanic.provider_service_identifier psi ON ps.identifier_id = psi.id " +
+            "INNER JOIN mechanic.vehicle_type vt ON c.vehicle_type_id = vt.id " +
+            "inner join mechanic.transaction t on c.transaction_id = t.id " +
+            "WHERE c.provider_account_id = :providerAccountId " +
+            "AND c.create_date BETWEEN :startDate AND :endDate GROUP BY vt.name, psi.identifier", nativeQuery = true)
+    List<Object[]> countCompletedServicesByProviderServiceIdAndDate(@Param("providerAccountId") Long providerAccountId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
-    @Query("SELECT c.colorId, COUNT(c) FROM CompletedService c WHERE c.providerAccountId = :providerAccountId AND (c.createDate BETWEEN :startDate AND :endDate OR :startDate IS NULL OR :endDate IS NULL) GROUP BY c.colorId")
-    List<Object[]> countCompletedServicesByColorIdAndOptionalDate(Long providerAccountId, LocalDateTime startDate, LocalDateTime endDate);
 
-    @Query("SELECT c.plateId, COUNT(c) FROM CompletedService c WHERE c.providerAccountId = :providerAccountId AND (c.createDate BETWEEN :startDate AND :endDate OR :startDate IS NULL OR :endDate IS NULL) GROUP BY c.plateId")
-    List<Object[]> countCompletedServicesByPlateIdAndOptionalDate(Long providerAccountId, LocalDateTime startDate, LocalDateTime endDate);
+    @Query(value = "SELECT psi.identifier, vt.name as typeOfCar, COUNT(c), sum(t.workmanship_amount) as workmanshipAmount, sum(t.amount - t.workmanship_amount) as equipmentValue, to_char(c.create_date, 'YYYY-MM-DD') AS date " +
+            "FROM mechanic.completed_service c " +
+            "INNER JOIN mechanic.provider_service ps ON c.provider_service_id = ps.id " +
+            "INNER JOIN mechanic.provider_service_identifier psi ON ps.identifier_id = psi.id " +
+            "INNER JOIN mechanic.vehicle_type vt ON c.vehicle_type_id = vt.id " +
+            "inner join mechanic.transaction t on c.transaction_id = t.id " +
+            "WHERE c.provider_account_id = :providerAccountId " +
+            "AND c.create_date BETWEEN :startDate AND :endDate GROUP BY vt.name, psi.identifier, to_char(c.create_date, 'YYYY-MM-DD')", nativeQuery = true)
+    List<Object[]> countCompletedServicesByProviderServiceIdAndDateAndGroupByDate(@Param("providerAccountId") Long providerAccountId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
+    @Query(value = "SELECT psi.identifier, vt.name as typeOfCar, COUNT(c), to_char(c.create_date, 'YYYY-MM-DD') AS date " +
+            "FROM mechanic.completed_service c " +
+            "INNER JOIN mechanic.provider_service ps ON c.provider_service_id = ps.id " +
+            "INNER JOIN mechanic.provider_service_identifier psi ON ps.identifier_id = psi.id " +
+            "INNER JOIN mechanic.vehicle_type vt ON c.vehicle_type_id = vt.id " +
+            "WHERE c.provider_account_id = :providerAccountId " +
+            "AND c.create_date BETWEEN :startDate AND :endDate GROUP BY vt.name, psi.identifier, to_char(c.create_date, 'YYYY-MM-DD')", nativeQuery = true)
+    List<Object[]> countCompletedServicesByVehicleTypeIdAndOptionalDate(@Param("providerAccountId") Long providerAccountId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
 }
 

@@ -221,6 +221,26 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
     }
 
     @Override
+    public List<ProviderServiceCountDto> getCompletedServiceCountByProviderService(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        log.info("Fetching completed service count for providerAccountId: {}, from: {}, to: {}", providerAccountId, startDate, endDate);
+        accountServiceBO.findById(providerAccountId);
+        return completedServiceRepository.countFirstCompletedServiceByProviderService(providerAccountId, startDate, endDate);
+    }
+    @Override
+    public List<ProviderServiceCountGroupByDateDto> countFirstCompletedServiceByProviderServiceGroupByDate(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        log.info("Fetching completed service count for providerAccountId: {}, from: {}, to: {}, group by date", providerAccountId, startDate, endDate);
+        accountServiceBO.findById(providerAccountId);
+        return completedServiceRepository.countFirstCompletedServiceByProviderServiceGroupByDate(providerAccountId, startDate, endDate);
+    }
+
+    @Override
+    public List<ProviderServiceCountCompletedServiceGroupByDateDto> countCompletedServicesByVehicleTypeIdAndOptionalDate(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        log.info("Fetching completed service count for providerAccountId: {}, from: {}, to: {}, group by date", providerAccountId, startDate, endDate);
+        accountServiceBO.findById(providerAccountId);
+        return completedServiceRepository.countCompletedServicesByVehicleTypeIdAndOptionalDate(providerAccountId, startDate, endDate);
+    }
+
+    @Override
     public Page<CompletedResponseDtoDefault> findAll(Pageable pageable) {
         log.info("Retrieving list of completedServices");
         return completedServiceRepository.findAll(pageable).map(CompletedServiceMapper.MAPPER::toDtoDefault);

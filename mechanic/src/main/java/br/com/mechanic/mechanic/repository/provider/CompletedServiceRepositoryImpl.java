@@ -2,6 +2,9 @@ package br.com.mechanic.mechanic.repository.provider;
 
 import br.com.mechanic.mechanic.entity.provider.CompletedService;
 import br.com.mechanic.mechanic.response.EmployeeServiceCountDto;
+import br.com.mechanic.mechanic.response.ProviderServiceCountCompletedServiceGroupByDateDto;
+import br.com.mechanic.mechanic.response.ProviderServiceCountDto;
+import br.com.mechanic.mechanic.response.ProviderServiceCountGroupByDateDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -21,6 +24,12 @@ public interface CompletedServiceRepositoryImpl {
 
 
     List<EmployeeServiceCountDto> countFirstCompletedServiceByEmployee(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    List<ProviderServiceCountDto> countFirstCompletedServiceByProviderService(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    List<ProviderServiceCountGroupByDateDto> countFirstCompletedServiceByProviderServiceGroupByDate(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    List<ProviderServiceCountCompletedServiceGroupByDateDto> countCompletedServicesByVehicleTypeIdAndOptionalDate(Long providerAccountId, LocalDate startDate, LocalDate endDate);
 
     void setTransactionIds(List<Long> completedServiceIds, Long transactionId);
 }

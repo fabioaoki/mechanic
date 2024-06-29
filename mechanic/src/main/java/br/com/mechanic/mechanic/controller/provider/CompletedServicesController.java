@@ -75,13 +75,54 @@ public class CompletedServicesController {
         }
     }
 
-    @GetMapping("/providers/{providerAccountId}/service-count")
-    public ResponseEntity<?> getEquipmentInById(@PathVariable Long providerAccountId,
+    @GetMapping("/provider/{providerAccountId}/service-count-by-employee")
+    public ResponseEntity<?> getProviderServiceByEmployee(@PathVariable Long providerAccountId,
+                                                @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        try {
+            log.info("Fetching service count for providerAccountId: {}, from: {}, to: {} by employee", providerAccountId, startDate, endDate);
+            return ResponseEntity.ok(completedServiceManagerBO.getCompletedServiceCountByEmployee(providerAccountId, startDate, endDate));
+        } catch (CompletedServiceException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
+        } catch (ProviderAccountException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
+        }
+    }
+
+    @GetMapping("/provider/{providerAccountId}/service-count-by-provider-service")
+    public ResponseEntity<?> getProviderServiceByProviderAccount(@PathVariable Long providerAccountId,
                                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
                                                 @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
         try {
             log.info("Fetching service count for providerAccountId: {}, from: {}, to: {}", providerAccountId, startDate, endDate);
-            return ResponseEntity.ok(completedServiceManagerBO.getCompletedServiceCountByEmployee(providerAccountId, startDate, endDate));
+            return ResponseEntity.ok(completedServiceManagerBO.getCompletedServiceCountByProviderService(providerAccountId, startDate, endDate));
+        } catch (CompletedServiceException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
+        } catch (ProviderAccountException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
+        }
+    }
+    @GetMapping("/provider/{providerAccountId}/service-count-by-provider-service-group-by-date")
+    public ResponseEntity<?> getProviderServiceByProviderAccountGroupByDate(@PathVariable Long providerAccountId,
+                                                                 @RequestParam(required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                                 @RequestParam(required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        try {
+            log.info("Fetching service count for providerAccountId: {}, from: {}, to: {}, group by date", providerAccountId, startDate, endDate);
+            return ResponseEntity.ok(completedServiceManagerBO.countFirstCompletedServiceByProviderServiceGroupByDate(providerAccountId, startDate, endDate));
+        } catch (CompletedServiceException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
+        } catch (ProviderAccountException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
+        }
+    }
+
+    @GetMapping("/provider/{providerAccountId}/service-count-by-provider-service-completed-group-by-date")
+    public ResponseEntity<?> getProviderCompletedServiceByProviderAccountGroupByDate(@PathVariable Long providerAccountId,
+                                                                            @RequestParam(required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                                            @RequestParam(required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        try {
+            log.info("Fetching service count for providerAccountId: {}, from: {}, to: {}, group by date", providerAccountId, startDate, endDate);
+            return ResponseEntity.ok(completedServiceManagerBO.countCompletedServicesByVehicleTypeIdAndOptionalDate(providerAccountId, startDate, endDate));
         } catch (CompletedServiceException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
         } catch (ProviderAccountException e) {

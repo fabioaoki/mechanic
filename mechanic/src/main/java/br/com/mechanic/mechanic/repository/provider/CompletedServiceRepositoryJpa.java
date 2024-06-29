@@ -1,18 +1,19 @@
 package br.com.mechanic.mechanic.repository.provider;
 
 import br.com.mechanic.mechanic.entity.provider.CompletedService;
-import br.com.mechanic.mechanic.exception.CompletedServiceException;
-import br.com.mechanic.mechanic.exception.ErrorCode;
 import br.com.mechanic.mechanic.response.EmployeeServiceCountDto;
+import br.com.mechanic.mechanic.response.ProviderServiceCountCompletedServiceGroupByDateDto;
+import br.com.mechanic.mechanic.response.ProviderServiceCountDto;
+import br.com.mechanic.mechanic.response.ProviderServiceCountGroupByDateDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -63,7 +64,7 @@ public class CompletedServiceRepositoryJpa implements CompletedServiceRepository
             LocalDateTime endDateTime = null;
             startDateTime = startDate.atTime(LocalTime.MIN);
             endDateTime = endDate.atTime(LocalTime.MAX);
-            List<Object[]> results = repository.countCompletedServicesByEmployeeAccountIdAndOptionalDate(providerAccountId, startDateTime, endDateTime);
+            List<Object[]> results = repository.countCompletedServicesByEmployeeAccountIdAndDate(providerAccountId, startDateTime, endDateTime);
 
             return results.stream()
                     .map(result -> new EmployeeServiceCountDto((String) result[0], (String) result[1], (String) result[2], (Long) result[3]))
@@ -74,6 +75,64 @@ public class CompletedServiceRepositoryJpa implements CompletedServiceRepository
                     .map(result -> new EmployeeServiceCountDto((String) result[0], (String) result[1], (String) result[2], (Long) result[3]))
                     .collect(Collectors.toList());
         }
+    }
+
+    @Override
+    public List<ProviderServiceCountDto> countFirstCompletedServiceByProviderService(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        if (startDate != null && endDate != null) {
+            LocalDateTime startDateTime = null;
+            LocalDateTime endDateTime = null;
+            startDateTime = startDate.atTime(LocalTime.MIN);
+            endDateTime = endDate.atTime(LocalTime.MAX);
+            List<Object[]> results = repository.countCompletedServicesByProviderServiceIdAndDate(providerAccountId, startDateTime, endDateTime);
+
+            return results.stream()
+                    .map(result -> new ProviderServiceCountDto((String) result[0], (String) result[1], (Long) result[2], (BigDecimal) result[3], (BigDecimal) result[4]))
+                    .collect(Collectors.toList());
+        } else {
+            List<Object[]> results = repository.countCompletedServicesByProviderServiceId(providerAccountId);
+            return results.stream()
+                    .map(result -> new ProviderServiceCountDto((String) result[0], (String) result[1], (Long) result[2], (BigDecimal) result[3], (BigDecimal) result[4]))
+                    .collect(Collectors.toList());
+        }
+    }
+
+    @Override
+    public List<ProviderServiceCountGroupByDateDto> countFirstCompletedServiceByProviderServiceGroupByDate(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDateTime = null;
+        LocalDateTime endDateTime = null;
+        startDateTime = startDate.atTime(LocalTime.MIN);
+        endDateTime = endDate.atTime(LocalTime.MAX);
+        List<Object[]> results = repository.countCompletedServicesByProviderServiceIdAndDateAndGroupByDate(providerAccountId, startDateTime, endDateTime);
+
+        return results.stream()
+                .map(result -> new ProviderServiceCountGroupByDateDto(
+                        (String) result[0],
+                        (String) result[1],
+                        (Long) result[2],
+                        (BigDecimal) result[3],
+                        (BigDecimal) result[4],
+                        LocalDate.parse((String) result[5])
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ProviderServiceCountCompletedServiceGroupByDateDto> countCompletedServicesByVehicleTypeIdAndOptionalDate(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDateTime = null;
+        LocalDateTime endDateTime = null;
+        startDateTime = startDate.atTime(LocalTime.MIN);
+        endDateTime = endDate.atTime(LocalTime.MAX);
+        List<Object[]> results = repository.countCompletedServicesByVehicleTypeIdAndOptionalDate(providerAccountId, startDateTime, endDateTime);
+
+        return results.stream()
+                .map(result -> new ProviderServiceCountCompletedServiceGroupByDateDto(
+                        (String) result[0],   // identifier
+                        (String) result[1],   // typeOfCar
+                        (Long) result[2],     // count
+                        LocalDate.parse((String) result[3])  // date from String
+                ))
+                .collect(Collectors.toList());
     }
 
     @Override

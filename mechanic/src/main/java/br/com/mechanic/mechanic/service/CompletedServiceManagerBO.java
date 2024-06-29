@@ -1,10 +1,7 @@
 package br.com.mechanic.mechanic.service;
 
 import br.com.mechanic.mechanic.request.CompletedServiceRequest;
-import br.com.mechanic.mechanic.response.CompletedResponseByProviderAccountDto;
-import br.com.mechanic.mechanic.response.CompletedResponseDto;
-import br.com.mechanic.mechanic.response.CompletedResponseDtoDefault;
-import br.com.mechanic.mechanic.response.EmployeeServiceCountDto;
+import br.com.mechanic.mechanic.response.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,6 +13,12 @@ public interface CompletedServiceManagerBO {
     CompletedResponseDto save(final CompletedServiceRequest completedServiceRequest);
 
     List<EmployeeServiceCountDto> getCompletedServiceCountByEmployee(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    List<ProviderServiceCountDto> getCompletedServiceCountByProviderService(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    List<ProviderServiceCountGroupByDateDto> countFirstCompletedServiceByProviderServiceGroupByDate(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    List<ProviderServiceCountCompletedServiceGroupByDateDto> countCompletedServicesByVehicleTypeIdAndOptionalDate(Long providerAccountId, LocalDate startDate, LocalDate endDate);
 
     Page<CompletedResponseDtoDefault> findAll(final Pageable pageable);
 
