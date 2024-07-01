@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -87,12 +88,24 @@ public class CompletedServiceRepositoryJpa implements CompletedServiceRepository
             List<Object[]> results = repository.countCompletedServicesByProviderServiceIdAndDate(providerAccountId, startDateTime, endDateTime);
 
             return results.stream()
-                    .map(result -> new ProviderServiceCountDto((String) result[0], (String) result[1], (Long) result[2], (BigDecimal) result[3], (BigDecimal) result[4]))
+                    .map(result -> new ProviderServiceCountDto(
+                            (String) result[0],
+                            (String) result[1],
+                            (Long) result[2],
+                            BigDecimal.valueOf((Double) result[3]).setScale(2, RoundingMode.HALF_EVEN),
+                            BigDecimal.valueOf((Double) result[4]).setScale(2, RoundingMode.HALF_EVEN)
+                    ))
                     .collect(Collectors.toList());
         } else {
             List<Object[]> results = repository.countCompletedServicesByProviderServiceId(providerAccountId);
             return results.stream()
-                    .map(result -> new ProviderServiceCountDto((String) result[0], (String) result[1], (Long) result[2], (BigDecimal) result[3], (BigDecimal) result[4]))
+                    .map(result -> new ProviderServiceCountDto(
+                            (String) result[0],
+                            (String) result[1],
+                            (Long) result[2],
+                            BigDecimal.valueOf((Double) result[3]).setScale(2, RoundingMode.HALF_EVEN),
+                            BigDecimal.valueOf((Double) result[4]).setScale(2, RoundingMode.HALF_EVEN)
+                    ))
                     .collect(Collectors.toList());
         }
     }
@@ -110,8 +123,8 @@ public class CompletedServiceRepositoryJpa implements CompletedServiceRepository
                         (String) result[0],
                         (String) result[1],
                         (Long) result[2],
-                        (BigDecimal) result[3],
-                        (BigDecimal) result[4],
+                        BigDecimal.valueOf((Double) result[3]).setScale(2, RoundingMode.HALF_EVEN),
+                        BigDecimal.valueOf((Double) result[4]).setScale(2, RoundingMode.HALF_EVEN),
                         LocalDate.parse((String) result[5])
                 ))
                 .collect(Collectors.toList());
