@@ -14,7 +14,7 @@ import java.time.LocalDate;
 public class RevisionModel {
 
     private Long id;
-    private Long transactionId;
+    private Long completedServiceId;
     private Long providerServiceId;
     private Long providerAccountId;
     private Long clientAccountId;

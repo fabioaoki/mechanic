@@ -20,4 +20,6 @@ public class CompletedServiceValueModel {
     private Long quantity;
     private BigDecimal mileageForInspection;
     private LocalDate endDate;
+    private boolean isReturn;
+    private Long completedServiceId;
 }

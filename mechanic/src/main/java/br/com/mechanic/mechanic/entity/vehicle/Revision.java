@@ -20,8 +20,8 @@ public class Revision {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "transaction_id")
-    private Long transactionId;
+    @Column(name = "completed_service_id")
+    private Long completedServiceId;
     @Column(name = "provider_service_id")
     private Long providerServiceId;
     @Column(name = "provider_account_id")

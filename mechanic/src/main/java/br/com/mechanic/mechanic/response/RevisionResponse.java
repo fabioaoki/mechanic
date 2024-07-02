@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Builder
 public class RevisionResponse {
     private Long id;
-    private Long transactionId;
+    private Long completedServiceId;
     private Long providerServiceId;
     private Long providerAccountId;
     private Long clientAccountId;

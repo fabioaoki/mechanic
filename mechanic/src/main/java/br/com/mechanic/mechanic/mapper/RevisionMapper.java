@@ -32,6 +32,8 @@ public interface RevisionMapper {
                 .providerAccountId(providerAccountId)
                 .mileageForInspection(completedServiceValueModel.getMileageForInspection())
                 .mileage(mileage)
-                .transactionId(transactionId).clientAccountId(clientAccountId).build();
+                .completedServiceId(transactionId).clientAccountId(clientAccountId).build();
     }
+
+    RevisionRequest responseToRequest(RevisionResponse revisionResponse);
 }

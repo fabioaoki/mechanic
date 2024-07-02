@@ -29,6 +29,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -104,6 +105,24 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
 
         log.debug("Processing service value requests");
         completedServiceModel.getServiceValueRequests().forEach(serviceValueModelRequest -> {
+            if (serviceValueModelRequest.isReturn()) {
+
+                CompletedService completedService = completedServiceRepository.findById(serviceValueModelRequest.getCompletedServiceId()).orElseThrow(
+                        () -> new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "There is no previous return."));
+
+                TransactionResponse transactionResponse = transactionServiceBO.findById(completedService.getTransactionId());
+                if (!transactionResponse.getClientAccountId().equals(completedServiceRequest.getClientAccountId())) {
+                    throw new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "Return transaction is not from the same clientAccountId.");
+                }
+                RevisionResponse revisionResponse = revisionServiceBO.findById(completedService.getId());
+                if (revisionResponse.getReturnDate() != null) {
+                    throw new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "Return already made before today's date.");
+                }
+                revisionResponse.setReturnDate(LocalDate.now());
+                ///PARADO AQUI
+                revisionServiceBO.save(RevisionMapper.MAPPER.responseToRequest(revisionResponse));
+            }
+
             log.debug("Fetching employee account details for employee account ID: {}", serviceValueModelRequest.getEmployeeAccountId());
             EmployeeAccountResponseDto employeeAccountResponseDto = employeeAccountServiceBO.findById(serviceValueModelRequest.getEmployeeAccountId());
             log.info("Retrieved employee account name: {}", employeeAccountResponseDto.getName());
@@ -166,6 +185,11 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
                             equipmentInResponse.getAmount()
                     );
                     CompletedService completedServiceEntity = completedServiceRepository.save(completedServices);
+
+                    log.debug("Creating revision request for completedServiceId ID: {}", completedServiceEntity.getId());
+                    RevisionRequest revisionRequest = RevisionMapper.MAPPER.transactionToRequest(serviceValueModelRequest, completedServiceEntity.getId(), completedServiceRequest.getProviderAccountId(), completedServiceRequest.getClientAccountId(), completedServiceRequest.getMileage());
+                    revisionServiceBO.save(revisionRequest);
+
                     completedServiceIds.add(completedServiceEntity.getId());
                     log.info("Saved completed service for employee account ID: {}", employeeAccountResponseDto.getId());
                     equipmentOutServiceBO.save(
@@ -197,13 +221,6 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
 
         completedServiceRepository.setTransactionIds(completedServiceIds, transactionResponse.getId());
 
-        log.debug("Processing revisions for service value requests");
-        completedServiceModel.getServiceValueRequests().forEach(completedServiceValueModel -> {
-            log.debug("Creating revision request for transaction ID: {}", transactionResponse.getId());
-            RevisionRequest revisionRequest = RevisionMapper.MAPPER.transactionToRequest(completedServiceValueModel, transactionResponse.getId(), completedServiceRequest.getProviderAccountId(), completedServiceRequest.getClientAccountId(), completedServiceRequest.getMileage());
-            revisionServiceBO.save(revisionRequest);
-        });
-
         log.info("Completed service creation process successfully");
         return CompletedServiceMapper.MAPPER.toDto(colorResponseDto.getColor(), providerAccount.getWorkshop(), vehicleType.getName(), plate, model.getModel(), model.getName(), responseList, completedServiceModel.getInstallments(), totalAmount, completedServiceRequest.getMileage());
     }
@@ -226,6 +243,7 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
         accountServiceBO.findById(providerAccountId);
         return completedServiceRepository.countFirstCompletedServiceByProviderService(providerAccountId, startDate, endDate);
     }
+
     @Override
     public List<ProviderServiceCountGroupByDateDto> countFirstCompletedServiceByProviderServiceGroupByDate(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
         log.info("Fetching completed service count for providerAccountId: {}, from: {}, to: {}, group by date", providerAccountId, startDate, endDate);

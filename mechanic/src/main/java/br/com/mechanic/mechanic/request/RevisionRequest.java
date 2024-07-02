@@ -13,7 +13,7 @@ import java.time.LocalDate;
 @Data
 @Builder
 public class RevisionRequest {
-    private Long transactionId;
+    private Long completedServiceId;
     private Long providerServiceId;
     private Long providerAccountId;
     private Long clientAccountId;
