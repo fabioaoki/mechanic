@@ -46,6 +46,11 @@ public class RevisionService implements RevisionServiceBO {
     }
 
     @Override
+    public RevisionResponse findByCompletedServiceId(Long id) {
+        return RevisionMapper.MAPPER.toDto(getRevisionByCompletedServiceId(id));
+    }
+
+    @Override
     public Page<RevisionResponse> findAllByProviderAccountId(Long providerAccountId, Pageable pageable) {
         log.info("Retrieving list of revisions by providerAccount");
         return revisionRepository.findAllByProviderAccountId(pageable, providerAccountId).map(RevisionMapper.MAPPER::toDto);
@@ -57,8 +62,17 @@ public class RevisionService implements RevisionServiceBO {
         return revisionRepository.findAllByClientAccountId(pageable, clientAccountId).map(RevisionMapper.MAPPER::toDto);
     }
 
+    @Override
+    public void updateRevision(Long id, LocalDate revisionReturn) {
+        revisionRepository.updateReturn(id, revisionReturn);
+    }
+
     private Revision getRevision(Long id) {
         return revisionRepository.findById(id).orElseThrow(() -> new RevisionException(ErrorCode.ERROR_REVISION_NOT_FOUND, "Revision not found by id: " + id));
+    }
+
+    private Revision getRevisionByCompletedServiceId(Long id) {
+        return revisionRepository.findByCompletedServiceId(id).orElseThrow(() -> new RevisionException(ErrorCode.ERROR_REVISION_NOT_FOUND, "Revision not found by id: " + id));
     }
 
     private static void validEndDate(LocalDate endDate) {

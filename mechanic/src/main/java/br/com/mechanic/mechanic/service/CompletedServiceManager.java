@@ -29,7 +29,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -105,22 +104,24 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
 
         log.debug("Processing service value requests");
         completedServiceModel.getServiceValueRequests().forEach(serviceValueModelRequest -> {
-            if (serviceValueModelRequest.isReturn()) {
+            if (!serviceValueModelRequest.getCompletedServiceIds().isEmpty()) {
 
-                CompletedService completedService = completedServiceRepository.findById(serviceValueModelRequest.getCompletedServiceId()).orElseThrow(
-                        () -> new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "There is no previous return."));
+                serviceValueModelRequest.getCompletedServiceIds().forEach(completedServiceId -> {
+                    CompletedService completedService = completedServiceRepository.findById(completedServiceId).orElseThrow(
+                            () -> new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "There is no previous return."));
 
-                TransactionResponse transactionResponse = transactionServiceBO.findById(completedService.getTransactionId());
-                if (!transactionResponse.getClientAccountId().equals(completedServiceRequest.getClientAccountId())) {
-                    throw new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "Return transaction is not from the same clientAccountId.");
-                }
-                RevisionResponse revisionResponse = revisionServiceBO.findById(completedService.getId());
-                if (revisionResponse.getReturnDate() != null) {
-                    throw new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "Return already made before today's date.");
-                }
-                revisionResponse.setReturnDate(LocalDate.now());
-                ///PARADO AQUI
-                revisionServiceBO.save(RevisionMapper.MAPPER.responseToRequest(revisionResponse));
+                    TransactionResponse transactionResponse = transactionServiceBO.findById(completedService.getTransactionId());
+                    if (!transactionResponse.getClientAccountId().equals(completedServiceRequest.getClientAccountId())) {
+                        throw new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "Return transaction is not from the same clientAccountId.");
+                    }
+                    RevisionResponse revisionResponse = revisionServiceBO.findByCompletedServiceId(completedService.getId());
+                    if (revisionResponse.getReturnDate() != null) {
+                        throw new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "Return already made before today's date.");
+                    }
+
+                    revisionServiceBO.updateRevision(revisionResponse.getId(), LocalDate.now());
+
+                });
             }
 
             log.debug("Fetching employee account details for employee account ID: {}", serviceValueModelRequest.getEmployeeAccountId());

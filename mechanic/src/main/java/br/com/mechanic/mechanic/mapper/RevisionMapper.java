@@ -35,5 +35,4 @@ public interface RevisionMapper {
                 .completedServiceId(transactionId).clientAccountId(clientAccountId).build();
     }
 
-    RevisionRequest responseToRequest(RevisionResponse revisionResponse);
 }

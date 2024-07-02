@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -18,6 +19,5 @@ public class CompletedServiceValueRequest {
     private Long quantity;
     private BigDecimal mileageForInspection;
     private LocalDate endDate;
-    private boolean isReturn;
-    private Long completedServiceId;
+    private List<Long> completedServiceIds;
 }

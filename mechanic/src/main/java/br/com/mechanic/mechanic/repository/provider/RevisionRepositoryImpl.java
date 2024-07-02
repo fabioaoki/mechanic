@@ -5,6 +5,7 @@ import io.micrometer.observation.ObservationFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDate;
 import java.util.Optional;
 
 public interface RevisionRepositoryImpl {
@@ -17,4 +18,8 @@ public interface RevisionRepositoryImpl {
 
     Page<Revision> findAllByProviderAccountId(Pageable pageable, Long providerAccountId);
     Page<Revision> findAllByClientAccountId(Pageable pageable, Long clientAccountId);
+
+    void updateReturn(Long id, LocalDate revisionReturn);
+
+    Optional<Revision> findByCompletedServiceId(Long completedServiceId);
 }

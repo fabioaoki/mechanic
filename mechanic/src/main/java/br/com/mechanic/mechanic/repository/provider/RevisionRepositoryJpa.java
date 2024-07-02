@@ -43,4 +43,14 @@ public class RevisionRepositoryJpa implements RevisionRepositoryImpl {
         return repository.findAllByClientAccountId(pageable, clientAccountId);
     }
 
+    @Override
+    public void updateReturn(Long id, LocalDate revisionReturn) {
+        repository.updateReturn(id, revisionReturn);
+    }
+
+    @Override
+    public Optional<Revision> findByCompletedServiceId(Long completedServiceId) {
+        return repository.findByCompletedServiceId(completedServiceId);
+    }
+
 }
