@@ -41,9 +41,9 @@ public interface CompletedServiceMapper {
     CompletedServiceModel toModel(CompletedServiceRequest dto);
 
     @Named("modelToEntity")
-    default CompletedService modelToEntity(CompletedServiceModel model, ProviderServiceResponseDto serviceResponseDto, EmployeeAccountResponseDto employeeResponse, BigDecimal amount) {
+    default CompletedService modelToEntity(CompletedServiceModel model, ProviderServiceResponseDto serviceResponseDto, EmployeeAccountResponseDto employeeResponse, BigDecimal amount, long quantity) {
         return CompletedService.builder().colorId(model.getColorId()).plateId(model.getPlateId()).amount(amount.setScale(2, RoundingMode.HALF_UP)).modelId(model.getModelId()).vehicleTypeId(model.getVehicleTypeId())
-                .providerAccountId(model.getProviderAccountId()).providerServiceId(serviceResponseDto.getId()).employeeAccountId(employeeResponse.getId())
+                .providerAccountId(model.getProviderAccountId()).providerServiceId(serviceResponseDto.getId()).employeeAccountId(employeeResponse.getId()).quantity(quantity)
                 .build();
     }
 

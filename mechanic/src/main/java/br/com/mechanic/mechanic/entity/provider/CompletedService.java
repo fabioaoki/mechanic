@@ -40,4 +40,8 @@ public class CompletedService {
     @Column(name = "last_update")
     private LocalDateTime lastUpdate;
     private BigDecimal amount;
+    @Column(name = "quantity")
+    private Long quantity;
+    @Column(name = "quantity_revised")
+    private Long quantityRevised;
 }

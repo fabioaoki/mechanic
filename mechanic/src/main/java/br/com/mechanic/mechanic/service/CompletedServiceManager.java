@@ -172,27 +172,32 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
                 serviceValueResponse.setMileageForInspection(serviceValueModelRequest.getMileageForInspection());
                 responseList.add(serviceValueResponse);
 
-                long quantity = serviceValueModelRequest.getQuantity();
-                boolean isFinish = false;
 
+                long quantity = serviceValueModelRequest.getQuantity();
+
+                CompletedService completedServices = CompletedServiceMapper.MAPPER.modelToEntity(
+                        completedServiceModel,
+                        providerServiceResponseDto,
+                        employeeAccountResponseDto,
+                        equipmentInResponse.getAmount()
+                        ,quantity
+                );
+                CompletedService completedServiceEntity = completedServiceRepository.save(completedServices);
+
+
+                log.debug("Creating revision request for completedServiceId ID: {}", completedServiceEntity.getId());
+                RevisionRequest revisionRequest = RevisionMapper.MAPPER.transactionToRequest(serviceValueModelRequest, completedServiceEntity.getId(), completedServiceRequest.getProviderAccountId(), completedServiceRequest.getClientAccountId(), completedServiceRequest.getMileage());
+                revisionServiceBO.save(revisionRequest);
+
+                completedServiceIds.add(completedServiceEntity.getId());
+                log.info("Saved completed service for employee account ID: {}", employeeAccountResponseDto.getId());
+
+
+                boolean isFinish = false;
                 for (int i = 0; i < quantity; i++) {
                     if (isFinish) {
                         throw new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "Missing equipment, it is necessary to include equipment.");
                     }
-                    CompletedService completedServices = CompletedServiceMapper.MAPPER.modelToEntity(
-                            completedServiceModel,
-                            providerServiceResponseDto,
-                            employeeAccountResponseDto,
-                            equipmentInResponse.getAmount()
-                    );
-                    CompletedService completedServiceEntity = completedServiceRepository.save(completedServices);
-
-                    log.debug("Creating revision request for completedServiceId ID: {}", completedServiceEntity.getId());
-                    RevisionRequest revisionRequest = RevisionMapper.MAPPER.transactionToRequest(serviceValueModelRequest, completedServiceEntity.getId(), completedServiceRequest.getProviderAccountId(), completedServiceRequest.getClientAccountId(), completedServiceRequest.getMileage());
-                    revisionServiceBO.save(revisionRequest);
-
-                    completedServiceIds.add(completedServiceEntity.getId());
-                    log.info("Saved completed service for employee account ID: {}", employeeAccountResponseDto.getId());
                     equipmentOutServiceBO.save(
                             EquipmentOutMapper.MAPPER.completedServiceToEquipmentOut(
                                     completedServiceRequest.getProviderAccountId(),
@@ -200,6 +205,7 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
                                     equipmentResponseDto.getId()
                             )
                     );
+
                     if (equipmentIn == outList.size() + i) {
                         equipmentInResponse.setFinish(true);
                         isFinish = true;
@@ -207,7 +213,6 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
                         equipmentInServiceBO.finish(equipmentInResponse.getId());
                     }
                 }
-
             }
         });
 
