@@ -22,8 +22,6 @@ public interface CompletedServiceMapper {
 
     CompletedServiceMapper MAPPER = Mappers.getMapper(CompletedServiceMapper.class);
 
-    EmployeeAccount toEntity(EmployeeAccountRequest dto);
-
     CompletedResponseDtoDefault toDtoDefault(CompletedService entity);
 
     @Named("byProviderAccountId")
@@ -31,19 +29,36 @@ public interface CompletedServiceMapper {
                                                                       String employeeName, ProviderServiceResponseDto serviceResponseDto,
                                                                       String equipmentName,
                                                                       BigDecimal equipmentValue, BigDecimal workmanshipAmount,
-                                                                      ModelResponseDto modelResponseDto, String vehicleType, LocalDate createDate) {
-        return CompletedResponseByProviderAccountDto.builder().workshop(providerResponseDto).employeeName(employeeName)
-                .service(serviceResponseDto.getService().getIdentifier()).vehicleType(vehicleType).model(modelResponseDto.getModel()).name(modelResponseDto.getName()).version(modelResponseDto.getVersion()).year(modelResponseDto.getYear()).equipmentValue(equipmentValue).equipmentName(equipmentName).workmanshipAmount(workmanshipAmount).createDate(createDate).build();
+                                                                      ModelResponseDto modelResponseDto, String vehicleType, LocalDate createDate, Long quantity) {
+        BigDecimal quantityBigDecimal = BigDecimal.valueOf(quantity);
+        BigDecimal totalAmount = equipmentValue.multiply(quantityBigDecimal).add(workmanshipAmount);
+
+        return CompletedResponseByProviderAccountDto.builder()
+                .workshop(providerResponseDto)
+                .employeeName(employeeName)
+                .service(serviceResponseDto.getService().getIdentifier())
+                .vehicleType(vehicleType)
+                .model(modelResponseDto.getModel())
+                .name(modelResponseDto.getName())
+                .version(modelResponseDto.getVersion())
+                .year(modelResponseDto.getYear())
+                .equipmentValue(equipmentValue)
+                .totalAmount(totalAmount)
+                .equipmentName(equipmentName)
+                .workmanshipAmount(workmanshipAmount)
+                .createDate(createDate)
+                .build();
     }
+
 
     EmployeeAccountModel toModel(EmployeeAccount entity);
 
     CompletedServiceModel toModel(CompletedServiceRequest dto);
 
     @Named("modelToEntity")
-    default CompletedService modelToEntity(CompletedServiceModel model, ProviderServiceResponseDto serviceResponseDto, EmployeeAccountResponseDto employeeResponse, BigDecimal amount, long quantity) {
+    default CompletedService modelToEntity(CompletedServiceModel model, ProviderServiceResponseDto serviceResponseDto, EmployeeAccountResponseDto employeeResponse, BigDecimal amount, long quantity, long quantityRevised) {
         return CompletedService.builder().colorId(model.getColorId()).plateId(model.getPlateId()).amount(amount.setScale(2, RoundingMode.HALF_UP)).modelId(model.getModelId()).vehicleTypeId(model.getVehicleTypeId())
-                .providerAccountId(model.getProviderAccountId()).providerServiceId(serviceResponseDto.getId()).employeeAccountId(employeeResponse.getId()).quantity(quantity)
+                .providerAccountId(model.getProviderAccountId()).providerServiceId(serviceResponseDto.getId()).employeeAccountId(employeeResponse.getId()).quantity(quantity).quantityRevised(quantityRevised)
                 .build();
     }
 

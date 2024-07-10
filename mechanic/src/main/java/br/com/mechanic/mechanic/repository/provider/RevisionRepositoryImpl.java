@@ -19,7 +19,7 @@ public interface RevisionRepositoryImpl {
     Page<Revision> findAllByProviderAccountId(Pageable pageable, Long providerAccountId);
     Page<Revision> findAllByClientAccountId(Pageable pageable, Long clientAccountId);
 
-    void updateReturn(Long id, LocalDate revisionReturn);
+    void updateReturn(Long id, LocalDate revisionReturn, boolean isFinish, long quantityRevised);
 
     Optional<Revision> findByCompletedServiceId(Long completedServiceId);
 }

@@ -35,8 +35,12 @@ public class Revision {
     @Column(name = "end_date")
     private LocalDate endDate;
     @Column(name = "is_deleted")
-    private Boolean isDeleted;
+    private boolean isDeleted;
     private BigDecimal mileage;
     @Column(name = "mileage_for_inspection")
     private BigDecimal mileageForInspection;
+    private boolean finish;
+    private Long quantity;
+    @Column(name = "revision_id")
+    private Long revisionId;
 }

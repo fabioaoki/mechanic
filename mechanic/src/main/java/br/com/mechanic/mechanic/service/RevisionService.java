@@ -30,6 +30,9 @@ public class RevisionService implements RevisionServiceBO {
         }
         Revision entity = RevisionMapper.MAPPER.toEntity(revisionRequest);
         validEndDate(revisionRequest.getEndDate());
+        if (entity.getRevisionId() == 0) {
+            entity.setRevisionId(null);
+        }
         return RevisionMapper.MAPPER.toDto(revisionRepository.save(entity));
     }
 
@@ -63,8 +66,8 @@ public class RevisionService implements RevisionServiceBO {
     }
 
     @Override
-    public void updateRevision(Long id, LocalDate revisionReturn) {
-        revisionRepository.updateReturn(id, revisionReturn);
+    public void updateRevision(Long id, LocalDate revisionReturn, boolean isFinish, long quantityRevised) {
+        revisionRepository.updateReturn(id, revisionReturn, isFinish, quantityRevised);
     }
 
     private Revision getRevision(Long id) {

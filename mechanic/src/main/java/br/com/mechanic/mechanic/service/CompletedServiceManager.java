@@ -104,10 +104,19 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
 
         log.debug("Processing service value requests");
         completedServiceModel.getServiceValueRequests().forEach(serviceValueModelRequest -> {
+            long revisionId = 0L;
             if (!Objects.isNull(serviceValueModelRequest.getCompletedServiceId())) {
+
 
                 CompletedService completedService = completedServiceRepository.findById(serviceValueModelRequest.getCompletedServiceId()).orElseThrow(
                         () -> new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "There is no previous return."));
+
+                if (serviceValueModelRequest.getQuantityRevised() > completedService.getQuantity() || serviceValueModelRequest.getQuantityRevised() > (completedService.getQuantity() - completedService.getQuantityRevised())) {
+                    throw new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "Amount of revision greater than what exists.");
+                }
+
+                completedService.setQuantityRevised(serviceValueModelRequest.getQuantityRevised());
+                completedServiceRepository.save(completedService);
 
                 TransactionResponse transactionResponse = transactionServiceBO.findById(completedService.getTransactionId());
                 if (!transactionResponse.getClientAccountId().equals(completedServiceRequest.getClientAccountId())) {
@@ -117,8 +126,10 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
                 if (revisionResponse.getReturnDate() != null) {
                     throw new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "Return already made before today's date.");
                 }
-
-                revisionServiceBO.updateRevision(revisionResponse.getId(), LocalDate.now());
+                boolean isFinish = completedService.getQuantity().equals(serviceValueModelRequest.getQuantity());
+                long quantityRevised = serviceValueModelRequest.getQuantity();
+                revisionId = revisionResponse.getId();
+                revisionServiceBO.updateRevision(revisionResponse.getId(), LocalDate.now(), isFinish, quantityRevised);
 
             }
 
@@ -178,13 +189,13 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
                         providerServiceResponseDto,
                         employeeAccountResponseDto,
                         equipmentInResponse.getAmount()
-                        , quantity
+                        , quantity, 0
                 );
                 CompletedService completedServiceEntity = completedServiceRepository.save(completedServices);
 
 
                 log.debug("Creating revision request for completedServiceId ID: {}", completedServiceEntity.getId());
-                RevisionRequest revisionRequest = RevisionMapper.MAPPER.transactionToRequest(serviceValueModelRequest, completedServiceEntity.getId(), completedServiceRequest.getProviderAccountId(), completedServiceRequest.getClientAccountId(), completedServiceRequest.getMileage());
+                RevisionRequest revisionRequest = RevisionMapper.MAPPER.transactionToRequest(serviceValueModelRequest, completedServiceEntity.getId(), completedServiceRequest.getProviderAccountId(), completedServiceRequest.getClientAccountId(), completedServiceRequest.getMileage(), revisionId);
                 revisionServiceBO.save(revisionRequest);
 
                 completedServiceIds.add(completedServiceEntity.getId());
@@ -290,7 +301,7 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
 
                     return CompletedServiceMapper.MAPPER.byProviderAccountId(providerAccount, employeeResponse.getName(), serviceResponseDto,
                             equipmentResponseDto.getName(), equipmentInResponse.getAmount(), transactionResponse.getWorkmanshipAmount(),
-                            modelResponseDto, vehicleType.getName(), completedResponseDtoDefault.getCreateDate().toLocalDate());
+                            modelResponseDto, vehicleType.getName(), completedResponseDtoDefault.getCreateDate().toLocalDate(), completedResponseDtoDefault.getQuantity());
                 });
     }
 

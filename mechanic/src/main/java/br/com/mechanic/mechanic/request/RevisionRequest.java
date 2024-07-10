@@ -20,4 +20,6 @@ public class RevisionRequest {
     private LocalDate endDate;
     private BigDecimal mileageForInspection;
     private BigDecimal mileage;
+    private Long quantity;
+    private long revisionId;
 }

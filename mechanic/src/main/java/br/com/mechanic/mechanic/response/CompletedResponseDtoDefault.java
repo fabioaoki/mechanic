@@ -25,4 +25,5 @@ public class CompletedResponseDtoDefault {
     private LocalDateTime createDate;
     private LocalDateTime lastUpdate;
     private BigDecimal amount;
+    private Long quantity;
 }

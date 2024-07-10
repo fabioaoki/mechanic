@@ -44,8 +44,8 @@ public class RevisionRepositoryJpa implements RevisionRepositoryImpl {
     }
 
     @Override
-    public void updateReturn(Long id, LocalDate revisionReturn) {
-        repository.updateReturn(id, revisionReturn);
+    public void updateReturn(Long id, LocalDate revisionReturn, boolean isFinish, long quantityRevised) {
+        repository.updateReturn(id, revisionReturn, isFinish, quantityRevised);
     }
 
     @Override

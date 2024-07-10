@@ -24,6 +24,7 @@ public class CompletedResponseByProviderAccountDto {
     private String version;
     private String year;
     private String equipmentName;
+    private BigDecimal totalAmount;
     private BigDecimal equipmentValue;
     private BigDecimal workmanshipAmount;
     private LocalDate createDate;

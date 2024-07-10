@@ -26,5 +26,8 @@ public class RevisionResponse {
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDate returnDate;
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private Boolean isDeleted;
+    private boolean isDeleted;
+    private boolean finish;
+    private Long revisionId;
+    private Long quantity;
 }

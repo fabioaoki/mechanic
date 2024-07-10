@@ -20,8 +20,8 @@ public interface RevisionRepository extends JpaRepository<Revision, Long> {
 
     @Modifying
     @Transactional
-    @Query("UPDATE Revision r SET r.returnDate = :revisionReturn WHERE r.id = :id")
-    void updateReturn(Long id, LocalDate revisionReturn);
+    @Query("UPDATE Revision r SET r.returnDate = :revisionReturn, r.finish = :isFinish, r.quantity = :quantityRevised WHERE r.id = :id")
+    void updateReturn(Long id, LocalDate revisionReturn, boolean isFinish, long quantityRevised);
 
     Optional<Revision> findByCompletedServiceId(Long completedServiceId);
 }
