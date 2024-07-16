@@ -79,10 +79,10 @@ public class ProviderPersonService implements ProviderPersonServiceBO {
     }
 
     private static void isValidName(String name) {
-        if (!name.matches("^[a-zA-Z\\s]+$")) {
+        if (!name.matches("^[\\p{L}\\s]+$")) {
             throw new ProviderPersonException(ErrorCode.INVALID_FIELD, "The 'name' field must contain only letters and spaces.");
         }
-        if (name.split("\\s+").length < 2) {
+        if (name.trim().split("\\s+").length < 2) {
             throw new ProviderPersonException(ErrorCode.INVALID_FIELD, "The 'name' field is not full.");
         }
     }

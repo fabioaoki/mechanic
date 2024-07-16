@@ -13,6 +13,7 @@ import com.google.i18n.phonenumbers.PhoneNumberUtil;
 import com.google.i18n.phonenumbers.Phonenumber;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.apache.commons.validator.routines.RegexValidator;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -103,7 +104,7 @@ public class ProviderPhoneService implements ProviderPhoneServiceBO {
             if (phone.getArea() == null || phone.getNumber().isEmpty()) {
                 throw new ProviderPhoneException(ErrorCode.INVALID_FIELD, "The 'area number and phone number' field is required and cannot be empty.");
             }
-            if (!isValidPhoneNumber(phone.getArea(), phone.getNumber())) {
+            if (!isValidPhoneNumber(phone.getArea())) {
                 throw new ProviderPhoneException(ErrorCode.INVALID_FIELD, "The 'phone number' field is invalid.");
             }
             log.info("Service: Format number");
@@ -119,23 +120,22 @@ public class ProviderPhoneService implements ProviderPhoneServiceBO {
                 });
     }
 
-    public static boolean isValidPhoneNumber(Long area, String number) {
-        try {
-            String phoneNumber = area.toString() + number;
-            Phonenumber.PhoneNumber parsedNumber = phoneNumberUtil.parse(phoneNumber, "BR");
-            return phoneNumberUtil.isValidNumber(parsedNumber);
-        } catch (NumberParseException e) {
-            return false;
-        }
+    public static boolean isValidPhoneNumber(Long area) {
+        return isValidAreaCode(area.toString());
     }
+
+    public static boolean isValidAreaCode(String areaCode) {
+        return areaCode.matches("^[1-9][0-9]$");
+}
 
     public static String formatPhoneNumber(Long area, String number) {
         try {
             String phoneNumber = area.toString() + number;
-            Phonenumber.PhoneNumber parsedNumber = phoneNumberUtil.parse(phoneNumber, "BR"); // Assumindo Brasil como exemplo
+            Phonenumber.PhoneNumber parsedNumber = phoneNumberUtil.parse(phoneNumber, "BR");
             return phoneNumberUtil.format(parsedNumber, PhoneNumberUtil.PhoneNumberFormat.INTERNATIONAL);
         } catch (NumberParseException e) {
-            return "+" + area + " " + number;
+            System.out.println("NumberParseException was thrown: " + e.toString());
+            return "+" + area + " " + number; // Fallback format
         }
     }
 }
