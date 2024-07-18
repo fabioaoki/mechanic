@@ -81,7 +81,7 @@ public class ClientAccountService implements ClientAccountServiceBO {
         clientAccountRequest.getVehicles().forEach(vehicleRequest -> {
             if (Objects.isNull(vehicleRequest.getPlate()) ||
                     Objects.isNull(vehicleRequest.getColorId()) ||
-                    Objects.isNull(vehicleRequest.getModelId()) || Objects.isNull(vehicleRequest.getVehicleId())) {
+                    Objects.isNull(vehicleRequest.getModelId()) || Objects.isNull(vehicleRequest.getVehicleTypeId())) {
                 throw new ClientAccountException(ErrorCode.INVALID_FIELD, "Mismatch in sizes of lists: Plates, Marcs, vehicleType and Colors must have the same number of elements.");
             }
         });
@@ -117,7 +117,7 @@ public class ClientAccountService implements ClientAccountServiceBO {
 
         log.info("Processing and saving vehicleType.");
         List<Long> vehicleTypeIds = clientAccountRequest.getVehicles().stream()
-                .map(VehicleRequest::getVehicleId)
+                .map(VehicleRequest::getVehicleTypeId)
                 .collect(Collectors.toList());
         List<VehicleTypeResponseDto> vehicleTypeResponseList = new ArrayList<>();
         vehicleTypeIds.forEach(vehicleTypeId -> {

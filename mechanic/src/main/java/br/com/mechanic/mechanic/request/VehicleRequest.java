@@ -14,5 +14,5 @@ public class VehicleRequest {
     private PlateRequest plate;
     private Long ModelId;
     private Long colorId;
-    private Long vehicleId;
+    private Long vehicleTypeId;
 }

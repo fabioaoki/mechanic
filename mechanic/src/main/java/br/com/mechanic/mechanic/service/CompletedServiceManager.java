@@ -105,8 +105,7 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
         log.debug("Processing service value requests");
         completedServiceModel.getServiceValueRequests().forEach(serviceValueModelRequest -> {
             long revisionId = 0L;
-            if (!Objects.isNull(serviceValueModelRequest.getCompletedServiceId())) {
-
+            if (Objects.nonNull(serviceValueModelRequest.getCompletedServiceId()) && serviceValueModelRequest.getCompletedServiceId() != 0L)  {
 
                 CompletedService completedService = completedServiceRepository.findById(serviceValueModelRequest.getCompletedServiceId()).orElseThrow(
                         () -> new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "There is no previous return."));
