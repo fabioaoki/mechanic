@@ -44,4 +44,9 @@ public class EmployeeAccountRepositoryJpa implements EmployeeAccountRepositoryIm
         return repository.findByCpf(cpf);
     }
 
+    @Override
+    public Page<EmployeeAccount> findAllByProviderAccountId(Long providerAccountId, Pageable pageable) {
+        return repository.findAllByProviderAccountId(providerAccountId, pageable);
+    }
+
 }

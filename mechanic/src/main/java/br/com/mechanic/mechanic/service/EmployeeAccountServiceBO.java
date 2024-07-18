@@ -10,11 +10,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface EmployeeAccountServiceBO {
-    EmployeeAccountResponseDto save(EmployeeAccountRequest personRequest);
+    EmployeeAccountResponseDto save(final EmployeeAccountRequest personRequest);
 
     Page<EmployeeAccountResponseDtoPage> findAll(final Pageable pageable);
 
-    EmployeeAccountResponseDto findById(Long id);
+    EmployeeAccountResponseDto findById(final Long id);
 
-    EmployeeAccountResponseDto updateEmployeeAccount(Long id, EmployeeAccountRequest requestDto);
+    Page<EmployeeAccountResponseDtoPage> findByProviderAccountId(final Long providerAccountId, final Pageable pageable);
+
+    EmployeeAccountResponseDto updateEmployeeAccount(final Long id, final EmployeeAccountRequest requestDto);
 }

@@ -87,6 +87,13 @@ public class EmployeeAccountService implements EmployeeAccountServiceBO {
         return EmployeeAccountMapper.MAPPER.toDto(employee, accountResponseDto);
     }
 
+    @Override
+    public Page<EmployeeAccountResponseDtoPage> findByProviderAccountId(Long providerAccountId, Pageable pageable) {
+        log.info("Retrieving list of employees by providerAccountId");
+        getProviderAccountResponseDto(providerAccountId);
+        return employeeAccountRepository.findAllByProviderAccountId(providerAccountId, pageable).map(EmployeeAccountMapper.MAPPER::toDtoPage);
+    }
+
     private ProviderAccountResponseDto getProviderAccountResponseDto(Long providerAccountId) {
         return accountServiceBO.findById(providerAccountId);
     }

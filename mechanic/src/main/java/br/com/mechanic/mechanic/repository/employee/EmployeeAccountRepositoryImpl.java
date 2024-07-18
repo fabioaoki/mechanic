@@ -1,6 +1,7 @@
 package br.com.mechanic.mechanic.repository.employee;
 
 import br.com.mechanic.mechanic.entity.provider.emloyee.EmployeeAccount;
+import io.micrometer.observation.ObservationFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -16,4 +17,5 @@ public interface EmployeeAccountRepositoryImpl {
 
     Optional<EmployeeAccount> findByCpf(String cpf);
 
+    Page<EmployeeAccount> findAllByProviderAccountId(Long providerAccountId, Pageable pageable);
 }

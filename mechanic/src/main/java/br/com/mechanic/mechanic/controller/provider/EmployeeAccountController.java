@@ -49,9 +49,21 @@ public class EmployeeAccountController {
     @GetMapping("/{id}")
     public ResponseEntity<?> getEmployeeAccountById(@PathVariable Long id) {
         try {
-            log.info("Fetching employee account with id: {}" , id);
+            log.info("Fetching employee account with id: {}", id);
             return ResponseEntity.ok(employeeAccountServiceBO.findById(id));
         } catch (EmployeeAccountException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
+        }
+    }
+
+    @GetMapping("providerAccountId/{providerAccountId}")
+    public ResponseEntity<?> getEmployeeAccountByProviderAccountId(@PathVariable Long providerAccountId,
+                                                                   @RequestParam(defaultValue = "0") int page,
+                                                                   @RequestParam(defaultValue = "20") int size) {
+        try {
+            log.info("Fetching employee account with providerAccountId: {}", providerAccountId);
+            return ResponseEntity.ok(employeeAccountServiceBO.findByProviderAccountId(providerAccountId, PageRequest.of(page, size)));
+        } catch (ProviderAccountException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
         }
     }
@@ -59,7 +71,7 @@ public class EmployeeAccountController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateEmployeeAccount(@PathVariable Long id, @RequestBody EmployeeAccountRequest requestDto) {
         try {
-            log.info("Updating employee account with id: {}" , id);
+            log.info("Updating employee account with id: {}", id);
             return ResponseEntity.ok(employeeAccountServiceBO.updateEmployeeAccount(id, requestDto));
         } catch (EmployeeAccountException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
