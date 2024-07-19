@@ -1,6 +1,7 @@
 package br.com.mechanic.mechanic.repository.provider;
 
 import br.com.mechanic.mechanic.entity.provider.EquipmentIn;
+import br.com.mechanic.mechanic.response.ProviderEquipmentInResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -13,7 +14,7 @@ public interface EquipmentInRepositoryImpl {
 
     Page<EquipmentIn> findAll(final Pageable pageable);
 
-    Page<EquipmentIn> findAllByProviderAccountId(final Pageable pageable, final Long providerAccountId);
+    Page<ProviderEquipmentInResponseDto> findAllByProviderAccountId(final Pageable pageable, final Long providerAccountId);
 
     Optional<EquipmentIn> findById(final Long id);
 

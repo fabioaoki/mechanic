@@ -3,6 +3,7 @@ package br.com.mechanic.mechanic.service;
 import br.com.mechanic.mechanic.request.EquipmentInRequest;
 import br.com.mechanic.mechanic.request.EquipmentInUpdateRequest;
 import br.com.mechanic.mechanic.response.EquipmentInResponseDto;
+import br.com.mechanic.mechanic.response.ProviderEquipmentInResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -13,7 +14,7 @@ public interface EquipmentInServiceBO {
 
     EquipmentInResponseDto findById(final Long id);
 
-    Page<EquipmentInResponseDto> findAllByProviderAccountId(final Long providerAccountId, final Pageable pageable);
+    Page<ProviderEquipmentInResponseDto> findAllByProviderAccountId(final Long providerAccountId, final Pageable pageable);
 
     EquipmentInResponseDto updateEquipmentIn(final Long id, final EquipmentInUpdateRequest requestDto);
     void finish(final Long id);

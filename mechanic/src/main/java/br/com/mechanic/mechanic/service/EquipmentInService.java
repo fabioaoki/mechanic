@@ -12,6 +12,7 @@ import br.com.mechanic.mechanic.request.EquipmentInRequest;
 import br.com.mechanic.mechanic.request.EquipmentInUpdateRequest;
 import br.com.mechanic.mechanic.response.EquipmentInResponseDto;
 import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;
+import br.com.mechanic.mechanic.response.ProviderEquipmentInResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
@@ -69,9 +70,9 @@ public class EquipmentInService implements EquipmentInServiceBO {
     }
 
     @Override
-    public Page<EquipmentInResponseDto> findAllByProviderAccountId(Long providerAccountId, Pageable pageable) {
+    public Page<ProviderEquipmentInResponseDto> findAllByProviderAccountId(Long providerAccountId, Pageable pageable) {
         log.info("Retrieving list of equipmentsIn by providerAccount");
-        return equipmentInRepository.findAllByProviderAccountId(pageable, providerAccountId).map(EquipmentInMapper.MAPPER::toDto);
+        return equipmentInRepository.findAllByProviderAccountId(pageable, providerAccountId);
     }
 
     @Override
