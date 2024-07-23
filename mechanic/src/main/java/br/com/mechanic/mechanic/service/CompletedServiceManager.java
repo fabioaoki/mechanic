@@ -108,13 +108,14 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
             if (Objects.nonNull(serviceValueModelRequest.getCompletedServiceId()) && serviceValueModelRequest.getCompletedServiceId() != 0L)  {
 
                 CompletedService completedService = completedServiceRepository.findById(serviceValueModelRequest.getCompletedServiceId()).orElseThrow(
-                        () -> new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "There is no previous return."));
+                        () -> new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "Completed service id: " + serviceValueModelRequest.getCompletedServiceId() + " not found." ));
 
                 if (serviceValueModelRequest.getQuantityRevised() > completedService.getQuantity() || serviceValueModelRequest.getQuantityRevised() > (completedService.getQuantity() - completedService.getQuantityRevised())) {
                     throw new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "Amount of revision greater than what exists.");
                 }
 
-                completedService.setQuantityRevised(serviceValueModelRequest.getQuantityRevised());
+                long totalRevised = serviceValueModelRequest.getQuantityRevised() + completedService.getQuantityRevised();
+                completedService.setQuantityRevised(totalRevised);
                 completedServiceRepository.save(completedService);
 
                 TransactionResponse transactionResponse = transactionServiceBO.findById(completedService.getTransactionId());
@@ -122,10 +123,10 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
                     throw new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "Return transaction is not from the same clientAccountId.");
                 }
                 RevisionResponse revisionResponse = revisionServiceBO.findByCompletedServiceId(completedService.getId());
-                if (revisionResponse.getReturnDate() != null) {
+                if (revisionResponse.getReturnDate() != null && revisionResponse.isFinish()) {
                     throw new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "Return already made before today's date.");
                 }
-                boolean isFinish = completedService.getQuantity().equals(serviceValueModelRequest.getQuantity());
+                boolean isFinish = completedService.getQuantity().equals(totalRevised);
                 long quantityRevised = serviceValueModelRequest.getQuantity();
                 revisionId = revisionResponse.getId();
                 revisionServiceBO.updateRevision(revisionResponse.getId(), LocalDate.now(), isFinish, quantityRevised);
