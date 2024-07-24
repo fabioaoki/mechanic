@@ -10,6 +10,7 @@ import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Mapper
 public interface RevisionMapper {
@@ -25,7 +26,7 @@ public interface RevisionMapper {
     Revision modelToEntity(RevisionModel save);
 
     @Named("transactionToRequest")
-    default RevisionRequest transactionToRequest(CompletedServiceValueModel completedServiceValueModel, Long transactionId, Long providerAccountId, Long clientAccountId, BigDecimal mileage, long revisionId){
+    default RevisionRequest transactionToRequest(CompletedServiceValueModel completedServiceValueModel, Long transactionId, Long providerAccountId, Long clientAccountId, BigDecimal mileage, long revisionId, LocalDate expectedReturnDate){
         return RevisionRequest.builder()
                 .providerServiceId(completedServiceValueModel.getProviderServiceId())
                 .endDate(completedServiceValueModel.getEndDate())
@@ -34,6 +35,7 @@ public interface RevisionMapper {
                 .mileage(mileage)
                 .quantity(completedServiceValueModel.getQuantity())
                 .revisionId(revisionId)
+                .expectedReturnDate(expectedReturnDate)
                 .completedServiceId(transactionId).clientAccountId(clientAccountId).build();
     }
 

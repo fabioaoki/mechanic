@@ -22,4 +22,5 @@ public class RevisionModel {
     private LocalDate endDate;
     private LocalDate returnDate;
     private Boolean isDeleted;
+    private LocalDate expectedReturnDate;
 }

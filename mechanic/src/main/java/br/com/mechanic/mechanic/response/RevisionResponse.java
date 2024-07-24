@@ -30,4 +30,6 @@ public class RevisionResponse {
     private boolean finish;
     private Long revisionId;
     private Long quantity;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private LocalDate expectedReturnDate;
 }

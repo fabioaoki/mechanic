@@ -22,4 +22,5 @@ public class RevisionRequest {
     private BigDecimal mileage;
     private Long quantity;
     private long revisionId;
+    private LocalDate expectedReturnDate;
 }

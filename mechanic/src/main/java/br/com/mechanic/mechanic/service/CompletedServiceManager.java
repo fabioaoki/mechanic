@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -104,6 +105,7 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
 
         log.debug("Processing service value requests");
         completedServiceModel.getServiceValueRequests().forEach(serviceValueModelRequest -> {
+            LocalDate expectedReturnDate = null;
             long revisionId = 0L;
             if (Objects.nonNull(serviceValueModelRequest.getCompletedServiceId()) && serviceValueModelRequest.getCompletedServiceId() != 0L)  {
 
@@ -126,11 +128,12 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
                 if (revisionResponse.getReturnDate() != null && revisionResponse.isFinish()) {
                     throw new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "Return already made before today's date.");
                 }
+
+                expectedReturnDate = calculateExpectedReturn(revisionResponse.getStartDate());
                 boolean isFinish = completedService.getQuantity().equals(totalRevised);
                 long quantityRevised = serviceValueModelRequest.getQuantity();
                 revisionId = revisionResponse.getId();
                 revisionServiceBO.updateRevision(revisionResponse.getId(), LocalDate.now(), isFinish, quantityRevised);
-
             }
 
             log.debug("Fetching employee account details for employee account ID: {}", serviceValueModelRequest.getEmployeeAccountId());
@@ -195,7 +198,7 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
 
 
                 log.debug("Creating revision request for completedServiceId ID: {}", completedServiceEntity.getId());
-                RevisionRequest revisionRequest = RevisionMapper.MAPPER.transactionToRequest(serviceValueModelRequest, completedServiceEntity.getId(), completedServiceRequest.getProviderAccountId(), completedServiceRequest.getClientAccountId(), completedServiceRequest.getMileage(), revisionId);
+                RevisionRequest revisionRequest = RevisionMapper.MAPPER.transactionToRequest(serviceValueModelRequest, completedServiceEntity.getId(), completedServiceRequest.getProviderAccountId(), completedServiceRequest.getClientAccountId(), completedServiceRequest.getMileage(), revisionId, expectedReturnDate);
                 revisionServiceBO.save(revisionRequest);
 
                 completedServiceIds.add(completedServiceEntity.getId());
@@ -238,6 +241,11 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
 
         log.info("Completed service creation process successfully");
         return CompletedServiceMapper.MAPPER.toDto(colorResponseDto.getColor(), providerAccount.getWorkshop(), vehicleType.getName(), plate, model.getModel(), model.getName(), responseList, completedServiceModel.getInstallments(), totalAmount, completedServiceRequest.getMileage());
+    }
+
+    private LocalDate calculateExpectedReturn(LocalDate startDate) {
+        long daysBetween = ChronoUnit.DAYS.between(startDate, LocalDate.now());
+        return LocalDate.now().plusDays(daysBetween);
     }
 
     public static String formatColor(String color) {

@@ -43,4 +43,6 @@ public class Revision {
     private Long quantity;
     @Column(name = "revision_id")
     private Long revisionId;
+    @Column(name = "expected_return_date")
+    private LocalDate expectedReturnDate;
 }
