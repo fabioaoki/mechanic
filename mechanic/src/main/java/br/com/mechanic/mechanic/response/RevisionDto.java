@@ -1,4 +1,4 @@
-package br.com.mechanic.mechanic.model;
+package br.com.mechanic.mechanic.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,18 +11,19 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Data
 @Builder
-public class RevisionModel {
-
+public class RevisionDto {
     private Long id;
     private Long completedServiceId;
-    private Long providerServiceId;
-    private Long providerAccountId;
-    private Long clientAccountId;
+    private String description;
     private LocalDate startDate;
-    private LocalDate endDate;
     private LocalDate returnDate;
-    private Boolean isDeleted;
+    private LocalDate endDate;
+    private Long quantity;
     private LocalDate expectedReturnDate;
-    private boolean notification;
-    private LocalDate notificationDate;
+    private String clientPhone;
+    private String clientName;
+    private String providerPhone;
+    private String workshop;
+    private String sid;
+    private String token;
 }

@@ -1,7 +1,7 @@
 package br.com.mechanic.mechanic.repository.provider;
 
 import br.com.mechanic.mechanic.entity.vehicle.Revision;
-import io.micrometer.observation.ObservationFilter;
+import br.com.mechanic.mechanic.response.RevisionDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -24,5 +24,7 @@ public interface RevisionRepositoryImpl {
 
     Optional<Revision> findByCompletedServiceId(Long completedServiceId);
 
-    List<Revision> findPendingRevision();
+    List<RevisionDto> findPendingRevision();
+
+    void updateNotification(List<Long> revisionIds);
 }

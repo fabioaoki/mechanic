@@ -6,6 +6,7 @@ import br.com.mechanic.mechanic.exception.RevisionException;
 import br.com.mechanic.mechanic.mapper.RevisionMapper;
 import br.com.mechanic.mechanic.repository.provider.RevisionRepositoryImpl;
 import br.com.mechanic.mechanic.request.RevisionRequest;
+import br.com.mechanic.mechanic.response.RevisionDto;
 import br.com.mechanic.mechanic.response.RevisionResponse;
 import com.twilio.Twilio;
 import lombok.AllArgsConstructor;
@@ -13,11 +14,11 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import com.twilio.Twilio;
-import com.twilio.rest.api.v2010.account.Message;
-import com.twilio.type.PhoneNumber;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @Log4j2
@@ -75,21 +76,35 @@ public class RevisionService implements RevisionServiceBO {
     }
 
     @Override
+    @Transactional
     public void senRevisionNotification() {
-        Twilio.init("ACCOUNT_SID", "AUTH_TOKEN");
+        List<RevisionDto> pendingRevisionList = revisionRepository.findPendingRevision();
+        List<Long> revisionIds = new ArrayList<>();
+        pendingRevisionList.forEach(revisionDto -> {
+            Twilio.init(revisionDto.getSid(), revisionDto.getToken());
 
-        revisionRepository.findPendingRevision();
+            String fromWhatsAppNumber = "whatsapp:" + revisionDto.getProviderPhone().replace("-","").trim();
+            String toWhatsAppNumber = "whatsapp:" + revisionDto.getClientPhone().replace("-","").trim();
 
-        String fromWhatsAppNumber = "whatsapp:+YOUR_TWILIO_WHATSAPP_NUMBER"; // Inclua whatsapp: antes do número
-        String toWhatsAppNumber = "whatsapp:+CLIENT_NUMBER"; // Substitua CLIENT_NUMBER pelo número do cliente
 
-        Message message = Message.creator(
-                new PhoneNumber(toWhatsAppNumber),
-                new PhoneNumber(fromWhatsAppNumber),
-                "Olá, este é um teste de envio de mensagem via WhatsApp!"
-        ).create();
+            String messageText = "Prezado(a) "+ revisionDto.getClientName()+ ",\n\n" +
+                    "Esperamos que esteja tudo bem com você!\n\n" +
+                    "Gostaríamos de lembrar que está chegando a hora de realizar a revisão de " + revisionDto.getDescription() + " do seu carro.\n" +
+                    "Manter seu veículo em excelente condição não apenas garante sua segurança e de sua família, mas também ajuda a prolongar a vida útil do seu automóvel.\n\n" +
+                    "Qualquer duvida estamos a disposição.\n\n"+
+                    revisionDto.getWorkshop();
 
-        System.out.println("Message SID: " + message.getSid());
+//            Message message = Message.creator(
+//                    new PhoneNumber(toWhatsAppNumber),
+//                    new PhoneNumber(fromWhatsAppNumber),
+//                    messageText
+//            ).create();
+
+            System.out.println(messageText);
+            revisionIds.add(revisionDto.getId());
+        });
+        revisionRepository.updateNotification(revisionIds);
+
     }
 
     private Revision getRevision(Long id) {

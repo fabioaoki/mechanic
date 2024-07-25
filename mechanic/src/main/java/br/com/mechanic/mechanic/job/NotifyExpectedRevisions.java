@@ -11,8 +11,8 @@ public class NotifyExpectedRevisions {
     @Autowired
     private RevisionServiceBO revisionServiceBO;
 
-    @Scheduled(cron = "0 0 7 * * ?")
-//    @Scheduled(cron = "0 * * * * ?")  // Executa no início de cada minuto
+//    @Scheduled(cron = "0 0 7 * * ?")
+    @Scheduled(cron = "0 * * * * ?")  // Executa no início de cada minuto
     public void raffleWinner() {
         revisionServiceBO.senRevisionNotification();
 

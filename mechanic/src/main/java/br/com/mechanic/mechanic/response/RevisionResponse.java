@@ -32,4 +32,6 @@ public class RevisionResponse {
     private Long quantity;
     @JsonInclude(JsonInclude.Include.NON_NULL)
     private LocalDate expectedReturnDate;
+    private boolean notification;
+    private LocalDate notificationDate;
 }
