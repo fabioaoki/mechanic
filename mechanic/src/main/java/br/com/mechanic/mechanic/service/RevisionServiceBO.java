@@ -23,4 +23,6 @@ public interface RevisionServiceBO {
     Page<RevisionResponse> findAllByClientAccountId(final Long clientAccountId, final Pageable pageable);
 
     void updateRevision(Long id, LocalDate revisionReturn, boolean isFinish, long quantityRevised);
+
+    void senRevisionNotification();
 }

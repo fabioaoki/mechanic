@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -51,6 +52,11 @@ public class RevisionRepositoryJpa implements RevisionRepositoryImpl {
     @Override
     public Optional<Revision> findByCompletedServiceId(Long completedServiceId) {
         return repository.findByCompletedServiceId(completedServiceId);
+    }
+
+    @Override
+    public List<Revision> findPendingRevision() {
+        return repository.findPendingRevision();
     }
 
 }

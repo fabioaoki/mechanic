@@ -6,6 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Optional;
 
 public interface RevisionRepositoryImpl {
@@ -22,4 +23,6 @@ public interface RevisionRepositoryImpl {
     void updateReturn(Long id, LocalDate revisionReturn, boolean isFinish, long quantityRevised);
 
     Optional<Revision> findByCompletedServiceId(Long completedServiceId);
+
+    List<Revision> findPendingRevision();
 }

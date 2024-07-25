@@ -7,11 +7,15 @@ import br.com.mechanic.mechanic.mapper.RevisionMapper;
 import br.com.mechanic.mechanic.repository.provider.RevisionRepositoryImpl;
 import br.com.mechanic.mechanic.request.RevisionRequest;
 import br.com.mechanic.mechanic.response.RevisionResponse;
+import com.twilio.Twilio;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import com.twilio.Twilio;
+import com.twilio.rest.api.v2010.account.Message;
+import com.twilio.type.PhoneNumber;
 
 import java.time.LocalDate;
 
@@ -68,6 +72,24 @@ public class RevisionService implements RevisionServiceBO {
     @Override
     public void updateRevision(Long id, LocalDate revisionReturn, boolean isFinish, long quantityRevised) {
         revisionRepository.updateReturn(id, revisionReturn, isFinish, quantityRevised);
+    }
+
+    @Override
+    public void senRevisionNotification() {
+        Twilio.init("ACCOUNT_SID", "AUTH_TOKEN");
+
+        revisionRepository.findPendingRevision();
+
+        String fromWhatsAppNumber = "whatsapp:+YOUR_TWILIO_WHATSAPP_NUMBER"; // Inclua whatsapp: antes do número
+        String toWhatsAppNumber = "whatsapp:+CLIENT_NUMBER"; // Substitua CLIENT_NUMBER pelo número do cliente
+
+        Message message = Message.creator(
+                new PhoneNumber(toWhatsAppNumber),
+                new PhoneNumber(fromWhatsAppNumber),
+                "Olá, este é um teste de envio de mensagem via WhatsApp!"
+        ).create();
+
+        System.out.println("Message SID: " + message.getSid());
     }
 
     private Revision getRevision(Long id) {
