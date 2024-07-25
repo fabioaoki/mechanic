@@ -129,7 +129,7 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
                     throw new CompletedServiceException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "Return already made before today's date.");
                 }
 
-                expectedReturnDate = calculateExpectedReturn(revisionResponse.getStartDate());
+                expectedReturnDate = calculateExpectedReturn(revisionResponse.getStartDate(), serviceValueModelRequest.getEndDate());
                 boolean isFinish = completedService.getQuantity().equals(totalRevised);
                 long quantityRevised = serviceValueModelRequest.getQuantity();
                 revisionId = revisionResponse.getId();
@@ -243,9 +243,11 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
         return CompletedServiceMapper.MAPPER.toDto(colorResponseDto.getColor(), providerAccount.getWorkshop(), vehicleType.getName(), plate, model.getModel(), model.getName(), responseList, completedServiceModel.getInstallments(), totalAmount, completedServiceRequest.getMileage());
     }
 
-    private LocalDate calculateExpectedReturn(LocalDate startDate) {
+    private LocalDate calculateExpectedReturn(LocalDate startDate, LocalDate endDate) {
         long daysBetween = ChronoUnit.DAYS.between(startDate, LocalDate.now());
-        return LocalDate.now().plusDays(daysBetween);
+        LocalDate expectedDate = LocalDate.now().plusDays(daysBetween);
+
+        return expectedDate.equals(endDate) ? expectedDate : null;
     }
 
     public static String formatColor(String color) {
