@@ -19,5 +19,7 @@ public interface EquipmentInServiceBO {
     EquipmentInResponseDto updateEquipmentIn(final Long id, final EquipmentInUpdateRequest requestDto);
     void finish(final Long id);
 
-    EquipmentInResponseDto findByProviderAccountAndEquipmentId(Long providerAccountId, Long equipmentId);
+    EquipmentInResponseDto findByProviderAccountAndEquipmentId(final Long providerAccountId, final Long equipmentId);
+
+    EquipmentInResponseDto findByProviderAccountAndEquipmentIdAndFinishIsFalse(final Long providerAccountId, final Long equipmentId);
 }

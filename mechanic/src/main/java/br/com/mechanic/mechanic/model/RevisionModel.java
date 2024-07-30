@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,4 +26,5 @@ public class RevisionModel {
     private LocalDate expectedReturnDate;
     private boolean notification;
     private LocalDate notificationDate;
+    private LocalDateTime lastUpdate;
 }

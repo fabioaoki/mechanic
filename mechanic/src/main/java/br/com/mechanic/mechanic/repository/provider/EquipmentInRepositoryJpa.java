@@ -74,6 +74,11 @@ public class EquipmentInRepositoryJpa implements EquipmentInRepositoryImpl {
     }
 
     @Override
+    public Optional<EquipmentIn> findByProviderAccountIdAndEquipmentIdAndFinishIsFalse(Long providerAccountId, Long equipmentId) {
+        return Optional.empty();
+    }
+
+    @Override
     public Optional<EquipmentIn> findByProviderAccountId(Long providerAccountId) {
         return repository.findByProviderAccountId(providerAccountId);
     }

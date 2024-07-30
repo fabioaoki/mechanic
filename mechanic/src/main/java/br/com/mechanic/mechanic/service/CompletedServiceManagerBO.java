@@ -1,6 +1,7 @@
 package br.com.mechanic.mechanic.service;
 
 import br.com.mechanic.mechanic.request.CompletedServiceRequest;
+import br.com.mechanic.mechanic.request.ReversalCompletedServiceRequest;
 import br.com.mechanic.mechanic.response.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,4 +28,6 @@ public interface CompletedServiceManagerBO {
     Page<CompletedResponseByProviderAccountDto> findAllByProviderAccountId(final Long providerAccountId, final Pageable pageable, final LocalDate startDate, final LocalDate endDate);
 
     Page<CompletedResponseDto> findAllByClientAccountId(final Long providerAccountId, final Pageable pageable);
+
+    void reversalCompletedService(final Long providerAccountId, final ReversalCompletedServiceRequest reversalRequest);
 }

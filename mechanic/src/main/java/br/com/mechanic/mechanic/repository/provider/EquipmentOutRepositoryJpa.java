@@ -50,6 +50,16 @@ public class EquipmentOutRepositoryJpa implements EquipmentOutRepositoryImpl {
     }
 
     @Override
+    public void reversal(Long id) {
+        repository.reversal(id, LocalDateTime.now());
+    }
+
+    @Override
+    public List<EquipmentOut> findAllByCompletedServiceId(Long completedServiceId) {
+        return repository.findAllByCompletedServiceId(completedServiceId);
+    }
+
+    @Override
     public Long countByProviderAccountIdAndEquipmentId(Long providerAccountId, Long equipmentId) {
         return repository.countByProviderAccountIdAndEquipmentIdAndReversalIsFalse(providerAccountId, equipmentId);
     }

@@ -23,4 +23,6 @@ public interface RevisionServiceBO {
     void updateRevision(Long id, LocalDate revisionReturn, boolean isFinish, long quantityRevised);
 
     void senRevisionNotification();
+
+    void reversal(Long id);
 }

@@ -101,6 +101,13 @@ public class EquipmentInService implements EquipmentInServiceBO {
         return EquipmentInMapper.MAPPER.toDto(equipmentIn);
     }
 
+    @Override
+    public EquipmentInResponseDto findByProviderAccountAndEquipmentIdAndFinishIsFalse(Long providerAccountId, Long equipmentId) {
+        EquipmentIn equipmentIn = equipmentInRepository.findByProviderAccountIdAndEquipmentId(providerAccountId, equipmentId)
+                .orElseThrow(() -> new EquipmentException(ErrorCode.ERROR_EQUIPMENT_NOT_FOUND, "Equipment not found by id: " + equipmentId));
+        return EquipmentInMapper.MAPPER.toDto(equipmentIn);
+    }
+
     private boolean updateField(EquipmentInModel equipmentInModel, EquipmentInUpdateRequest requestDto) {
         boolean isChange = false;
         if (Objects.nonNull(requestDto.getQuantity()) && !Objects.equals(equipmentInModel.getQuantity(), requestDto.getQuantity())) {

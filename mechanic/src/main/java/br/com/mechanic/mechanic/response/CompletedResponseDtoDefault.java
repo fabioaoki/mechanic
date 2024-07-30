@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class CompletedResponseDtoDefault {
 
+    private Long id;
     private Long providerAccountId;
     private Long employeeAccountId;
     private Long providerServiceId;

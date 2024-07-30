@@ -23,5 +23,9 @@ public interface EquipmentOutServiceBO {
 
     EquipmentOutResponseDto updateEquipmentOut(final Long id, final EquipmentOutUpdateRequest requestDto);
 
-    List<EquipmentOutResponseDto> findByProviderAccountAndEquipmentId(Long providerAccountId, Long id, LocalDateTime createDate);
+    List<EquipmentOutResponseDto> findByProviderAccountAndEquipmentId(final Long providerAccountId, final Long id, final LocalDateTime createDate);
+
+    void reversal(final Long id);
+
+    List<EquipmentOutResponseDto> findAllByCompletedServiceId(final Long completedServiceId);
 }
