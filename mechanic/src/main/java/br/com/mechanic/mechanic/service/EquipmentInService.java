@@ -1,6 +1,7 @@
 package br.com.mechanic.mechanic.service;
 
 import br.com.mechanic.mechanic.entity.provider.EquipmentIn;
+import br.com.mechanic.mechanic.entity.provider.EquipmentOut;
 import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import br.com.mechanic.mechanic.exception.EquipmentException;
 import br.com.mechanic.mechanic.exception.ErrorCode;
@@ -8,6 +9,7 @@ import br.com.mechanic.mechanic.exception.ProviderAccountException;
 import br.com.mechanic.mechanic.mapper.EquipmentInMapper;
 import br.com.mechanic.mechanic.model.EquipmentInModel;
 import br.com.mechanic.mechanic.repository.provider.EquipmentInRepositoryImpl;
+import br.com.mechanic.mechanic.repository.provider.EquipmentOutRepositoryImpl;
 import br.com.mechanic.mechanic.request.EquipmentInRequest;
 import br.com.mechanic.mechanic.request.EquipmentInUpdateRequest;
 import br.com.mechanic.mechanic.response.EquipmentInResponseDto;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
@@ -30,6 +33,7 @@ import java.util.Optional;
 public class EquipmentInService implements EquipmentInServiceBO {
 
     private final EquipmentInRepositoryImpl equipmentInRepository;
+    private final EquipmentOutRepositoryImpl equipmentOutRepository;
     private final ProviderAccountServiceBO accountServiceBO;
     private final EquipmentServiceBO equipmentServiceBO;
 
@@ -43,7 +47,7 @@ public class EquipmentInService implements EquipmentInServiceBO {
 
         return equipmentInResponse.map(equipment -> {
             log.info("Service: Updating existing equipment");
-            equipment.setQuantity(equipmentModel.getQuantity());
+            equipment.setQuantity(equipmentModel.getQuantity() + equipment.getQuantity());
             equipment.setAmount(equipmentModel.getAmount().setScale(2, RoundingMode.HALF_UP));
             EquipmentIn updatedEquipment = equipmentInRepository.save(equipment);
             log.info("Service: Equipment updated with ID: {}", updatedEquipment.getId());
@@ -111,8 +115,16 @@ public class EquipmentInService implements EquipmentInServiceBO {
     private boolean updateField(EquipmentInModel equipmentInModel, EquipmentInUpdateRequest requestDto) {
         boolean isChange = false;
         if (Objects.nonNull(requestDto.getQuantity()) && !Objects.equals(equipmentInModel.getQuantity(), requestDto.getQuantity())) {
-            equipmentInModel.setQuantity(requestDto.getQuantity());
-            isChange = true;
+            List<EquipmentOut> outList = equipmentOutRepository.findByProviderAccountAndEquipmentId(equipmentInModel.getProviderAccountId(), equipmentInModel.getEquipmentId(), equipmentInModel.getCreateDate());
+            if (requestDto.getQuantity() > equipmentInModel.getQuantity()) {
+                if (outList.isEmpty() || outList.size() < requestDto.getQuantity()) {
+                    equipmentInModel.setQuantity(requestDto.getQuantity());
+                    isChange = true;
+                }
+            } else {
+                throw new EquipmentException(ErrorCode.IDENTICAL_FIELDS, "You cannot reduce the quantity, it must be greater than that already used.");
+            }
+
         }
         if (Objects.nonNull(requestDto.getAmount()) && requestDto.getAmount().compareTo(BigDecimal.ZERO) != 0) {
             BigDecimal currentAmount = equipmentInModel.getAmount();

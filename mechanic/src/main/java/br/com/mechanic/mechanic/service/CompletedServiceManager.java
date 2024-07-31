@@ -170,7 +170,7 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
             equipmentValueRef.set(updated);
 
             log.debug("Checking equipment availability");
-            List<EquipmentOutResponseDto> outList = equipmentOutServiceBO.findByProviderAccountAndEquipmentId(completedServiceRequest.getProviderAccountId(), equipmentResponseDto.getId(), equipmentResponseDto.getCreateDate());
+            List<EquipmentOutResponseDto> outList = equipmentOutServiceBO.findByProviderAccountAndEquipmentId(completedServiceRequest.getProviderAccountId(), equipmentResponseDto.getId(), equipmentInResponse.getCreateDate());
 
             if (outList.size() <= equipmentIn) {
                 if (equipmentInResponse.isFinish()) {
@@ -229,6 +229,9 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
                         equipmentInServiceBO.finish(equipmentInResponse.getId());
                     }
                 }
+            } else {
+                log.error("Insufficient equipment for creating completed service");
+                throw new EquipmentException(ErrorCode.ERROR_CREATED_COMPLETED_SERVICE, "Missing equipment, it is necessary to include equipment.");
             }
         });
 
