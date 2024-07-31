@@ -27,4 +27,8 @@ public interface RevisionRepositoryImpl {
     List<RevisionDto> findPendingRevision();
 
     void updateNotification(List<Long> revisionIds);
+
+    void reversal(Long id);
+
+    void partialReversal(Long id, Long partialReversalValue);
 }

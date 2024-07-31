@@ -4,9 +4,11 @@ import br.com.mechanic.mechanic.entity.provider.EquipmentOut;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,4 +25,11 @@ public interface EquipmentOutRepository extends JpaRepository<EquipmentOut, Long
             @Param("equipmentId") Long equipmentId,
             @Param("createDate") LocalDateTime createDate
     );
+
+    @Modifying
+    @Transactional
+    @Query(value = "UPDATE mechanic.equipment_out SET reversal = true, last_update = :now WHERE id = :id", nativeQuery = true)
+    void reversal(@Param("id") Long id, @Param("now") LocalDateTime now);
+
+    List<EquipmentOut> findAllByCompletedServiceId(Long completedServiceId);
 }

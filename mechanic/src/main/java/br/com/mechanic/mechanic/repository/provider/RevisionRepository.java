@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,6 +48,16 @@ public interface RevisionRepository extends JpaRepository<Revision, Long> {
     @Transactional
     @Query("UPDATE Revision r SET r.notification = true, r.notificationDate = :notificationDate WHERE r.id IN (:revisionIds)")
     void updateNotification(@Param("revisionIds") List<Long> revisionIds, @Param("notificationDate") LocalDate notificationDate);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Revision r SET r.isDeleted = true, r.lastUpdate = :now WHERE r.id = :id")
+    void reversal(@Param("id") Long id, @Param("now") LocalDateTime now);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Revision r SET r.quantity = :partialReversalValue, r.lastUpdate = :now WHERE r.id = :id")
+    void partialReversal(@Param("id") Long id, @Param("partialReversalValue") Long partialReversalValue, @Param("now") LocalDateTime now);
 }
 
 

@@ -74,6 +74,11 @@ public class EquipmentInRepositoryJpa implements EquipmentInRepositoryImpl {
     }
 
     @Override
+    public Optional<EquipmentIn> findByLastProviderAccountAndEquipmentId(Long providerAccountId, Long equipmentId) {
+        return repository.findByLastProviderAccountAndEquipmentId(providerAccountId, equipmentId);
+    }
+
+    @Override
     public Optional<EquipmentIn> findByProviderAccountId(Long providerAccountId) {
         return repository.findByProviderAccountId(providerAccountId);
     }

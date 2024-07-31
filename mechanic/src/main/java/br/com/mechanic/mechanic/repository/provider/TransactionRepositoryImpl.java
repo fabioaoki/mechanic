@@ -4,6 +4,7 @@ import br.com.mechanic.mechanic.entity.provider.Transaction;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
 import java.util.Optional;
 
 public interface TransactionRepositoryImpl {
@@ -17,4 +18,6 @@ public interface TransactionRepositoryImpl {
     Optional<Transaction> findById(final Long id);
 
     Page<Transaction> findAllByClientAccountId(final Pageable pageable, final Long clientAccountId);
+
+    void reversal(final Long id, final BigDecimal totalAmount, final BigDecimal workmanshipAmount);
 }

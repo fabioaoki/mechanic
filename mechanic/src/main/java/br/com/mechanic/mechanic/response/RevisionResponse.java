@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -34,4 +35,6 @@ public class RevisionResponse {
     private LocalDate expectedReturnDate;
     private boolean notification;
     private LocalDate notificationDate;
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private LocalDateTime lastUpdate;
 }

@@ -19,5 +19,9 @@ public interface EquipmentOutRepositoryImpl {
 
     Optional<EquipmentOut> findById(final Long id);
 
-    List<EquipmentOut> findByProviderAccountAndEquipmentId(Long providerAccountId, Long id, LocalDateTime createDate);
+    List<EquipmentOut> findByProviderAccountAndEquipmentId(Long providerAccountId, Long equipmentId, LocalDateTime createDate);
+
+    void reversal(Long id);
+
+    List<EquipmentOut> findAllByCompletedServiceId(Long completedServiceId);
 }

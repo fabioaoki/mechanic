@@ -107,6 +107,16 @@ public class RevisionService implements RevisionServiceBO {
 
     }
 
+    @Override
+    public void reversal(Long id) {
+        revisionRepository.reversal(id);
+    }
+
+    @Override
+    public void partialReversal(Long id, Long partialReversalValue) {
+        revisionRepository.partialReversal(id, partialReversalValue);
+    }
+
     private Revision getRevision(Long id) {
         return revisionRepository.findById(id).orElseThrow(() -> new RevisionException(ErrorCode.ERROR_REVISION_NOT_FOUND, "Revision not found by id: " + id));
     }

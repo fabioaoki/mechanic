@@ -7,6 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -82,5 +83,15 @@ public class RevisionRepositoryJpa implements RevisionRepositoryImpl {
     @Override
     public void updateNotification(List<Long> revisionIds) {
         repository.updateNotification(revisionIds, LocalDate.now());
+    }
+
+    @Override
+    public void reversal(Long id) {
+        repository.reversal(id, LocalDateTime.now());
+    }
+
+    @Override
+    public void partialReversal(Long id, Long partialReversalValue) {
+        repository.partialReversal(id, partialReversalValue, LocalDateTime.now());
     }
 }

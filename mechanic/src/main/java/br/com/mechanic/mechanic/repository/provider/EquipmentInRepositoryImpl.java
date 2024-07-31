@@ -19,4 +19,6 @@ public interface EquipmentInRepositoryImpl {
     Optional<EquipmentIn> findById(final Long id);
 
     Optional<EquipmentIn> findByProviderAccountIdAndEquipmentId(final Long providerAccountId, final Long equipmentId);
+
+    Optional<EquipmentIn> findByLastProviderAccountAndEquipmentId(final Long providerAccountId, final Long equipmentId);
 }

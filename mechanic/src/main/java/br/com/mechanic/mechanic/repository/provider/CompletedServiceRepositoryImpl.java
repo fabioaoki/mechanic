@@ -32,4 +32,6 @@ public interface CompletedServiceRepositoryImpl {
     List<ProviderServiceCountCompletedServiceGroupByDateDto> countCompletedServicesByVehicleTypeIdAndOptionalDate(Long providerAccountId, LocalDate startDate, LocalDate endDate);
 
     void setTransactionIds(List<Long> completedServiceIds, Long transactionId);
+
+    void partialReversal(final Long id, final Long partialReversal);
 }

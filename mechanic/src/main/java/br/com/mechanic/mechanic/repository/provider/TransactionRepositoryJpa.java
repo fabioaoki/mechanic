@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
@@ -46,6 +47,11 @@ public class TransactionRepositoryJpa implements TransactionRepositoryImpl {
     @Override
     public Page<Transaction> findAllByClientAccountId(Pageable pageable, Long clientAccountId) {
         return repository.findAllByClientAccountId(pageable, clientAccountId);
+    }
+
+    @Override
+    public void reversal(Long id, BigDecimal totalAmount, BigDecimal workmanshipAmount) {
+        repository.reversal(id, totalAmount, workmanshipAmount, LocalDateTime.now());
     }
 
 }

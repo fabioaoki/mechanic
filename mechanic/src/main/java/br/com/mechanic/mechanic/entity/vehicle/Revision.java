@@ -48,4 +48,6 @@ public class Revision {
     private Long revisionId;
     @Column(name = "expected_return_date")
     private LocalDate expectedReturnDate;
+    @Column(name = "last_update")
+    private LocalDateTime lastUpdate;
 }

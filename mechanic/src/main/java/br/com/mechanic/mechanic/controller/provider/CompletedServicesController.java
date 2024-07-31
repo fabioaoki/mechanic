@@ -2,6 +2,7 @@ package br.com.mechanic.mechanic.controller.provider;
 
 import br.com.mechanic.mechanic.exception.*;
 import br.com.mechanic.mechanic.request.CompletedServiceRequest;
+import br.com.mechanic.mechanic.request.ReversalCompletedServiceRequest;
 import br.com.mechanic.mechanic.service.CompletedServiceManagerBO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 
@@ -86,6 +88,23 @@ public class CompletedServicesController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
         } catch (ProviderAccountException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
+        }
+    }
+
+    @PostMapping("/provider/{providerAccountId}/reversal")
+    public void reversalCompletedService(@PathVariable Long providerAccountId, @RequestBody ReversalCompletedServiceRequest reversalRequest) {
+        try {
+            log.info("Reversal completed service by providerAccountId: {}", providerAccountId);
+            completedServiceManagerBO.reversalCompletedService(providerAccountId, reversalRequest);
+        } catch (CompletedServiceException e) {
+            log.error("Error during reversal service: ", e);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Completed service not found", e);
+        } catch (ProviderAccountException e) {
+            log.error("Provider account issue: ", e);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Provider account issue", e);
+        } catch (EquipmentException e) {
+            log.error("Equipment issue: ", e);
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Equipment not found", e);
         }
     }
 

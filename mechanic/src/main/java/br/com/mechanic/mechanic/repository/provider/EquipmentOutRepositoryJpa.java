@@ -45,8 +45,18 @@ public class EquipmentOutRepositoryJpa implements EquipmentOutRepositoryImpl {
     }
 
     @Override
-    public List<EquipmentOut> findByProviderAccountAndEquipmentId(Long providerAccountId, Long id, LocalDateTime createDate) {
-        return repository.findByProviderAccountAndEquipmentIdNative(providerAccountId, id, createDate);
+    public List<EquipmentOut> findByProviderAccountAndEquipmentId(Long providerAccountId, Long equipmentId, LocalDateTime createDate) {
+        return repository.findByProviderAccountAndEquipmentIdNative(providerAccountId, equipmentId, createDate);
+    }
+
+    @Override
+    public void reversal(Long id) {
+        repository.reversal(id, LocalDateTime.now());
+    }
+
+    @Override
+    public List<EquipmentOut> findAllByCompletedServiceId(Long completedServiceId) {
+        return repository.findAllByCompletedServiceId(completedServiceId);
     }
 
     @Override

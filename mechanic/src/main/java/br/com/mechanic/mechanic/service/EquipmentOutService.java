@@ -94,6 +94,20 @@ public class EquipmentOutService implements EquipmentOutServiceBO {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void reversal(Long id) {
+        equipmentOutRepository.reversal(id);
+    }
+
+    @Override
+    public List<EquipmentOutResponseDto> findAllByCompletedServiceId(Long completedServiceId) {
+        log.info("get all completed service by id: {}", completedServiceId);
+        List<EquipmentOut> outList = equipmentOutRepository.findAllByCompletedServiceId(completedServiceId);
+        return outList.stream()
+                .map(EquipmentOutMapper.MAPPER::toDto)
+                .collect(Collectors.toList());
+    }
+
     private boolean updateField(EquipmentOutModel equipmentInModel, EquipmentOutUpdateRequest outUpdateRequest) {
         boolean isChange = false;
         if (Objects.nonNull(outUpdateRequest.getEquipmentId()) && !Objects.equals(equipmentInModel.getEquipmentId(), outUpdateRequest.getEquipmentId())) {

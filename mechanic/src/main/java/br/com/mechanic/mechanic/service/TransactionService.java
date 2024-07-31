@@ -13,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+
 @AllArgsConstructor
 @Log4j2
 @Service
@@ -39,14 +41,20 @@ public class TransactionService implements TransactionServiceBO {
 
     @Override
     public Page<TransactionResponse> findAllByProviderAccountId(Long providerAccountId, Pageable pageable) {
-        log.info("Retrieving list of transaction by providerAccount");
+        log.info("Retrieving list of transaction by providerAccount: {}", providerAccountId);
         return transactionRepository.findAllByProviderAccountId(pageable, providerAccountId).map(TransactionMapper.MAPPER::toDto);
     }
 
     @Override
     public Page<TransactionResponse> findAllByClientAccountId(Long clientAccountId, Pageable pageable) {
-        log.info("Retrieving list of transaction by providerAccount");
+        log.info("Retrieving list of transaction by clientAccountId: {}", clientAccountId);
         return transactionRepository.findAllByClientAccountId(pageable, clientAccountId).map(TransactionMapper.MAPPER::toDto);
+    }
+
+    @Override
+    public void reversal(BigDecimal totalAmount, BigDecimal workmanshipAmount, Long id) {
+        log.info("reversal transaction by providerAccount : {}", id);
+        transactionRepository.reversal(id, totalAmount, workmanshipAmount);
     }
 
     private Transaction getTransactionById(Long id) {
