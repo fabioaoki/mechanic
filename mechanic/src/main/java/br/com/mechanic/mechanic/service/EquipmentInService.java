@@ -102,8 +102,8 @@ public class EquipmentInService implements EquipmentInServiceBO {
     }
 
     @Override
-    public EquipmentInResponseDto findByProviderAccountAndEquipmentIdAndFinishIsFalse(Long providerAccountId, Long equipmentId) {
-        EquipmentIn equipmentIn = equipmentInRepository.findByProviderAccountIdAndEquipmentId(providerAccountId, equipmentId)
+    public EquipmentInResponseDto findByLastProviderAccountAndEquipmentId(Long providerAccountId, Long equipmentId) {
+        EquipmentIn equipmentIn = equipmentInRepository.findByLastProviderAccountAndEquipmentId(providerAccountId, equipmentId)
                 .orElseThrow(() -> new EquipmentException(ErrorCode.ERROR_EQUIPMENT_NOT_FOUND, "Equipment not found by id: " + equipmentId));
         return EquipmentInMapper.MAPPER.toDto(equipmentIn);
     }

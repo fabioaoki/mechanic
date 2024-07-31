@@ -21,5 +21,5 @@ public interface EquipmentInServiceBO {
 
     EquipmentInResponseDto findByProviderAccountAndEquipmentId(final Long providerAccountId, final Long equipmentId);
 
-    EquipmentInResponseDto findByProviderAccountAndEquipmentIdAndFinishIsFalse(final Long providerAccountId, final Long equipmentId);
+    EquipmentInResponseDto findByLastProviderAccountAndEquipmentId(final Long providerAccountId, final Long equipmentId);
 }

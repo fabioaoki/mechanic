@@ -25,4 +25,6 @@ public interface RevisionServiceBO {
     void senRevisionNotification();
 
     void reversal(Long id);
+
+    void partialReversal(Long id, Long partialReversalValue);
 }

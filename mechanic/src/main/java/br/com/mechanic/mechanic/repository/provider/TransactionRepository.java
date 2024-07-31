@@ -21,6 +21,6 @@ public interface TransactionRepository extends JpaRepository<Transaction, Long> 
 
     @Modifying
     @Transactional
-    @Query("UPDATE Transaction t SET t.amount = :amount, t.workmanshipAmount = :workmanshipAmount, t.lastUpdate = :now WHERE t.id = :id")
-    void reversal(@Param("id") Long id, @Param("amount") BigDecimal amount, @Param("workmanshipAmount") BigDecimal workmanshipAmount, @Param("now") LocalDateTime now);
+    @Query("UPDATE Transaction t SET t.amount = :totalAmount, t.workmanshipAmount = :workmanshipAmount, t.lastUpdate = :now WHERE t.id = :id")
+    void reversal(@Param("id") Long id, @Param("totalAmount") BigDecimal totalAmount, @Param("workmanshipAmount") BigDecimal workmanshipAmount, @Param("now") LocalDateTime now);
 }

@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -23,4 +24,7 @@ public interface EquipmentInRepository extends JpaRepository<EquipmentIn, Long> 
             countQuery = "SELECT count(*) FROM mechanic.equipment_in x WHERE x.provider_account_id = ?1 and x.finish = false",
             nativeQuery = true)
     Page<Object[]> findAllByProviderAccountId(Pageable pageable, Long providerAccountId);
+
+    @Query(value = "SELECT x.* FROM mechanic.equipment_in x WHERE x.provider_account_id = :providerAccountId AND x.equipment_id = :equipmentId ORDER BY x.create_date DESC LIMIT 1", nativeQuery = true)
+    Optional<EquipmentIn> findByLastProviderAccountAndEquipmentId(@Param("providerAccountId") Long providerAccountId, @Param("equipmentId") Long equipmentId);
 }

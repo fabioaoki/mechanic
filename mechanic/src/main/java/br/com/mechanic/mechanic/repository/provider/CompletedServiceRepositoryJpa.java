@@ -154,6 +154,11 @@ public class CompletedServiceRepositoryJpa implements CompletedServiceRepository
     }
 
     @Override
+    public void partialReversal(Long id, Long partialReversal) {
+        repository.partialReversal(id, partialReversal, LocalDateTime.now());
+    }
+
+    @Override
     public Optional<CompletedService> findById(Long id) {
         return repository.findById(id);
     }

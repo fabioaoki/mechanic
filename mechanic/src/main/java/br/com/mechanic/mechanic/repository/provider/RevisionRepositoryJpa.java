@@ -89,4 +89,9 @@ public class RevisionRepositoryJpa implements RevisionRepositoryImpl {
     public void reversal(Long id) {
         repository.reversal(id, LocalDateTime.now());
     }
+
+    @Override
+    public void partialReversal(Long id, Long partialReversalValue) {
+        repository.partialReversal(id, partialReversalValue, LocalDateTime.now());
+    }
 }

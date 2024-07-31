@@ -87,5 +87,8 @@ public interface CompletedServiceRepository extends JpaRepository<CompletedServi
             "AND c.create_date BETWEEN :startDate AND :endDate GROUP BY vt.name, psi.identifier, to_char(c.create_date, 'YYYY-MM-DD')", nativeQuery = true)
     List<Object[]> countCompletedServicesByVehicleTypeIdAndOptionalDate(@Param("providerAccountId") Long providerAccountId, @Param("startDate") LocalDateTime startDate, @Param("endDate") LocalDateTime endDate);
 
+    @Modifying
+    @Transactional
+    @Query("UPDATE CompletedService cs SET cs.quantity = :partialReversal, cs.lastUpdate = :now WHERE cs.id = :id")
+    void partialReversal(@Param("id") Long id, @Param("partialReversal") Long partialReversal, @Param("now") LocalDateTime now);
 }
-

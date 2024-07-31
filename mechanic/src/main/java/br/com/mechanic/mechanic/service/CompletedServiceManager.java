@@ -10,7 +10,7 @@ import br.com.mechanic.mechanic.mapper.TransactionMapper;
 import br.com.mechanic.mechanic.model.CompletedServiceModel;
 import br.com.mechanic.mechanic.repository.provider.CompletedServiceRepositoryImpl;
 import br.com.mechanic.mechanic.request.CompletedServiceRequest;
-import br.com.mechanic.mechanic.request.EquipmentInUpdateRequest;
+import br.com.mechanic.mechanic.request.EquipmentInRequest;
 import br.com.mechanic.mechanic.request.ReversalCompletedServiceRequest;
 import br.com.mechanic.mechanic.request.RevisionRequest;
 import br.com.mechanic.mechanic.response.*;
@@ -27,7 +27,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
@@ -325,72 +327,6 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
     }
 
 
-    @Transactional
-    @Override
-    public void reversalCompletedService(Long providerAccountId, ReversalCompletedServiceRequest reversalRequest) {
-        log.info("Service: find completedService by provider accountId: {}, and completedServiceId: {}", providerAccountId, reversalRequest.getCompletedServiceId());
-        CompletedResponseDtoDefault completedResponseDtoDefault = findById(reversalRequest.getCompletedServiceId());
-
-        if (isValidTransaction(completedResponseDtoDefault, reversalRequest, providerAccountId)) {
-            RevisionResponse revisionResponse = revisionServiceBO.findByCompletedServiceId(completedResponseDtoDefault.getId());
-            TransactionResponse transactionResponse = transactionServiceBO.findById(completedResponseDtoDefault.getTransactionId());
-
-            if (!revisionResponse.isDeleted() && revisionResponse.getReturnDate() == null) {
-                EquipmentInResponseDto equipmentInResponseDto = equipmentInServiceBO.findByProviderAccountAndEquipmentId(providerAccountId, reversalRequest.getEquipmentId());
-                updateEquipmentAndReversal(providerAccountId, reversalRequest, equipmentInResponseDto);
-
-                List<EquipmentOutResponseDto> equipmentOutList = equipmentOutServiceBO.findAllByCompletedServiceId(completedResponseDtoDefault.getId());
-                processEquipmentOutReversal(equipmentOutList, Math.toIntExact(reversalRequest.getQuantity()));
-
-                processReversal(reversalRequest, revisionResponse, transactionResponse, equipmentInResponseDto.getAmount());
-            }
-        }
-    }
-
-    private void adjustTransactionAmounts(TransactionResponse transactionResponse, BigDecimal amount, ReversalCompletedServiceRequest reversalRequest) {
-        BigDecimal newAmount = amount.multiply(new BigDecimal(reversalRequest.getQuantity()));
-        transactionResponse.setAmount(transactionResponse.getAmount().subtract(newAmount));
-        transactionResponse.setWorkmanshipAmount(transactionResponse.getWorkmanshipAmount().subtract(reversalRequest.getWorkmanshipAmount()));
-    }
-
-    private void processReversal(ReversalCompletedServiceRequest reversalRequest, RevisionResponse revisionResponse, TransactionResponse transactionResponse, BigDecimal amount) {
-        log.info("Service: Reversal revision by id: {}", revisionResponse.getId());
-        revisionServiceBO.reversal(revisionResponse.getId());
-
-        adjustTransactionAmounts(transactionResponse, amount, reversalRequest);
-        log.info("Service: reversal transaction by transactionId: {}", transactionResponse.getId());
-        transactionServiceBO.reversal(transactionResponse.getAmount(), transactionResponse.getWorkmanshipAmount(), transactionResponse.getId());
-    }
-
-    private boolean isValidTransaction(CompletedResponseDtoDefault completedResponseDtoDefault, ReversalCompletedServiceRequest reversalRequest, Long providerAccountId) {
-        return completedResponseDtoDefault.getProviderAccountId().equals(providerAccountId)
-                && reversalRequest.getQuantity() <= completedResponseDtoDefault.getQuantity();
-    }
-
-    private void updateEquipmentAndReversal(Long providerAccountId, ReversalCompletedServiceRequest reversalRequest, EquipmentInResponseDto equipmentInResponseDto) {
-        log.info("Updating equipment quantities and amounts for providerAccountId: {}, equipmentId: {}", providerAccountId, equipmentInResponseDto.getId());
-        EquipmentInUpdateRequest equipmentRequest = new EquipmentInUpdateRequest();
-        equipmentRequest.setQuantity(equipmentInResponseDto.getQuantity() + reversalRequest.getQuantity());
-        equipmentRequest.setAmount(equipmentInResponseDto.getAmount());
-
-        equipmentInServiceBO.updateEquipmentIn(equipmentInResponseDto.getId(), equipmentRequest);
-
-        log.info("Equipment updated successfully for providerAccountId: {}, equipmentId: {}", providerAccountId, equipmentInResponseDto.getId());
-    }
-
-
-    private void processEquipmentOutReversal(List<EquipmentOutResponseDto> equipmentOutList, int quantity) throws EquipmentException {
-        if (equipmentOutList.size() >= quantity) {
-            for (int i = 0; i < quantity; i++) {
-                log.info("Service: Reversal equipmentOut by id: {}", equipmentOutList.get(i).getId());
-                equipmentOutServiceBO.reversal(equipmentOutList.get(i).getId());
-            }
-        } else {
-            throw new EquipmentException(ErrorCode.INVALID_FIELD, "Not enough equipment available for reversal.");
-        }
-    }
-
-
     private CompletedService getCompletedService(Long id) {
         return completedServiceRepository.findById(id).orElseThrow(() -> new CompletedServiceException(ErrorCode.ERROR_COMPLETED_SERVICE_NOT_FOUND, "Completed service not found by id: " + id));
     }
@@ -435,5 +371,129 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
                 throw new CompletedServiceException(ErrorCode.INVALID_FIELD, "The 'endDate' field is required.");
             }
         });
+    }
+
+    @Transactional
+    @Override
+    public void reversalCompletedService(Long providerAccountId, ReversalCompletedServiceRequest reversalRequest) {
+        log.info("Service: find completedService by provider accountId: {}, and completedServiceId: {}", providerAccountId, reversalRequest.getCompletedServiceId());
+        CompletedResponseDtoDefault completedResponseDtoDefault = findById(reversalRequest.getCompletedServiceId());
+
+        if (isValidTransaction(completedResponseDtoDefault, reversalRequest, providerAccountId)) {
+            RevisionResponse revisionResponse = revisionServiceBO.findByCompletedServiceId(completedResponseDtoDefault.getId());
+            TransactionResponse transactionResponse = transactionServiceBO.findById(completedResponseDtoDefault.getTransactionId());
+
+            if (!revisionResponse.isDeleted() && revisionResponse.getReturnDate() == null) {
+                EquipmentInResponseDto equipmentInResponseDto = equipmentInServiceBO.findByLastProviderAccountAndEquipmentId(providerAccountId, reversalRequest.getEquipmentId());
+                if (equipmentInResponseDto.isFinish()) {
+                    updateEquipmentAndReversal(providerAccountId, reversalRequest, equipmentInResponseDto);
+                }
+
+                List<EquipmentOutResponseDto> equipmentOutList = equipmentOutServiceBO.findAllByCompletedServiceId(completedResponseDtoDefault.getId());
+                processEquipmentOutReversal(equipmentOutList, Math.toIntExact(reversalRequest.getQuantity()));
+
+                processReversal(reversalRequest, revisionResponse, transactionResponse, equipmentInResponseDto.getAmount(), completedResponseDtoDefault);
+            }
+        }
+    }
+
+    private void adjustTransactionAmounts(TransactionResponse transactionResponse, BigDecimal amount, ReversalCompletedServiceRequest reversalRequest) {
+        //350
+        BigDecimal oldWorkmanshipAmount = transactionResponse.getWorkmanshipAmount();
+        //1910
+        BigDecimal oldAmount = transactionResponse.getAmount();
+        //1560
+        BigDecimal oldServiceAmount = oldAmount.subtract(oldWorkmanshipAmount);
+
+        //780
+        BigDecimal newAmount = amount.multiply(new BigDecimal(reversalRequest.getQuantity()));
+
+        //oldServiceAmount - ewAmount = 780
+        BigDecimal newServiceValue = oldServiceAmount.subtract(newAmount);
+
+        //350 - 150 - 200
+        BigDecimal finalAmount = newServiceValue.add(oldWorkmanshipAmount.subtract(reversalRequest.getWorkmanshipAmount()));
+
+        //200  + 780
+        BigDecimal finalWorkmanshipAmount = oldWorkmanshipAmount.subtract(reversalRequest.getWorkmanshipAmount());
+
+        transactionResponse.setWorkmanshipAmount(finalWorkmanshipAmount);
+
+        transactionResponse.setAmount(finalAmount);
+
+        // Salva ou processa a reversão com os valores ajustados
+        savingReversal(transactionResponse, transactionResponse.getWorkmanshipAmount());
+    }
+
+
+
+    private void savingReversal(TransactionResponse transactionResponse, BigDecimal newWorkmanshipAmount) {
+        log.info("Service: reversal transaction by transactionId: {}", transactionResponse.getId());
+        transactionServiceBO.reversal(transactionResponse.getAmount(), newWorkmanshipAmount, transactionResponse.getId());
+    }
+
+    private void processReversal(ReversalCompletedServiceRequest reversalRequest, RevisionResponse revisionResponse, TransactionResponse transactionResponse, BigDecimal amount, CompletedResponseDtoDefault completedResponseDtoDefault) {
+
+        String[] parts = transactionResponse.getCompletedServiceIds().split(",");
+        if (parts.length > 1) {
+            adjustTransactionAmounts(transactionResponse, amount, reversalRequest);
+            revisionServiceBO.partialReversal(revisionResponse.getId(), partialReversalValue(reversalRequest, completedResponseDtoDefault));
+            completedServiceRepository.partialReversal(completedResponseDtoDefault.getId(), partialReversalValue(reversalRequest, completedResponseDtoDefault));
+        } else {
+            if (reversalRequest.getQuantity().equals(completedResponseDtoDefault.getQuantity())) {
+                log.info("Service: Reversal revision by id: {}", revisionResponse.getId());
+                revisionServiceBO.reversal(revisionResponse.getId());
+                transactionResponse.setAmount(BigDecimal.ZERO);
+                savingReversal(transactionResponse, BigDecimal.ZERO);
+            } else {
+                adjustTransactionAmounts(transactionResponse, amount, reversalRequest);
+                revisionServiceBO.partialReversal(revisionResponse.getId(), partialReversalValue(reversalRequest, completedResponseDtoDefault));
+                completedServiceRepository.partialReversal(completedResponseDtoDefault.getId(), partialReversalValue(reversalRequest, completedResponseDtoDefault));
+            }
+        }
+    }
+
+    private static Long partialReversalValue(ReversalCompletedServiceRequest reversalRequest, CompletedResponseDtoDefault completedResponseDtoDefault) {
+        return completedResponseDtoDefault.getQuantity() - reversalRequest.getQuantity();
+    }
+
+    private boolean isValidTransaction(CompletedResponseDtoDefault completedResponseDtoDefault, ReversalCompletedServiceRequest reversalRequest, Long providerAccountId) {
+        log.info("Checks sameProvider {}.", completedResponseDtoDefault.getProviderAccountId());
+        boolean isSameProvider = completedResponseDtoDefault.getProviderAccountId().equals(providerAccountId);
+
+        log.info("Checks if the requested quantity is less than or equal to the available quantity by transactionId: {}.", completedResponseDtoDefault.getTransactionId());
+        boolean isQuantityValid = reversalRequest.getQuantity() <= completedResponseDtoDefault.getQuantity();
+
+        log.info("Checks if the creation date is within the last 24 hours by transactionId: {}.", completedResponseDtoDefault.getTransactionId());
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime createDate = completedResponseDtoDefault.getCreateDate();
+        boolean isWithin24Hours = Duration.between(createDate, now).toHours() <= 24;
+
+        return isSameProvider && isQuantityValid && isWithin24Hours;
+    }
+
+    private void updateEquipmentAndReversal(Long providerAccountId, ReversalCompletedServiceRequest reversalRequest, EquipmentInResponseDto equipmentInResponseDto) {
+        log.info("saving equipment quantities and amounts for providerAccountId: {}, equipmentId: {}", providerAccountId, equipmentInResponseDto.getId());
+        EquipmentInRequest equipmentRequest = new EquipmentInRequest();
+        equipmentRequest.setQuantity(reversalRequest.getQuantity());
+        equipmentRequest.setAmount(equipmentInResponseDto.getAmount());
+        equipmentRequest.setProviderAccountId(providerAccountId);
+        equipmentRequest.setEquipmentId(equipmentInResponseDto.getEquipmentId());
+
+        equipmentInServiceBO.save(equipmentRequest);
+
+        log.info("Equipment save successfully for providerAccountId: {}, equipmentId: {}", providerAccountId, equipmentInResponseDto.getId());
+    }
+
+
+    private void processEquipmentOutReversal(List<EquipmentOutResponseDto> equipmentOutList, int quantity) throws EquipmentException {
+        if (equipmentOutList.size() >= quantity) {
+            for (int i = 0; i < quantity; i++) {
+                log.info("Service: Reversal equipmentOut by id: {}", equipmentOutList.get(i).getId());
+                equipmentOutServiceBO.reversal(equipmentOutList.get(i).getId());
+            }
+        } else {
+            throw new EquipmentException(ErrorCode.INVALID_FIELD, "Not enough equipment available for reversal.");
+        }
     }
 }

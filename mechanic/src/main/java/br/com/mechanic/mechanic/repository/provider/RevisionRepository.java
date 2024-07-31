@@ -52,7 +52,12 @@ public interface RevisionRepository extends JpaRepository<Revision, Long> {
     @Modifying
     @Transactional
     @Query("UPDATE Revision r SET r.isDeleted = true, r.lastUpdate = :now WHERE r.id = :id")
-    void reversal(Long id, LocalDateTime now);
+    void reversal(@Param("id") Long id, @Param("now") LocalDateTime now);
+
+    @Modifying
+    @Transactional
+    @Query("UPDATE Revision r SET r.quantity = :partialReversalValue, r.lastUpdate = :now WHERE r.id = :id")
+    void partialReversal(@Param("id") Long id, @Param("partialReversalValue") Long partialReversalValue, @Param("now") LocalDateTime now);
 }
 
 

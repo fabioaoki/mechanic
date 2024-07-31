@@ -29,4 +29,6 @@ public interface RevisionRepositoryImpl {
     void updateNotification(List<Long> revisionIds);
 
     void reversal(Long id);
+
+    void partialReversal(Long id, Long partialReversalValue);
 }

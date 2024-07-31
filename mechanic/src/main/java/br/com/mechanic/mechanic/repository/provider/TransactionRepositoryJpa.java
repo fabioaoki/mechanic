@@ -50,8 +50,8 @@ public class TransactionRepositoryJpa implements TransactionRepositoryImpl {
     }
 
     @Override
-    public void reversal(Long id, BigDecimal amount, BigDecimal workmanshipAmount) {
-        repository.reversal(id, amount, workmanshipAmount, LocalDateTime.now());
+    public void reversal(Long id, BigDecimal totalAmount, BigDecimal workmanshipAmount) {
+        repository.reversal(id, totalAmount, workmanshipAmount, LocalDateTime.now());
     }
 
 }

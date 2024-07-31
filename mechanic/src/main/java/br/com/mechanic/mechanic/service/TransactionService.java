@@ -52,9 +52,9 @@ public class TransactionService implements TransactionServiceBO {
     }
 
     @Override
-    public void reversal(BigDecimal amount, BigDecimal workmanshipAmount, Long id) {
+    public void reversal(BigDecimal totalAmount, BigDecimal workmanshipAmount, Long id) {
         log.info("reversal transaction by providerAccount : {}", id);
-        transactionRepository.reversal(id, amount, workmanshipAmount);
+        transactionRepository.reversal(id, totalAmount, workmanshipAmount);
     }
 
     private Transaction getTransactionById(Long id) {

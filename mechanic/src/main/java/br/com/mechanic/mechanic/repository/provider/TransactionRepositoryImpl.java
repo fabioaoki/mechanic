@@ -19,5 +19,5 @@ public interface TransactionRepositoryImpl {
 
     Page<Transaction> findAllByClientAccountId(final Pageable pageable, final Long clientAccountId);
 
-    void reversal(final Long id, final BigDecimal amount, final BigDecimal workmanshipAmount);
+    void reversal(final Long id, final BigDecimal totalAmount, final BigDecimal workmanshipAmount);
 }

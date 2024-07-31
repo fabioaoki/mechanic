@@ -18,5 +18,5 @@ public interface TransactionServiceBO {
 
     Page<TransactionResponse> findAllByClientAccountId(final Long clientAccountId, final Pageable pageable);
 
-    void reversal(final BigDecimal amount, final BigDecimal workmanshipAmount, final Long id);
+    void reversal(final BigDecimal totalAmount, final BigDecimal workmanshipAmount, final Long id);
 }

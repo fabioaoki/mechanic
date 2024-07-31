@@ -28,8 +28,8 @@ public interface EquipmentOutRepository extends JpaRepository<EquipmentOut, Long
 
     @Modifying
     @Transactional
-    @Query("UPDATE mechanic.equipment_out SET reversal = true, last_update = :now WHERE id = :id")
-    void reversal(Long id, LocalDateTime now);
+    @Query(value = "UPDATE mechanic.equipment_out SET reversal = true, last_update = :now WHERE id = :id", nativeQuery = true)
+    void reversal(@Param("id") Long id, @Param("now") LocalDateTime now);
 
     List<EquipmentOut> findAllByCompletedServiceId(Long completedServiceId);
 }
