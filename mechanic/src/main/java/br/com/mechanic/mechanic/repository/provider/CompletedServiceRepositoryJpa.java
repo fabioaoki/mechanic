@@ -44,17 +44,29 @@ public class CompletedServiceRepositoryJpa implements CompletedServiceRepository
     }
 
     @Override
-    public Page<CompletedService> findAllByProviderAccountId(Pageable pageable, Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+    public Page<CompletedService> findAllByProviderAccountId(Pageable pageable, Long providerAccountId, LocalDate startDate, LocalDate endDate, boolean isReversal) {
+        if (isReversal) {
+            if (startDate != null && endDate != null) {
+                LocalDateTime startDateTime = null;
+                LocalDateTime endDateTime = null;
+                startDateTime = startDate.atTime(LocalTime.MIN);  // 00:00:00.000 do dia
+                endDateTime = endDate.atTime(LocalTime.MAX);  // 23:59:59.999 do dia
+                return repository.findByProviderAccountIdAndCreateDateBetween(providerAccountId, startDateTime, endDateTime, pageable, true);
+            } else {
+                return repository.findAllByProviderAccountId(pageable, providerAccountId, true);
 
-        if (startDate != null && endDate != null) {
-            LocalDateTime startDateTime = null;
-            LocalDateTime endDateTime = null;
-            startDateTime = startDate.atTime(LocalTime.MIN);  // 00:00:00.000 do dia
-            endDateTime = endDate.atTime(LocalTime.MAX);  // 23:59:59.999 do dia
-            return repository.findByProviderAccountIdAndCreateDateBetween(providerAccountId, startDateTime, endDateTime, pageable);
+            }
         } else {
-            return repository.findAllByProviderAccountId(pageable, providerAccountId);
+            if (startDate != null && endDate != null) {
+                LocalDateTime startDateTime = null;
+                LocalDateTime endDateTime = null;
+                startDateTime = startDate.atTime(LocalTime.MIN);  // 00:00:00.000 do dia
+                endDateTime = endDate.atTime(LocalTime.MAX);  // 23:59:59.999 do dia
+                return repository.findByProviderAccountIdAndCreateDateBetween(providerAccountId, startDateTime, endDateTime, pageable, false);
+            } else {
+                return repository.findAllByProviderAccountId(pageable, providerAccountId, false);
 
+            }
         }
     }
 

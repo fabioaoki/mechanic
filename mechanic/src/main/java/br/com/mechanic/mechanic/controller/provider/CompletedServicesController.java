@@ -174,6 +174,21 @@ public class CompletedServicesController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
         }
     }
+    @GetMapping("/provider-account/{provider-account-id}/reversal")
+    public ResponseEntity<?> findAllByProviderAccountIdReversal(
+            @PathVariable("provider-account-id") Long providerAccountId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        try {
+            return ResponseEntity.ok(completedServiceManagerBO.findAllReversalByProviderAccountId(providerAccountId, PageRequest.of(page, size), startDate, endDate));
+        } catch (CompletedServiceException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
+        } catch (ProviderAccountException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
+        }
+    }
 
     private static ErrorResponse getErrorResponse(CompletedServiceException e) {
         ErrorResponse errorResponse = new ErrorResponse();

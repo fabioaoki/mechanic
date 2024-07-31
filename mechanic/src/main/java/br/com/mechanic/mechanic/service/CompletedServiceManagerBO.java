@@ -26,6 +26,7 @@ public interface CompletedServiceManagerBO {
     CompletedResponseDtoDefault findById(final Long id);
 
     Page<CompletedResponseByProviderAccountDto> findAllByProviderAccountId(final Long providerAccountId, final Pageable pageable, final LocalDate startDate, final LocalDate endDate);
+    Page<CompletedResponseByProviderAccountDto> findAllReversalByProviderAccountId(final Long providerAccountId, final Pageable pageable, final LocalDate startDate, final LocalDate endDate);
 
     Page<CompletedResponseDto> findAllByClientAccountId(final Long providerAccountId, final Pageable pageable);
 

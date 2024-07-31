@@ -306,7 +306,27 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
         log.info("Retrieving list of completed services by providerAccountId: {}", providerAccountId);
         ProviderAccountResponseDto providerAccount = accountServiceBO.findById(providerAccountId);
 
-        return completedServiceRepository.findAllByProviderAccountId(pageable, providerAccountId, startDate, endDate)
+        return completedServiceRepository.findAllByProviderAccountId(pageable, providerAccountId, startDate, endDate, false)
+                .map(completedResponseDtoDefault -> {
+                    EmployeeAccountResponseDto employeeResponse = employeeAccountServiceBO.findById(completedResponseDtoDefault.getEmployeeAccountId());
+                    ProviderServiceResponseDto serviceResponseDto = providerServiceBO.findById(completedResponseDtoDefault.getProviderServiceId());
+                    EquipmentResponseDto equipmentResponseDto = equipmentServiceBO.findByProviderServiceIdentifierId(serviceResponseDto.getService().getId());
+                    EquipmentInResponseDto equipmentInResponse = equipmentInServiceBO.findByProviderAccountAndEquipmentId(providerAccountId, equipmentResponseDto.getId());
+                    TransactionResponse transactionResponse = transactionServiceBO.findById(completedResponseDtoDefault.getTransactionId());
+                    ModelResponseDto modelResponseDto = modelServiceBO.findById(completedResponseDtoDefault.getModelId());
+                    VehicleTypeResponseDto vehicleType = vehicleTypeServiceBO.findById(completedResponseDtoDefault.getVehicleTypeId());
+
+                    return CompletedServiceMapper.MAPPER.byProviderAccountId(providerAccount, employeeResponse.getName(), serviceResponseDto,
+                            equipmentResponseDto.getName(), equipmentInResponse.getAmount(), transactionResponse.getWorkmanshipAmount(),
+                            modelResponseDto, vehicleType.getName(), completedResponseDtoDefault.getCreateDate().toLocalDate(), completedResponseDtoDefault.getQuantity());
+                });
+    }
+    @Override
+    public Page<CompletedResponseByProviderAccountDto> findAllReversalByProviderAccountId(Long providerAccountId, Pageable pageable, LocalDate startDate, LocalDate endDate) {
+        log.info("Retrieving list of completed services by providerAccountId: {}", providerAccountId);
+        ProviderAccountResponseDto providerAccount = accountServiceBO.findById(providerAccountId);
+
+        return completedServiceRepository.findAllByProviderAccountId(pageable, providerAccountId, startDate, endDate, true)
                 .map(completedResponseDtoDefault -> {
                     EmployeeAccountResponseDto employeeResponse = employeeAccountServiceBO.findById(completedResponseDtoDefault.getEmployeeAccountId());
                     ProviderServiceResponseDto serviceResponseDto = providerServiceBO.findById(completedResponseDtoDefault.getProviderServiceId());
@@ -325,7 +345,6 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
     @Override
     public Page<CompletedResponseDto> findAllByClientAccountId(Long providerAccountId, Pageable pageable) {
         log.info("Retrieving list of completedServices by clientAccountId");
-
         return null;
     }
 

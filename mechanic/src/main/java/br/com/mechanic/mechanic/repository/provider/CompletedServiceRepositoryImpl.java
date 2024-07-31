@@ -20,7 +20,7 @@ public interface CompletedServiceRepositoryImpl {
 
     CompletedService save(CompletedService entity);
 
-    Page<CompletedService> findAllByProviderAccountId(Pageable pageable, Long providerAccountId, LocalDate startDate, LocalDate endDate);
+    Page<CompletedService> findAllByProviderAccountId(Pageable pageable, Long providerAccountId, LocalDate startDate, LocalDate endDate, boolean isReversal);
 
 
     List<EmployeeServiceCountDto> countFirstCompletedServiceByEmployee(Long providerAccountId, LocalDate startDate, LocalDate endDate);
