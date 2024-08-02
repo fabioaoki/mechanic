@@ -190,6 +190,123 @@ public class CompletedServicesController {
         }
     }
 
+    // Services by Month
+    @GetMapping("/provider/{providerAccountId}/services-by-month")
+    public ResponseEntity<?> getServicesByMonth(@PathVariable Long providerAccountId,
+                                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        try {
+            var services = completedServiceManagerBO.getServicesByMonth(providerAccountId, startDate, endDate);
+            return ResponseEntity.ok(services);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching services by month data");
+        }
+    }
+
+    // Revenue by Service Type
+    @GetMapping("/provider/{providerAccountId}/revenue-by-service-type")
+    public ResponseEntity<?> getRevenueByServiceType(@PathVariable Long providerAccountId,
+                                                     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                     @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        try {
+            var revenue = completedServiceManagerBO.getRevenueByServiceType(providerAccountId, startDate, endDate);
+            return ResponseEntity.ok(revenue);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching revenue by service type");
+        }
+    }
+
+    // Equipment Utilization Report
+    @GetMapping("/provider/{providerAccountId}/equipment-utilization")
+    public ResponseEntity<?> getEquipmentUtilizationReport(@PathVariable Long providerAccountId,
+                                                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                           @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        try {
+            var utilization = completedServiceManagerBO.getEquipmentUtilizationReport(providerAccountId, startDate, endDate);
+            return ResponseEntity.ok(utilization);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching equipment utilization data");
+        }
+    }
+
+    // Employee Efficiency Report
+    @GetMapping("/provider/{providerAccountId}/employee-efficiency")
+    public ResponseEntity<?> getEmployeeEfficiencyReport(@PathVariable Long providerAccountId,
+                                                         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                         @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        try {
+            var efficiency = completedServiceManagerBO.getEmployeeEfficiencyReport(providerAccountId, startDate, endDate);
+            return ResponseEntity.ok(efficiency);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching employee efficiency data");
+        }
+    }
+
+    // Labor Costs by Service Type
+    @GetMapping("/provider/{providerAccountId}/labor-costs-by-service-type")
+    public ResponseEntity<?> getLaborCostsByServiceType(@PathVariable Long providerAccountId,
+                                                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                        @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        try {
+            var laborCosts = completedServiceManagerBO.getLaborCostsByServiceType(providerAccountId, startDate, endDate);
+            return ResponseEntity.ok(laborCosts);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching labor costs by service type");
+        }
+    }
+
+    // Equipment Costs by Service Type
+    @GetMapping("/provider/{providerAccountId}/equipment-costs-by-service-type")
+    public ResponseEntity<?> getEquipmentCostsByServiceType(@PathVariable Long providerAccountId,
+                                                            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        try {
+            var equipmentCosts = completedServiceManagerBO.getEquipmentCostsByServiceType(providerAccountId, startDate, endDate);
+            return ResponseEntity.ok(equipmentCosts);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching equipment costs by service type");
+        }
+    }
+
+    // Cost Revenue Comparison
+    @GetMapping("/provider/{providerAccountId}/cost-revenue-comparison")
+    public ResponseEntity<?> getCostRevenueComparison(@PathVariable Long providerAccountId,
+                                                      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                      @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        try {
+            var comparison = completedServiceManagerBO.getCostRevenueComparison(providerAccountId, startDate, endDate);
+            return ResponseEntity.ok(comparison);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching cost revenue comparison");
+        }
+    }
+
+    // Inventory Efficiency Report
+    @GetMapping("/provider/{providerAccountId}/inventory-efficiency")
+    public ResponseEntity<?> getInventoryEfficiencyReport(@PathVariable Long providerAccountId,
+                                                          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                          @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        try {
+            var efficiency = completedServiceManagerBO.getInventoryEfficiencyReport(providerAccountId, startDate, endDate);
+            return ResponseEntity.ok(efficiency);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching inventory efficiency data");
+        }
+    }
+
+    // Maintenance and Revisions Report
+    @GetMapping("/provider/{providerAccountId}/maintenance-revisions-report")
+    public ResponseEntity<?> getMaintenanceAndRevisionsReport(@PathVariable Long providerAccountId,
+                                                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
+                                                              @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        try {
+            var report = completedServiceManagerBO.getMaintenanceAndRevisionsReport(providerAccountId, startDate, endDate);
+            return ResponseEntity.ok(report);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error fetching maintenance and revisions report");
+        }
+    }
+
     private static ErrorResponse getErrorResponse(CompletedServiceException e) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setErrorCode(e.getErrorCode());

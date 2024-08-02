@@ -420,27 +420,14 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
     }
 
     private void adjustTransactionAmounts(TransactionResponse transactionResponse, BigDecimal amount, ReversalCompletedServiceRequest reversalRequest) {
-        //350
         BigDecimal oldWorkmanshipAmount = transactionResponse.getWorkmanshipAmount();
-        //1910
         BigDecimal oldAmount = transactionResponse.getAmount();
-        //1560
         BigDecimal oldServiceAmount = oldAmount.subtract(oldWorkmanshipAmount);
-
-        //780
         BigDecimal newAmount = amount.multiply(new BigDecimal(reversalRequest.getQuantity()));
-
-        //oldServiceAmount - ewAmount = 780
         BigDecimal newServiceValue = oldServiceAmount.subtract(newAmount);
-
-        //350 - 150 - 200
         BigDecimal finalAmount = newServiceValue.add(oldWorkmanshipAmount.subtract(reversalRequest.getWorkmanshipAmount()));
-
-        //200  + 780
         BigDecimal finalWorkmanshipAmount = oldWorkmanshipAmount.subtract(reversalRequest.getWorkmanshipAmount());
-
         transactionResponse.setWorkmanshipAmount(finalWorkmanshipAmount);
-
         transactionResponse.setAmount(finalAmount);
 
         // Salva ou processa a reversão com os valores ajustados
@@ -518,4 +505,61 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
             throw new EquipmentException(ErrorCode.INVALID_FIELD, "Not enough equipment available for reversal.");
         }
     }
+
+    ///
+
+    @Override
+    public List<ServicePeriodDto> getServicesByMonth(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        log.info("Fetching services by month for providerAccountId: {}, from: {}, to: {}", providerAccountId, startDate, endDate);
+        return completedServiceRepository.countServicesByMonth(providerAccountId, startDate, endDate);
+    }
+
+    @Override
+    public List<RevenueByServiceTypeDto> getRevenueByServiceType(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        log.info("Fetching revenue by service type for providerAccountId: {}, from: {}, to: {}", providerAccountId, startDate, endDate);
+        return completedServiceRepository.getTotalRevenueByServiceType(providerAccountId, startDate, endDate);
+    }
+
+    @Override
+    public List<EquipmentUtilizationDto> getEquipmentUtilizationReport(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        log.info("Fetching equipment utilization for providerAccountId: {}, from: {}, to: {}", providerAccountId, startDate, endDate);
+        return completedServiceRepository.getEquipmentUtilization(providerAccountId, startDate, endDate);
+    }
+
+    @Override
+    public List<EmployeeEfficiencyDto> getEmployeeEfficiencyReport(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        log.info("Fetching employee efficiency for providerAccountId: {}, from: {}, to: {}", providerAccountId, startDate, endDate);
+        return completedServiceRepository.getEmployeeEfficiency(providerAccountId, startDate, endDate);
+    }
+
+    @Override
+    public List<LaborCostDto> getLaborCostsByServiceType(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        log.info("Fetching labor costs by service type for providerAccountId: {}, from: {}, to: {}", providerAccountId, startDate, endDate);
+        return completedServiceRepository.getLaborCostByServiceType(providerAccountId, startDate, endDate);
+    }
+
+    @Override
+    public List<EquipmentCostDto> getEquipmentCostsByServiceType(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        log.info("Fetching equipment costs by service type for providerAccountId: {}, from: {}, to: {}", providerAccountId, startDate, endDate);
+        return completedServiceRepository.getEquipmentCostByServiceType(providerAccountId, startDate, endDate);
+    }
+
+    @Override
+    public List<CostRevenueComparisonDto> getCostRevenueComparison(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        log.info("Fetching cost revenue comparison for providerAccountId: {}, from: {}, to: {}", providerAccountId, startDate, endDate);
+        return completedServiceRepository.getCostRevenueComparison(providerAccountId, startDate, endDate);
+    }
+
+    @Override
+    public List<InventoryEfficiencyDto> getInventoryEfficiencyReport(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        log.info("Fetching inventory efficiency for providerAccountId: {}, from: {}, to: {}", providerAccountId, startDate, endDate);
+        return completedServiceRepository.getInventoryEfficiency(providerAccountId, startDate, endDate);
+    }
+
+    @Override
+    public MaintenanceRevisionsDto getMaintenanceAndRevisionsReport(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        log.info("Fetching maintenance and revisions report for providerAccountId: {}, from: {}, to: {}", providerAccountId, startDate, endDate);
+        return completedServiceRepository.getMaintenanceAndRevisionsReport(providerAccountId, startDate, endDate);
+    }
+
 }

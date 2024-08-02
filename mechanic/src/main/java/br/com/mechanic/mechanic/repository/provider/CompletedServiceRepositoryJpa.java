@@ -1,10 +1,7 @@
 package br.com.mechanic.mechanic.repository.provider;
 
 import br.com.mechanic.mechanic.entity.provider.CompletedService;
-import br.com.mechanic.mechanic.response.EmployeeServiceCountDto;
-import br.com.mechanic.mechanic.response.ProviderServiceCountCompletedServiceGroupByDateDto;
-import br.com.mechanic.mechanic.response.ProviderServiceCountDto;
-import br.com.mechanic.mechanic.response.ProviderServiceCountGroupByDateDto;
+import br.com.mechanic.mechanic.response.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -173,6 +170,135 @@ public class CompletedServiceRepositoryJpa implements CompletedServiceRepository
     @Override
     public Optional<CompletedService> findById(Long id) {
         return repository.findById(id);
+    }
+
+    //////
+    @Override
+    public List<ServicePeriodDto> countServicesByMonth(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDateTime = startDate.atTime(LocalTime.MIN);
+        LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
+        List<Object[]> results = repository.countServicesByMonth(providerAccountId, startDateTime, endDateTime);
+        return results.stream()
+                .map(result -> new ServicePeriodDto((String) result[0], (Long) result[1]))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<RevenueByServiceTypeDto> getTotalRevenueByServiceType(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDateTime = startDate.atTime(LocalTime.MIN);
+        LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
+        List<Object[]> results = repository.getTotalRevenueByServiceType(providerAccountId, startDateTime, endDateTime);
+        return results.stream()
+                .map(result -> new RevenueByServiceTypeDto((String) result[0],
+                        BigDecimal.valueOf((Double) result[1]).setScale(2, RoundingMode.HALF_EVEN)))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<EquipmentUtilizationDto> getEquipmentUtilization(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDateTime = startDate.atTime(LocalTime.MIN);
+        LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
+        List<Object[]> results = repository.getEquipmentUtilization(providerAccountId, startDateTime, endDateTime);
+        return results.stream()
+                .map(result -> new EquipmentUtilizationDto(
+                        (String) result[0],           // nome
+                        (Long) result[1],             // quantidade de uso
+                        ((BigDecimal) result[2]).setScale(2, RoundingMode.HALF_EVEN) // gasto total já como BigDecimal
+                ))
+                .collect(Collectors.toList());
+
+    }
+
+    @Override
+    public List<EmployeeEfficiencyDto> getEmployeeEfficiency(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDateTime = startDate.atTime(LocalTime.MIN);
+        LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
+        List<Object[]> results = repository.getEmployeeEfficiency(providerAccountId, startDateTime, endDateTime);
+        return results.stream()
+                .map(result -> new EmployeeEfficiencyDto(
+                        (String) result[0],
+                        (Long) result[1],
+                        result[2] != null ? ((BigDecimal) result[2]).setScale(2, RoundingMode.HALF_EVEN) : null
+                ))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<LaborCostDto> getLaborCostByServiceType(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDateTime = startDate.atTime(LocalTime.MIN);
+        LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
+        List<Object[]> results = repository.getLaborCostByServiceType(providerAccountId, startDateTime, endDateTime);
+        return results.stream()
+                .map(result -> new LaborCostDto((String) result[0],
+                        BigDecimal.valueOf((Double) result[1]).setScale(2, RoundingMode.HALF_EVEN)))
+                .collect(Collectors.toList());
+    }
+
+    // Method for Equipment Cost by Service
+    @Override
+    public List<EquipmentCostDto> getEquipmentCostByServiceType(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDateTime = startDate.atTime(LocalTime.MIN);
+        LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
+        List<Object[]> results = repository.getEquipmentCostByServiceType(providerAccountId, startDateTime, endDateTime);
+        return results.stream()
+                .map(result -> new EquipmentCostDto((String) result[0],
+                        BigDecimal.valueOf((Double) result[1]).setScale(2, RoundingMode.HALF_EVEN)))
+                .collect(Collectors.toList());
+    }
+
+    // Method for Labor Cost by Employee
+    @Override
+    public List<LaborCostDto> getLaborCostByEmployee(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDateTime = startDate.atTime(LocalTime.MIN);
+        LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
+        List<Object[]> results = repository.getLaborCostByEmployee(providerAccountId, startDateTime, endDateTime);
+        return results.stream()
+                .map(result -> new LaborCostDto((String) result[0],
+                        BigDecimal.valueOf((Double) result[1]).setScale(2, RoundingMode.HALF_EVEN)))
+                .collect(Collectors.toList());
+    }
+
+    // Method for Cost Revenue Comparison
+    @Override
+    public List<CostRevenueComparisonDto> getCostRevenueComparison(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDateTime = startDate.atTime(LocalTime.MIN);
+        LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
+        List<Object[]> results = repository.getCostRevenueComparison(providerAccountId, startDateTime, endDateTime);
+        return results.stream()
+                .map(result -> new CostRevenueComparisonDto((String) result[0], BigDecimal.valueOf((Double) result[1]).setScale(2, RoundingMode.HALF_EVEN),
+                        BigDecimal.valueOf((Double) result[2]).setScale(2, RoundingMode.HALF_EVEN),
+                        BigDecimal.valueOf((Double) result[3]).setScale(2, RoundingMode.HALF_EVEN))).collect(Collectors.toList());
+    }
+
+    // Method for Inventory Efficiency
+    @Override
+    public List<InventoryEfficiencyDto> getInventoryEfficiency(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        LocalDateTime startDateTime = startDate.atTime(LocalTime.MIN);
+        LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
+        List<Object[]> results = repository.getInventoryEfficiency(providerAccountId, startDateTime, endDateTime);
+        return results.stream()
+                .map(result -> new InventoryEfficiencyDto((String) result[0],
+                        (Long) result[1],
+                        BigDecimal.valueOf((Double) result[2]).setScale(2, RoundingMode.HALF_EVEN),
+                        BigDecimal.valueOf((Double) result[3]).setScale(2, RoundingMode.HALF_EVEN)))
+                .collect(Collectors.toList());
+    }
+
+    ////Relatório de Revisões e Manutenções
+    @Override
+    public MaintenanceRevisionsDto getMaintenanceAndRevisionsReport(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+        List<Object[]> results = repository.getMaintenanceAndRevisionsReport(providerAccountId, startDate, endDate);
+
+        if (results.isEmpty()) {
+            return new MaintenanceRevisionsDto(0L, 0L, 0L); // Returning default if no data found
+        }
+
+        Object[] result = results.get(0); // Assume only one row is returned
+        Long scheduledRevisions = ((Number) result[0]).longValue();
+        Long completedRevisions = ((Number) result[1]).longValue();
+        Long canceledRevisions = ((Number) result[2]).longValue();
+
+        return new MaintenanceRevisionsDto(scheduledRevisions, completedRevisions, canceledRevisions);
     }
 
 }

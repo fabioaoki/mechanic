@@ -1,10 +1,7 @@
 package br.com.mechanic.mechanic.repository.provider;
 
 import br.com.mechanic.mechanic.entity.provider.CompletedService;
-import br.com.mechanic.mechanic.response.EmployeeServiceCountDto;
-import br.com.mechanic.mechanic.response.ProviderServiceCountCompletedServiceGroupByDateDto;
-import br.com.mechanic.mechanic.response.ProviderServiceCountDto;
-import br.com.mechanic.mechanic.response.ProviderServiceCountGroupByDateDto;
+import br.com.mechanic.mechanic.response.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -34,4 +31,29 @@ public interface CompletedServiceRepositoryImpl {
     void setTransactionIds(List<Long> completedServiceIds, Long transactionId);
 
     void partialReversal(final Long id, final Long partialReversal);
+
+    //////
+    List<ServicePeriodDto> countServicesByMonth(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    List<RevenueByServiceTypeDto> getTotalRevenueByServiceType(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    List<EquipmentUtilizationDto> getEquipmentUtilization(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    List<EmployeeEfficiencyDto> getEmployeeEfficiency(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    List<LaborCostDto> getLaborCostByServiceType(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    // Method for Equipment Cost by Service
+    List<EquipmentCostDto> getEquipmentCostByServiceType(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    // Method for Labor Cost by Employee
+    List<LaborCostDto> getLaborCostByEmployee(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    // Method for Cost Revenue Comparison
+    List<CostRevenueComparisonDto> getCostRevenueComparison(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    // Method for Inventory Efficiency
+    List<InventoryEfficiencyDto> getInventoryEfficiency(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    MaintenanceRevisionsDto getMaintenanceAndRevisionsReport(Long providerAccountId, LocalDate startDate, LocalDate endDate);
 }

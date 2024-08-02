@@ -31,4 +31,22 @@ public interface CompletedServiceManagerBO {
     Page<CompletedResponseDto> findAllByClientAccountId(final Long providerAccountId, final Pageable pageable);
 
     void reversalCompletedService(final Long providerAccountId, final ReversalCompletedServiceRequest reversalRequest);
+
+    List<ServicePeriodDto> getServicesByMonth(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    List<RevenueByServiceTypeDto> getRevenueByServiceType(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    List<EquipmentUtilizationDto> getEquipmentUtilizationReport(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    List<EmployeeEfficiencyDto> getEmployeeEfficiencyReport(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    List<LaborCostDto> getLaborCostsByServiceType(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    List<EquipmentCostDto> getEquipmentCostsByServiceType(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    List<CostRevenueComparisonDto> getCostRevenueComparison(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    List<InventoryEfficiencyDto> getInventoryEfficiencyReport(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+
+    MaintenanceRevisionsDto getMaintenanceAndRevisionsReport(Long providerAccountId, LocalDate startDate, LocalDate endDate);
 }
