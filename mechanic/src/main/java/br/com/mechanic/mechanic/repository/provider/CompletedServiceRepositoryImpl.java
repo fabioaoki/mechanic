@@ -53,7 +53,7 @@ public interface CompletedServiceRepositoryImpl {
     List<CostRevenueComparisonDto> getCostRevenueComparison(Long providerAccountId, LocalDate startDate, LocalDate endDate);
 
     // Method for Inventory Efficiency
-    List<InventoryEfficiencyDto> getInventoryEfficiency(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+    List<EquipmentInByProviderAccountIdSumTotalDto> getInventoryEfficiency(Long providerAccountId, LocalDate startDate, LocalDate endDate);
 
     MaintenanceRevisionsDto getMaintenanceAndRevisionsReport(Long providerAccountId, LocalDate startDate, LocalDate endDate);
 }

@@ -551,7 +551,7 @@ public class CompletedServiceManager implements CompletedServiceManagerBO {
     }
 
     @Override
-    public List<InventoryEfficiencyDto> getInventoryEfficiencyReport(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+    public List<EquipmentInByProviderAccountIdSumTotalDto> getInventoryEfficiencyReport(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
         log.info("Fetching inventory efficiency for providerAccountId: {}, from: {}, to: {}", providerAccountId, startDate, endDate);
         return completedServiceRepository.getInventoryEfficiency(providerAccountId, startDate, endDate);
     }

@@ -46,7 +46,7 @@ public interface CompletedServiceManagerBO {
 
     List<CostRevenueComparisonDto> getCostRevenueComparison(Long providerAccountId, LocalDate startDate, LocalDate endDate);
 
-    List<InventoryEfficiencyDto> getInventoryEfficiencyReport(Long providerAccountId, LocalDate startDate, LocalDate endDate);
+    List<EquipmentInByProviderAccountIdSumTotalDto> getInventoryEfficiencyReport(Long providerAccountId, LocalDate startDate, LocalDate endDate);
 
     MaintenanceRevisionsDto getMaintenanceAndRevisionsReport(Long providerAccountId, LocalDate startDate, LocalDate endDate);
 }

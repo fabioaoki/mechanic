@@ -2,6 +2,7 @@ package br.com.mechanic.mechanic.repository.provider;
 
 import br.com.mechanic.mechanic.entity.provider.CompletedService;
 import br.com.mechanic.mechanic.response.*;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
@@ -16,6 +17,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+@Log4j2
 @Component
 public class CompletedServiceRepositoryJpa implements CompletedServiceRepositoryImpl {
 
@@ -272,17 +274,56 @@ public class CompletedServiceRepositoryJpa implements CompletedServiceRepository
 
     // Method for Inventory Efficiency
     @Override
-    public List<InventoryEfficiencyDto> getInventoryEfficiency(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
+    public List<EquipmentInByProviderAccountIdSumTotalDto> getInventoryEfficiency(Long providerAccountId, LocalDate startDate, LocalDate endDate) {
         LocalDateTime startDateTime = startDate.atTime(LocalTime.MIN);
         LocalDateTime endDateTime = endDate.atTime(LocalTime.MAX);
-        List<Object[]> results = repository.getInventoryEfficiency(providerAccountId, startDateTime, endDateTime);
-        return results.stream()
-                .map(result -> new InventoryEfficiencyDto((String) result[0],
+
+        log.info("Fetching equipment data for providerAccountId: {}, from: {}, to: {}", providerAccountId, startDateTime, endDateTime);
+        List<Object[]> getEquipmentInById = repository.getEquipmentInByProviderAccountId(providerAccountId, startDateTime, endDateTime);
+
+        List<EquipmentInByProviderAccountIdDto> equipmentList = getEquipmentInById.stream()
+                .map(result -> new EquipmentInByProviderAccountIdDto((String) result[0],
                         (Long) result[1],
-                        BigDecimal.valueOf((Double) result[2]).setScale(2, RoundingMode.HALF_EVEN),
-                        BigDecimal.valueOf((Double) result[3]).setScale(2, RoundingMode.HALF_EVEN)))
+                        (Long) result[2]))
                 .collect(Collectors.toList());
+
+        log.info("Fetched equipment data: {}", equipmentList);
+
+        log.info("Fetching inventory efficiency data for providerAccountId: {}, from: {}, to: {}", providerAccountId, startDateTime, endDateTime);
+        List<Object[]> results = repository.getInventoryEfficiency(providerAccountId, startDateTime, endDateTime);
+
+        List<EquipmentInByProviderAccountIdSumTotalDto> collectSum = results.stream()
+                .map(result -> {
+                    String name = (String) result[0];
+                    BigDecimal amount = BigDecimal.valueOf((Double) result[1]).setScale(2, RoundingMode.HALF_EVEN);
+                    Long equipmentId = (Long) result[2];
+
+                    Optional<EquipmentInByProviderAccountIdDto> matchingDto = equipmentList.stream()
+                            .filter(dto -> dto.getEquipmentId().equals(equipmentId))
+                            .findFirst();
+
+                    if (matchingDto.isPresent()) {
+                        Long quantity = matchingDto.get().getQuantity();
+                        BigDecimal newAmount = amount.multiply(BigDecimal.valueOf(quantity)).setScale(2, RoundingMode.HALF_EVEN);
+
+                        log.info("Processed equipmentId: {}. Original amount: {}, Quantity: {}, New amount: {}",
+                                equipmentId, amount, quantity, newAmount);
+
+                        return new EquipmentInByProviderAccountIdSumTotalDto(name, newAmount, equipmentId);
+                    } else {
+                        log.info("No matching equipment found for equipmentId: {}", equipmentId);
+                        return new EquipmentInByProviderAccountIdSumTotalDto(name, amount, equipmentId);
+                    }
+                })
+                .collect(Collectors.toList());
+
+        log.info("Calculated inventory efficiency data: {}", collectSum);
+
+        return collectSum;
     }
+
+
+
 
     ////Relatório de Revisões e Manutenções
     @Override
