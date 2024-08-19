@@ -283,8 +283,8 @@ public class CompletedServiceRepositoryJpa implements CompletedServiceRepository
 
         List<EquipmentInByProviderAccountIdDto> equipmentList = getEquipmentInById.stream()
                 .map(result -> new EquipmentInByProviderAccountIdDto((String) result[0],
-                        (Long) result[1],
-                        (Long) result[2]))
+                        result[1] != null ? ((Number) result[1]).longValue() : null,
+                        result[2] != null ? ((Number) result[2]).longValue() : null))
                 .collect(Collectors.toList());
 
         log.info("Fetched equipment data: {}", equipmentList);
@@ -295,8 +295,9 @@ public class CompletedServiceRepositoryJpa implements CompletedServiceRepository
         List<EquipmentInByProviderAccountIdSumTotalDto> collectSum = results.stream()
                 .map(result -> {
                     String name = (String) result[0];
-                    BigDecimal amount = BigDecimal.valueOf((Double) result[1]).setScale(2, RoundingMode.HALF_EVEN);
-                    Long equipmentId = (Long) result[2];
+                    BigDecimal amount = ((BigDecimal) result[1]).setScale(2, RoundingMode.HALF_EVEN);
+                    Long equipmentId = result[2] != null ? ((Number) result[2]).longValue() : null;
+
 
                     Optional<EquipmentInByProviderAccountIdDto> matchingDto = equipmentList.stream()
                             .filter(dto -> dto.getEquipmentId().equals(equipmentId))
@@ -305,16 +306,19 @@ public class CompletedServiceRepositoryJpa implements CompletedServiceRepository
                     if (matchingDto.isPresent()) {
                         Long quantity = matchingDto.get().getQuantity();
                         BigDecimal newAmount = amount.multiply(BigDecimal.valueOf(quantity)).setScale(2, RoundingMode.HALF_EVEN);
+                        BigDecimal unitPrice = newAmount.divide(BigDecimal.valueOf(quantity), 2, RoundingMode.HALF_EVEN);
+
 
                         log.info("Processed equipmentId: {}. Original amount: {}, Quantity: {}, New amount: {}",
                                 equipmentId, amount, quantity, newAmount);
 
-                        return new EquipmentInByProviderAccountIdSumTotalDto(name, newAmount, equipmentId);
+                        return new EquipmentInByProviderAccountIdSumTotalDto(name, newAmount, equipmentId, unitPrice, quantity);
                     } else {
                         log.info("No matching equipment found for equipmentId: {}", equipmentId);
-                        return new EquipmentInByProviderAccountIdSumTotalDto(name, amount, equipmentId);
+                        return null;
                     }
                 })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         log.info("Calculated inventory efficiency data: {}", collectSum);

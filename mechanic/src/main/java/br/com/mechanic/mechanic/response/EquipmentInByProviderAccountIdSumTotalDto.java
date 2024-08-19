@@ -15,4 +15,6 @@ public class EquipmentInByProviderAccountIdSumTotalDto {
     private String name;
     private BigDecimal amount;
     private Long equipmentId;
+    private BigDecimal unitPrice;
+    private Long quantity;
 }
