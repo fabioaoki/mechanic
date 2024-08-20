@@ -182,7 +182,7 @@ public interface CompletedServiceRepository extends JpaRepository<CompletedServi
             "SUM(CASE WHEN r.finish = TRUE THEN 1 ELSE 0 END) AS completed_revisions, " +
             "SUM(CASE WHEN r.is_deleted = TRUE THEN 1 ELSE 0 END) AS canceled_revisions " +
             "FROM mechanic.revision r " +
-            "WHERE r.provider_account_id = :providerAccountId AND r.is_deleted = FALSE AND r.start_date BETWEEN :startDate AND :endDate", nativeQuery = true)
+            "WHERE r.provider_account_id = :providerAccountId AND r.start_date BETWEEN :startDate AND :endDate", nativeQuery = true)
     List<Object[]> getMaintenanceAndRevisionsReport(@Param("providerAccountId") Long providerAccountId,
                                                     @Param("startDate") LocalDate startDate,
                                                     @Param("endDate") LocalDate endDate);
