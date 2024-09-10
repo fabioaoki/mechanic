@@ -32,6 +32,7 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
     private final ProviderAddressServiceBO addressServiceBO;
     private final ProviderPersonServiceBO personServiceBO;
     private final ProviderPhoneServiceBO phoneServiceBO;
+    private final PasswordServiceBO passwordServiceBO;
 
     private final ProviderAccountRepositoryImpl providerAccountRepository;
     private final ProviderAccountTypeRepositoryImpl typeRepository;
@@ -64,6 +65,8 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
         addressServiceBO.save(providerAccountRequest.getAddressRequest(), accountModel.getId());
         ProviderPersonResponseDto personResponseDto = personServiceBO.save(providerAccountRequest.getPersonRequest(), accountModel.getId());
         phoneServiceBO.save(providerAccountRequest.getPhoneRequest(), personResponseDto.getId(), accountModel.getId());
+        passwordServiceBO.save(providerAccount.getId(), providerAccountRequest.getPassword());
+
         return ProviderAccountMapper.MAPPER.toDto(providerAccount);
     }
 

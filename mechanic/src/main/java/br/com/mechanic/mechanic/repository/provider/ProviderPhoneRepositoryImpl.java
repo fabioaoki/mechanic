@@ -1,8 +1,6 @@
 package br.com.mechanic.mechanic.repository.provider;
 
-import br.com.mechanic.mechanic.entity.provider.ProviderAddress;
 import br.com.mechanic.mechanic.entity.provider.ProviderPhone;
-import io.micrometer.observation.ObservationFilter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

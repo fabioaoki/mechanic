@@ -2,11 +2,12 @@ package br.com.mechanic.mechanic.controller.provider;
 
 import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import br.com.mechanic.mechanic.exception.*;
+import br.com.mechanic.mechanic.request.PasswordRequestDto;
 import br.com.mechanic.mechanic.request.ProviderAccountRequestDto;
 import br.com.mechanic.mechanic.request.ProviderAccountUpdateRequestDto;
 import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;
+import br.com.mechanic.mechanic.service.PasswordServiceBO;
 import br.com.mechanic.mechanic.service.ProviderAccountServiceBO;
-import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,6 +23,9 @@ public class ProviderAccountController {
 
     @Autowired
     private ProviderAccountServiceBO providerAccountServiceBO;
+
+    @Autowired
+    private PasswordServiceBO passwordServiceBO;
 
     @GetMapping
     public ResponseEntity<Page<ProviderAccountResponseDto>> findAll(
@@ -39,6 +43,18 @@ public class ProviderAccountController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getErrorResponse(e));
         }
     }
+
+    @GetMapping("/{id}/password/{password}")
+    public ResponseEntity<Boolean> checkProviderPassword(@PathVariable Long id, @PathVariable String password) {
+        try {
+            log.info("Checking provider password with id: {}", id);
+            boolean exists = passwordServiceBO.matches(id, password);
+            return ResponseEntity.ok(exists);
+        } catch (PasswordException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(false);
+        }
+    }
+
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -58,6 +74,9 @@ public class ProviderAccountController {
         } catch (ProviderPhoneException e) {
             log.error("ProviderPhoneException: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
+        } catch (PasswordException e) {
+            log.error("PasswordException: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
         } catch (Exception e) {
             log.error("Unexpected error: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(getErrorResponse(e));
@@ -67,7 +86,7 @@ public class ProviderAccountController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProviderAccount(@PathVariable Long id) throws ProviderAccountException {
         try {
-            log.info("Deleting provider account with id: {}" , id);
+            log.info("Deleting provider account with id: {}", id);
             providerAccountServiceBO.changeStatus(id, ProviderAccountStatusEnum.CANCEL);
             return ResponseEntity.ok().build();
         } catch (ProviderAccountException e) {
@@ -78,7 +97,7 @@ public class ProviderAccountController {
     @PutMapping("active/{id}")
     public ResponseEntity<?> activeProviderAccount(@PathVariable Long id) {
         try {
-            log.info("Activating provider account with id: {}" , id);
+            log.info("Activating provider account with id: {}", id);
             providerAccountServiceBO.changeStatus(id, ProviderAccountStatusEnum.ACTIVE);
             return ResponseEntity.ok().build();
         } catch (ProviderAccountException e) {
@@ -86,15 +105,26 @@ public class ProviderAccountController {
         }
     }
 
+    @PutMapping("password/{id}")
+    public ResponseEntity<?> changePasswordProviderAccount(@PathVariable Long id, @RequestBody PasswordRequestDto passwordRequestDto) {
+        try {
+            log.info("Activating provider account with id: {}", id);
+            passwordServiceBO.updateProviderPassword(id, passwordRequestDto);
+            return ResponseEntity.ok().build();
+        } catch (PasswordException e) {
+            log.error("PasswordException: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
+        }
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<?> updateProviderAccount(@PathVariable Long id, @RequestBody ProviderAccountUpdateRequestDto requestDto) {
         try {
-            log.info("Updating provider account with id: {}" , id);
+            log.info("Updating provider account with id: {}", id);
             return ResponseEntity.ok(providerAccountServiceBO.updateProviderAccount(id, requestDto));
         } catch (ProviderAccountException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
-        }
-        catch (ProviderAccountTypeException e) {
+        } catch (ProviderAccountTypeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getErrorResponse(e));
         }
     }
@@ -105,6 +135,7 @@ public class ProviderAccountController {
         errorResponse.setMessage(e.getMessage());
         return errorResponse;
     }
+
     private static ErrorResponse getErrorResponse(ProviderAccountTypeException e) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setErrorCode(e.getErrorCode());
@@ -127,6 +158,11 @@ public class ProviderAccountController {
     }
 
     private static ErrorResponse getErrorResponse(Exception e) {
+        ErrorResponse errorResponse = new ErrorResponse();
+        errorResponse.setMessage(e.getMessage());
+        return errorResponse;
+    }
+    private static ErrorResponse getErrorResponse(PasswordException e) {
         ErrorResponse errorResponse = new ErrorResponse();
         errorResponse.setMessage(e.getMessage());
         return errorResponse;
