@@ -27,11 +27,26 @@ public class ProviderAccountController {
     @Autowired
     private PasswordServiceBO passwordServiceBO;
 
+
     @GetMapping
     public ResponseEntity<Page<ProviderAccountResponseDto>> findAll(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
         return ResponseEntity.ok(providerAccountServiceBO.findAll(PageRequest.of(page, size)));
+    }
+
+    @PostMapping("/{id}/password")
+    public ResponseEntity<String> genarateToken(@PathVariable Long id, @RequestBody String password) {
+        try {
+            log.info("Checking provider password with id: {}", id);
+            if (passwordServiceBO.matches(id, password)) {
+                return ResponseEntity.ok(null);
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            }
+        } catch (PasswordException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     @GetMapping("/{id}")
