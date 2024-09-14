@@ -2,18 +2,22 @@ package br.com.mechanic.mechanic.controller.provider;
 
 import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import br.com.mechanic.mechanic.exception.*;
+import br.com.mechanic.mechanic.request.DataAuthentication;
 import br.com.mechanic.mechanic.request.PasswordRequestDto;
 import br.com.mechanic.mechanic.request.ProviderAccountRequestDto;
 import br.com.mechanic.mechanic.request.ProviderAccountUpdateRequestDto;
 import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;
 import br.com.mechanic.mechanic.service.PasswordServiceBO;
 import br.com.mechanic.mechanic.service.ProviderAccountServiceBO;
+import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -27,6 +31,9 @@ public class ProviderAccountController {
     @Autowired
     private PasswordServiceBO passwordServiceBO;
 
+    @Autowired
+    private AuthenticationManager manager;
+
 
     @GetMapping
     public ResponseEntity<Page<ProviderAccountResponseDto>> findAll(
@@ -35,18 +42,12 @@ public class ProviderAccountController {
         return ResponseEntity.ok(providerAccountServiceBO.findAll(PageRequest.of(page, size)));
     }
 
-    @PostMapping("/{id}/password")
-    public ResponseEntity<String> genarateToken(@PathVariable Long id, @RequestBody String password) {
-        try {
-            log.info("Checking provider password with id: {}", id);
-            if (passwordServiceBO.matches(id, password)) {
-                return ResponseEntity.ok(null);
-            } else {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
-            }
-        } catch (PasswordException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+    @PostMapping("/login")
+    public ResponseEntity login(@RequestBody @Valid DataAuthentication data) {
+        var token = new UsernamePasswordAuthenticationToken(data.login(), data.password());
+        var authentication = manager.authenticate(token);
+
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/{id}")

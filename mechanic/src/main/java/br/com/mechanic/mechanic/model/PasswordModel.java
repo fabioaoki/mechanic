@@ -17,6 +17,7 @@ public class PasswordModel {
     private Long providerAccountId;
     private String password;
     private String oldPassword;
+    private String email;
     private LocalDateTime createDate;
     private LocalDateTime lastUpdate;
 }

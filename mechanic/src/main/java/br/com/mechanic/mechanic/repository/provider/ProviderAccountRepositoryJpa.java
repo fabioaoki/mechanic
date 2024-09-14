@@ -35,6 +35,11 @@ public class ProviderAccountRepositoryJpa implements ProviderAccountRepositoryIm
     }
 
     @Override
+    public Optional<ProviderAccount> findByEmail(String email) {
+        return providerAccountRepository.findByEmail(email);
+    }
+
+    @Override
     public ProviderAccount save(ProviderAccount entity) {
         if(entity.getCreateDate() == null){
             entity.setCreateDate(LocalDateTime.now());

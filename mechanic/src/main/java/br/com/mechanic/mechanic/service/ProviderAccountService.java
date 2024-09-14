@@ -5,7 +5,9 @@ import br.com.mechanic.mechanic.entity.provider.ProviderAccount;
 import br.com.mechanic.mechanic.entity.provider.ProviderAccountHistory;
 import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import br.com.mechanic.mechanic.exception.*;
+import br.com.mechanic.mechanic.mapper.PasswordMapper;
 import br.com.mechanic.mechanic.mapper.ProviderAccountMapper;
+import br.com.mechanic.mechanic.model.ClientAccountModel;
 import br.com.mechanic.mechanic.model.ProviderAccountModel;
 import br.com.mechanic.mechanic.repository.provider.ProviderAccountHistoryRepositoryImpl;
 import br.com.mechanic.mechanic.repository.provider.ProviderAccountRepositoryImpl;
@@ -23,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @AllArgsConstructor
 @Log4j2
@@ -65,9 +69,16 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
         addressServiceBO.save(providerAccountRequest.getAddressRequest(), accountModel.getId());
         ProviderPersonResponseDto personResponseDto = personServiceBO.save(providerAccountRequest.getPersonRequest(), accountModel.getId());
         phoneServiceBO.save(providerAccountRequest.getPhoneRequest(), personResponseDto.getId(), accountModel.getId());
-        passwordServiceBO.save(providerAccount.getId(), providerAccountRequest.getPassword());
+        passwordServiceBO.save(providerAccount.getId(), providerAccountRequest.getPassword(), providerAccountRequest.getEmail());
 
         return ProviderAccountMapper.MAPPER.toDto(providerAccount);
+    }
+
+    private static void formatCpf(ClientAccountModel employeeAccountModel) {
+        employeeAccountModel.setCpf(employeeAccountModel.getCpf().replaceAll("\\D", ""));
+        if (employeeAccountModel.getCpf().length() != 11) {
+            throw new ClientAccountException(ErrorCode.INVALID_FIELD, "Invalid CPF length.");
+        }
     }
 
     @Transactional
@@ -177,6 +188,8 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
                 .ifPresent(clientAccount -> {
                     throw new ProviderAccountException(ErrorCode.ERROR_CREATED_CLIENT, "CNPJ already registered");
                 });
+
+        validEmail(dto);
         if (dto.getType() == null) {
             throw new ProviderAccountException(ErrorCode.INVALID_FIELD, "The 'type' field is required and cannot be empty.");
         }
@@ -184,6 +197,21 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
         log.info("Service: valid provider address account");
         if (dto.getAddressRequest() == null || dto.getAddressRequest().isEmpty()) {
             throw new ProviderAddressException(ErrorCode.INVALID_FIELD, "The 'address' field is required and cannot be empty.");
+        }
+    }
+
+    private void validEmail(ProviderAccountRequestDto dto) {
+        if (dto.getEmail() == null || dto.getEmail().trim().isEmpty()) {
+            throw new ProviderAccountException(ErrorCode.INVALID_FIELD, "The 'email' field is required and cannot be empty.");
+        }
+        String EMAIL_REGEX = "^(?=.{1,256}$)[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        Pattern pattern = Pattern.compile(EMAIL_REGEX);
+        Matcher matcher = pattern.matcher(dto.getEmail().trim());
+        if (matcher.matches()) {
+            providerAccountRepository.findByEmail(dto.getEmail().trim())
+                    .ifPresent(clientAccount -> {
+                        throw new ProviderAccountException(ErrorCode.EMAIL_ALREADY_REGISTERED, "Email already registered");
+                    });
         }
     }
 }

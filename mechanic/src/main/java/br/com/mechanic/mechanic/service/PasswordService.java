@@ -24,11 +24,11 @@ public class PasswordService implements PasswordServiceBO {
     private final BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
 
     @Override
-    public void save(Long providerAccountId, String password) {
+    public void save(Long providerAccountId, String password, String email) {
         log.info("Service: valid password");
         validPassword(password);
         log.info("Service: Saving a password");
-        ProviderPassword providerPassword = PasswordMapper.MAPPER.toEntity(providerAccountId, password);
+        ProviderPassword providerPassword = PasswordMapper.MAPPER.toEntity(providerAccountId, password, email);
         passwordRepository.save(providerPassword);
     }
 

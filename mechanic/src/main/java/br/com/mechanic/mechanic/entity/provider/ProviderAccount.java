@@ -20,6 +20,7 @@ public class ProviderAccount {
     private Long id;
     private String workshop;
     private String cnpj;
+    private String email;
     @Column(name = "create_date")
     private LocalDateTime createDate;
     @Column(name = "last_update")

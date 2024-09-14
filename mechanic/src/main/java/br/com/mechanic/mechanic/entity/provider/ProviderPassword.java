@@ -20,6 +20,7 @@ public class ProviderPassword {
     @Column(name = "provider_account_id")
     private Long providerAccountId;
     private String password;
+    private String email;
     private String oldPassword;
     @Column(name = "create_date")
     private LocalDateTime createDate;
