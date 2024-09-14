@@ -21,7 +21,7 @@ public interface ProviderAccountMapper {
         return ProviderAccount.builder()
                 .workshop(dto.getWorkshop())
                 .cnpj(dto.getCnpj().replaceAll("\\D", ""))
-                .email(dto.getEmail().trim())
+                .login(dto.getLogin().trim())
                 .type(dto.getType())
                 .status(ProviderAccountStatusEnum.INITIAL_BLOCK)
                 .build();

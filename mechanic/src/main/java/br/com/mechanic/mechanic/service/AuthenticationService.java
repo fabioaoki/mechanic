@@ -8,19 +8,16 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class AuthenticationService implements UserDetailsService {
     private final String USER_NOT_FOUND_MSG = "User with email %s not found";
-    private final ProviderPasswordRepositoryImpl passwordRepository;
 
     @Autowired
-    public UserDetailsServiceImpl(ProviderPasswordRepositoryImpl userRepository) {
-        this.passwordRepository = userRepository;
-    }
+    private ProviderPasswordRepositoryImpl passwordRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        return (UserDetails) passwordRepository.findByEmail(email)
+    public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
+        return (UserDetails) passwordRepository.findByLogin(login)
                 .orElseThrow(() -> new UsernameNotFoundException(
-                        String.format(USER_NOT_FOUND_MSG, email)));
+                        String.format(USER_NOT_FOUND_MSG, login)));
     }
 }

@@ -5,9 +5,7 @@ import br.com.mechanic.mechanic.entity.provider.ProviderAccount;
 import br.com.mechanic.mechanic.entity.provider.ProviderAccountHistory;
 import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import br.com.mechanic.mechanic.exception.*;
-import br.com.mechanic.mechanic.mapper.PasswordMapper;
 import br.com.mechanic.mechanic.mapper.ProviderAccountMapper;
-import br.com.mechanic.mechanic.model.ClientAccountModel;
 import br.com.mechanic.mechanic.model.ProviderAccountModel;
 import br.com.mechanic.mechanic.repository.provider.ProviderAccountHistoryRepositoryImpl;
 import br.com.mechanic.mechanic.repository.provider.ProviderAccountRepositoryImpl;
@@ -69,16 +67,9 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
         addressServiceBO.save(providerAccountRequest.getAddressRequest(), accountModel.getId());
         ProviderPersonResponseDto personResponseDto = personServiceBO.save(providerAccountRequest.getPersonRequest(), accountModel.getId());
         phoneServiceBO.save(providerAccountRequest.getPhoneRequest(), personResponseDto.getId(), accountModel.getId());
-        passwordServiceBO.save(providerAccount.getId(), providerAccountRequest.getPassword(), providerAccountRequest.getEmail());
+        passwordServiceBO.save(providerAccount.getId(), providerAccountRequest.getPassword(), providerAccountRequest.getLogin());
 
         return ProviderAccountMapper.MAPPER.toDto(providerAccount);
-    }
-
-    private static void formatCpf(ClientAccountModel employeeAccountModel) {
-        employeeAccountModel.setCpf(employeeAccountModel.getCpf().replaceAll("\\D", ""));
-        if (employeeAccountModel.getCpf().length() != 11) {
-            throw new ClientAccountException(ErrorCode.INVALID_FIELD, "Invalid CPF length.");
-        }
     }
 
     @Transactional
@@ -201,14 +192,14 @@ public class ProviderAccountService implements ProviderAccountServiceBO {
     }
 
     private void validEmail(ProviderAccountRequestDto dto) {
-        if (dto.getEmail() == null || dto.getEmail().trim().isEmpty()) {
+        if (dto.getLogin() == null || dto.getLogin().trim().isEmpty()) {
             throw new ProviderAccountException(ErrorCode.INVALID_FIELD, "The 'email' field is required and cannot be empty.");
         }
         String EMAIL_REGEX = "^(?=.{1,256}$)[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
         Pattern pattern = Pattern.compile(EMAIL_REGEX);
-        Matcher matcher = pattern.matcher(dto.getEmail().trim());
+        Matcher matcher = pattern.matcher(dto.getLogin().trim());
         if (matcher.matches()) {
-            providerAccountRepository.findByEmail(dto.getEmail().trim())
+            providerAccountRepository.findByLogin(dto.getLogin().trim())
                     .ifPresent(clientAccount -> {
                         throw new ProviderAccountException(ErrorCode.EMAIL_ALREADY_REGISTERED, "Email already registered");
                     });

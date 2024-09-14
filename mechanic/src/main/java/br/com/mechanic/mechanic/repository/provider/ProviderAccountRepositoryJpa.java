@@ -35,8 +35,8 @@ public class ProviderAccountRepositoryJpa implements ProviderAccountRepositoryIm
     }
 
     @Override
-    public Optional<ProviderAccount> findByEmail(String email) {
-        return providerAccountRepository.findByEmail(email);
+    public Optional<ProviderAccount> findByLogin(String login) {
+        return providerAccountRepository.findByLogin(login);
     }
 
     @Override

@@ -15,13 +15,13 @@ public interface PasswordMapper {
     PasswordMapper MAPPER = Mappers.getMapper(PasswordMapper.class);
 
     @Named("toEntity")
-    default ProviderPassword toEntity(Long providerAccountId, String password, String email) {
+    default ProviderPassword toEntity(Long providerAccountId, String password, String login) {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String encodedPassword = encoder.encode(password);
         return ProviderPassword.builder()
                 .providerAccountId(providerAccountId)
                 .password(encodedPassword)
-                .email(email)
+                .login(login)
                 .build();
     }
 

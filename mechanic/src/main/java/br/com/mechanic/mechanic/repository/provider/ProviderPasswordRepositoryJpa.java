@@ -32,7 +32,7 @@ public class ProviderPasswordRepositoryJpa implements ProviderPasswordRepository
     }
 
     @Override
-    public Optional<ProviderPassword> findByEmail(String email) {
-        return repository.findByEmail(email);
+    public Optional<ProviderPassword> findByLogin(String login) {
+        return repository.findByLogin(login);
     }
 }
