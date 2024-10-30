@@ -1,6 +1,7 @@
 package br.com.mechanic.mechanic.service;
 
-import org.json.JSONObject;
+
+import org.springframework.boot.configurationprocessor.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;

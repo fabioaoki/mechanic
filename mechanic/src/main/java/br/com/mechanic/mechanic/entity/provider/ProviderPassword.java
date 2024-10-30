@@ -32,6 +32,8 @@ public class ProviderPassword implements UserDetails {
     @Column(name = "last_update")
     private LocalDateTime lastUpdate;
 
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_USER"));
