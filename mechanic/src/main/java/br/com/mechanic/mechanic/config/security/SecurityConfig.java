@@ -1,5 +1,6 @@
 package br.com.mechanic.mechanic.config.security;
 
+import br.com.mechanic.mechanic.repository.provider.ProviderPasswordRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.reactive.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -21,12 +22,15 @@ public class SecurityConfig {
     @Autowired
     private TokenServiceBo tokenServiceBo;
 
+    @Autowired
+    private ProviderPasswordRepository repository;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new AuthenticationToTokenFilter(tokenServiceBo), UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(new AuthenticationToTokenFilter(tokenServiceBo, repository), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests(auth -> auth
                         .requestMatchers(String.valueOf(PathRequest.toStaticResources().atCommonLocations())).permitAll()  // Exemplo para permitir recursos estáticos
                         .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()

@@ -6,4 +6,6 @@ public interface TokenServiceBo {
     String generated(Authentication authentication);
 
     boolean isValidToken(String token);
+
+    Long getIdProvider(String token);
 }

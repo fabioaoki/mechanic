@@ -1,6 +1,7 @@
 package br.com.mechanic.mechanic.config.security;
 
 import br.com.mechanic.mechanic.entity.provider.ProviderPassword;
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.log4j.Log4j2;
@@ -45,5 +46,11 @@ public class TokenService implements TokenServiceBo {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public Long getIdProvider(String token) {
+        Claims claims = Jwts.parser().setSigningKey(this.secret).parseClaimsJws(token).getBody();
+        return Long.parseLong(claims.getSubject());
     }
 }
