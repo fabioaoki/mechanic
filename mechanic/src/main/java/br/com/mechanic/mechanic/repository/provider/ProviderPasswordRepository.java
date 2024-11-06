@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface ProviderPasswordRepository extends JpaRepository<ProviderPassword, Long> {
     Optional<ProviderPassword> findByProviderAccountId(Long providerAccountId);
+
+    Optional<ProviderPassword> findByLogin(String login);
 }

@@ -13,6 +13,7 @@ public interface ProviderAccountRepositoryImpl {
     Optional<ProviderAccount> findById(Long id);
 
     Optional<ProviderAccount> findByCnpj(String cnpj);
+    Optional<ProviderAccount> findByLogin(String login);
 
     ProviderAccount save(ProviderAccount entity);
 }

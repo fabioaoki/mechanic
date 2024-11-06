@@ -30,4 +30,9 @@ public class ProviderPasswordRepositoryJpa implements ProviderPasswordRepository
     public Optional<ProviderPassword> findByProviderAccountId(Long providerAccountId) {
         return repository.findByProviderAccountId(providerAccountId);
     }
+
+    @Override
+    public Optional<ProviderPassword> findByLogin(String login) {
+        return repository.findByLogin(login);
+    }
 }

@@ -11,7 +11,7 @@ public interface PasswordServiceBO {
 
     void updateProviderPassword(final Long providerAccountId, final PasswordRequestDto newPassword);
 
-    void save(final Long providerAccountId, final String password);
+    void save(final Long providerAccountId, final String password, final String login);
 
     boolean matches(final Long providerAccountId, final String password);
 }

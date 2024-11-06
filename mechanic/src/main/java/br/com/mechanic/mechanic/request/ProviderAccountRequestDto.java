@@ -17,6 +17,7 @@ public class ProviderAccountRequestDto {
     private String cnpj;
     private Long type;
     private String password;
+    private String login;
     private List<ProviderAddressRequest> addressRequest;
     private List<ProviderPhoneRequest> phoneRequest;
     private ProviderPersonRequest personRequest;

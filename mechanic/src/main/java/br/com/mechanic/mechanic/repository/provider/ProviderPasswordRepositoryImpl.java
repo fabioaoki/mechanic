@@ -8,4 +8,6 @@ public interface ProviderPasswordRepositoryImpl {
     ProviderPassword save(ProviderPassword providerPassword);
 
     Optional<ProviderPassword> findByProviderAccountId(Long providerAccountId);
+
+    Optional<ProviderPassword> findByLogin(String login);
 }
