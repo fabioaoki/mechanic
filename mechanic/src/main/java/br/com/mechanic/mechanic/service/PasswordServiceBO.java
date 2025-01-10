@@ -1,7 +1,7 @@
 package br.com.mechanic.mechanic.service;
 
-import br.com.mechanic.mechanic.request.PasswordRequestDto;
-import br.com.mechanic.mechanic.response.PasswordResponse;
+import br.com.mechanic.mechanic.service.request.PasswordRequestDto;
+import br.com.mechanic.mechanic.service.response.PasswordResponse;
 
 public interface PasswordServiceBO {
 

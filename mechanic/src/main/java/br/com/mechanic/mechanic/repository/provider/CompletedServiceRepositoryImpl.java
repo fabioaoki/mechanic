@@ -1,12 +1,11 @@
 package br.com.mechanic.mechanic.repository.provider;
 
 import br.com.mechanic.mechanic.entity.provider.CompletedService;
-import br.com.mechanic.mechanic.response.*;
+import br.com.mechanic.mechanic.service.response.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 

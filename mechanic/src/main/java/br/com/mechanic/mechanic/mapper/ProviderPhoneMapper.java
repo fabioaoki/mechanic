@@ -1,9 +1,9 @@
 package br.com.mechanic.mechanic.mapper;
 
 import br.com.mechanic.mechanic.entity.provider.ProviderPhone;
-import br.com.mechanic.mechanic.model.ProvidePhoneModel;
-import br.com.mechanic.mechanic.request.ProviderPhoneRequest;
-import br.com.mechanic.mechanic.response.ProviderPhoneResponseDto;
+import br.com.mechanic.mechanic.service.model.ProvidePhoneModel;
+import br.com.mechanic.mechanic.service.request.ProviderPhoneRequest;
+import br.com.mechanic.mechanic.service.response.ProviderPhoneResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

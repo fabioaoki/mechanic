@@ -2,8 +2,8 @@ package br.com.mechanic.mechanic.controller.client;
 
 import br.com.mechanic.mechanic.exception.ClientPhoneException;
 import br.com.mechanic.mechanic.exception.ErrorResponse;
-import br.com.mechanic.mechanic.request.ClientPhoneRequest;
-import br.com.mechanic.mechanic.response.ClientPhoneResponseDto;
+import br.com.mechanic.mechanic.service.request.ClientPhoneRequest;
+import br.com.mechanic.mechanic.service.response.ClientPhoneResponseDto;
 import br.com.mechanic.mechanic.service.client.ClientPhoneServiceBO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,7 @@
 package br.com.mechanic.mechanic.service;
 
-import br.com.mechanic.mechanic.request.RevisionRequest;
-import br.com.mechanic.mechanic.response.RevisionResponse;
+import br.com.mechanic.mechanic.service.request.RevisionRequest;
+import br.com.mechanic.mechanic.service.response.RevisionResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

@@ -1,7 +1,7 @@
 package br.com.mechanic.mechanic.repository.provider;
 
 import br.com.mechanic.mechanic.entity.provider.EquipmentIn;
-import br.com.mechanic.mechanic.response.ProviderEquipmentInResponseDto;
+import br.com.mechanic.mechanic.service.response.ProviderEquipmentInResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

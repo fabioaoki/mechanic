@@ -1,8 +1,8 @@
 package br.com.mechanic.mechanic.controller.provider;
 
 import br.com.mechanic.mechanic.exception.*;
-import br.com.mechanic.mechanic.request.CompletedServiceRequest;
-import br.com.mechanic.mechanic.request.ReversalCompletedServiceRequest;
+import br.com.mechanic.mechanic.service.request.CompletedServiceRequest;
+import br.com.mechanic.mechanic.service.request.ReversalCompletedServiceRequest;
 import br.com.mechanic.mechanic.service.CompletedServiceManagerBO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;

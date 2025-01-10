@@ -1,9 +1,9 @@
 package br.com.mechanic.mechanic.controller.provider;
 
 import br.com.mechanic.mechanic.exception.*;
-import br.com.mechanic.mechanic.request.ProviderServiceRequest;
-import br.com.mechanic.mechanic.request.ProviderServiceUpdateRequestDto;
-import br.com.mechanic.mechanic.response.ProviderServiceResponseDto;
+import br.com.mechanic.mechanic.service.request.ProviderServiceRequest;
+import br.com.mechanic.mechanic.service.request.ProviderServiceUpdateRequestDto;
+import br.com.mechanic.mechanic.service.response.ProviderServiceResponseDto;
 import br.com.mechanic.mechanic.service.ProviderServiceBO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;

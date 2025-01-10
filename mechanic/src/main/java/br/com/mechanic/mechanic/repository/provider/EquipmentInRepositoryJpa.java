@@ -1,18 +1,14 @@
 package br.com.mechanic.mechanic.repository.provider;
 
 import br.com.mechanic.mechanic.entity.provider.EquipmentIn;
-import br.com.mechanic.mechanic.response.EquipmentInResponseDto;
-import br.com.mechanic.mechanic.response.ProviderEquipmentInResponseDto;
-import br.com.mechanic.mechanic.response.ProviderServiceCountGroupByDateDto;
+import br.com.mechanic.mechanic.service.response.ProviderEquipmentInResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;

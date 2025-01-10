@@ -1,7 +1,7 @@
 package br.com.mechanic.mechanic.service;
 
-import br.com.mechanic.mechanic.request.ColorRequest;
-import br.com.mechanic.mechanic.response.ColorResponseDto;
+import br.com.mechanic.mechanic.service.request.ColorRequest;
+import br.com.mechanic.mechanic.service.response.ColorResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

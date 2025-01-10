@@ -1,8 +1,8 @@
 package br.com.mechanic.mechanic.service.client;
 
-import br.com.mechanic.mechanic.request.ClientAddressRequest;
-import br.com.mechanic.mechanic.response.ClientAddressResponseByControllerDto;
-import br.com.mechanic.mechanic.response.ClientAddressResponseDto;
+import br.com.mechanic.mechanic.service.request.ClientAddressRequest;
+import br.com.mechanic.mechanic.service.response.ClientAddressResponseByControllerDto;
+import br.com.mechanic.mechanic.service.response.ClientAddressResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

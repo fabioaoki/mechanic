@@ -1,11 +1,11 @@
 package br.com.mechanic.mechanic.mapper;
 
 import br.com.mechanic.mechanic.entity.provider.emloyee.EmployeeAccount;
-import br.com.mechanic.mechanic.model.EmployeeAccountModel;
-import br.com.mechanic.mechanic.request.EmployeeAccountRequest;
-import br.com.mechanic.mechanic.response.EmployeeAccountResponseDto;
-import br.com.mechanic.mechanic.response.EmployeeAccountResponseDtoPage;
-import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;
+import br.com.mechanic.mechanic.service.model.EmployeeAccountModel;
+import br.com.mechanic.mechanic.service.request.EmployeeAccountRequest;
+import br.com.mechanic.mechanic.service.response.EmployeeAccountResponseDto;
+import br.com.mechanic.mechanic.service.response.EmployeeAccountResponseDtoPage;
+import br.com.mechanic.mechanic.service.response.ProviderAccountResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;

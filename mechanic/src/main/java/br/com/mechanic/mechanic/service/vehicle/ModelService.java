@@ -5,7 +5,7 @@ import br.com.mechanic.mechanic.exception.ErrorCode;
 import br.com.mechanic.mechanic.exception.ModelException;
 import br.com.mechanic.mechanic.mapper.MarcMapper;
 import br.com.mechanic.mechanic.repository.vehicle.ModelRepositoryImpl;
-import br.com.mechanic.mechanic.response.ModelResponseDto;
+import br.com.mechanic.mechanic.service.response.ModelResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;

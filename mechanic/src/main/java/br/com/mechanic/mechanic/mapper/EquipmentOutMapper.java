@@ -1,11 +1,11 @@
 package br.com.mechanic.mechanic.mapper;
 
 import br.com.mechanic.mechanic.entity.provider.EquipmentOut;
-import br.com.mechanic.mechanic.model.EquipmentOutModel;
-import br.com.mechanic.mechanic.request.EquipmentOutRequest;
-import br.com.mechanic.mechanic.response.EquipmentOutResponseDto;
-import br.com.mechanic.mechanic.response.EquipmentOutResponseDtoPage;
-import br.com.mechanic.mechanic.response.EquipmentResponseDto;
+import br.com.mechanic.mechanic.service.model.EquipmentOutModel;
+import br.com.mechanic.mechanic.service.request.EquipmentOutRequest;
+import br.com.mechanic.mechanic.service.response.EquipmentOutResponseDto;
+import br.com.mechanic.mechanic.service.response.EquipmentOutResponseDtoPage;
+import br.com.mechanic.mechanic.service.response.EquipmentResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
