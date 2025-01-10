@@ -2,9 +2,8 @@ package br.com.mechanic.mechanic.controller.provider;
 
 import br.com.mechanic.mechanic.exception.ErrorResponse;
 import br.com.mechanic.mechanic.exception.ProviderAddressException;
-import br.com.mechanic.mechanic.request.ProviderAddressRequest;
-import br.com.mechanic.mechanic.request.ProviderPersonUpdateRequest;
-import br.com.mechanic.mechanic.response.ProviderAddressResponseDto;
+import br.com.mechanic.mechanic.service.request.ProviderAddressRequest;
+import br.com.mechanic.mechanic.service.response.ProviderAddressResponseDto;
 import br.com.mechanic.mechanic.service.ProviderAddressServiceBO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;

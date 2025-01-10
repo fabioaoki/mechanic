@@ -1,10 +1,10 @@
 package br.com.mechanic.mechanic.mapper;
 
 import br.com.mechanic.mechanic.entity.vehicle.Revision;
-import br.com.mechanic.mechanic.model.CompletedServiceValueModel;
-import br.com.mechanic.mechanic.model.RevisionModel;
-import br.com.mechanic.mechanic.request.RevisionRequest;
-import br.com.mechanic.mechanic.response.RevisionResponse;
+import br.com.mechanic.mechanic.service.model.CompletedServiceValueModel;
+import br.com.mechanic.mechanic.service.model.RevisionModel;
+import br.com.mechanic.mechanic.service.request.RevisionRequest;
+import br.com.mechanic.mechanic.service.response.RevisionResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;

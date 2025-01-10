@@ -2,10 +2,10 @@ package br.com.mechanic.mechanic.mapper;
 
 import br.com.mechanic.mechanic.entity.client.ClientAccount;
 import br.com.mechanic.mechanic.entity.provider.emloyee.EmployeeAccount;
-import br.com.mechanic.mechanic.model.ClientAccountModel;
-import br.com.mechanic.mechanic.request.ClientAccountRequest;
-import br.com.mechanic.mechanic.request.EmployeeAccountRequest;
-import br.com.mechanic.mechanic.response.*;
+import br.com.mechanic.mechanic.service.model.ClientAccountModel;
+import br.com.mechanic.mechanic.service.request.ClientAccountRequest;
+import br.com.mechanic.mechanic.service.request.EmployeeAccountRequest;
+import br.com.mechanic.mechanic.service.response.*;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;

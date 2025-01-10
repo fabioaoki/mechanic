@@ -1,9 +1,9 @@
 package br.com.mechanic.mechanic.service;
 
-import br.com.mechanic.mechanic.request.EquipmentInRequest;
-import br.com.mechanic.mechanic.request.EquipmentInUpdateRequest;
-import br.com.mechanic.mechanic.response.EquipmentInResponseDto;
-import br.com.mechanic.mechanic.response.ProviderEquipmentInResponseDto;
+import br.com.mechanic.mechanic.service.request.EquipmentInRequest;
+import br.com.mechanic.mechanic.service.request.EquipmentInUpdateRequest;
+import br.com.mechanic.mechanic.service.response.EquipmentInResponseDto;
+import br.com.mechanic.mechanic.service.response.ProviderEquipmentInResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

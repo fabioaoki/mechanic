@@ -1,9 +1,9 @@
 package br.com.mechanic.mechanic.mapper;
 
 import br.com.mechanic.mechanic.entity.provider.Transaction;
-import br.com.mechanic.mechanic.model.CompletedServiceModel;
-import br.com.mechanic.mechanic.request.TransactionRequest;
-import br.com.mechanic.mechanic.response.TransactionResponse;
+import br.com.mechanic.mechanic.service.model.CompletedServiceModel;
+import br.com.mechanic.mechanic.service.request.TransactionRequest;
+import br.com.mechanic.mechanic.service.response.TransactionResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;

@@ -1,9 +1,9 @@
 package br.com.mechanic.mechanic.mapper;
 
 import br.com.mechanic.mechanic.entity.vehicle.Vehicle;
-import br.com.mechanic.mechanic.model.VehicleModel;
-import br.com.mechanic.mechanic.request.SaveVehicleRequest;
-import br.com.mechanic.mechanic.response.VehicleResponseDto;
+import br.com.mechanic.mechanic.service.model.VehicleModel;
+import br.com.mechanic.mechanic.service.request.SaveVehicleRequest;
+import br.com.mechanic.mechanic.service.response.VehicleResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

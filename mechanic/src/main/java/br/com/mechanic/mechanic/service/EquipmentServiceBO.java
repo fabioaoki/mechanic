@@ -1,8 +1,8 @@
 package br.com.mechanic.mechanic.service;
 
 import br.com.mechanic.mechanic.exception.EquipmentException;
-import br.com.mechanic.mechanic.request.EquipmentRequestDto;
-import br.com.mechanic.mechanic.response.EquipmentResponseDto;
+import br.com.mechanic.mechanic.service.request.EquipmentRequestDto;
+import br.com.mechanic.mechanic.service.response.EquipmentResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

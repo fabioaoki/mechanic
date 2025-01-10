@@ -1,7 +1,7 @@
 package br.com.mechanic.mechanic.service.client;
 
-import br.com.mechanic.mechanic.request.ClientPhoneRequest;
-import br.com.mechanic.mechanic.response.ClientPhoneResponseDto;
+import br.com.mechanic.mechanic.service.request.ClientPhoneRequest;
+import br.com.mechanic.mechanic.service.response.ClientPhoneResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

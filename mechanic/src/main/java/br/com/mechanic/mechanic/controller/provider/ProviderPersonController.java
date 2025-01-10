@@ -1,13 +1,10 @@
 package br.com.mechanic.mechanic.controller.provider;
 
 import br.com.mechanic.mechanic.exception.ErrorResponse;
-import br.com.mechanic.mechanic.exception.ProviderAccountException;
 import br.com.mechanic.mechanic.exception.ProviderPersonException;
-import br.com.mechanic.mechanic.request.ProviderAccountUpdateRequestDto;
-import br.com.mechanic.mechanic.request.ProviderPersonUpdateRequest;
-import br.com.mechanic.mechanic.response.ProviderPersonResponseDto;
+import br.com.mechanic.mechanic.service.request.ProviderPersonUpdateRequest;
+import br.com.mechanic.mechanic.service.response.ProviderPersonResponseDto;
 import br.com.mechanic.mechanic.service.ProviderPersonServiceBO;
-import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;

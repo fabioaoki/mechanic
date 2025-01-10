@@ -1,11 +1,8 @@
 package br.com.mechanic.mechanic.service.client;
 
-import br.com.mechanic.mechanic.request.ClientPersonRequest;
-import br.com.mechanic.mechanic.request.ProviderPersonRequest;
-import br.com.mechanic.mechanic.request.ProviderPersonUpdateRequest;
-import br.com.mechanic.mechanic.response.ClientPersonResponseByControllerDto;
-import br.com.mechanic.mechanic.response.ClientPersonResponseDto;
-import br.com.mechanic.mechanic.response.ProviderPersonResponseDto;
+import br.com.mechanic.mechanic.service.request.ClientPersonRequest;
+import br.com.mechanic.mechanic.service.response.ClientPersonResponseByControllerDto;
+import br.com.mechanic.mechanic.service.response.ClientPersonResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

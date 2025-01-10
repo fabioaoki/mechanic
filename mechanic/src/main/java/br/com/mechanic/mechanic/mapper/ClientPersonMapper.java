@@ -1,14 +1,10 @@
 package br.com.mechanic.mechanic.mapper;
 
 import br.com.mechanic.mechanic.entity.client.ClientPerson;
-import br.com.mechanic.mechanic.entity.provider.ProviderPerson;
-import br.com.mechanic.mechanic.model.ClientPersonModel;
-import br.com.mechanic.mechanic.model.ProviderPersonModel;
-import br.com.mechanic.mechanic.request.ClientPersonRequest;
-import br.com.mechanic.mechanic.request.ProviderPersonRequest;
-import br.com.mechanic.mechanic.response.ClientPersonResponseByControllerDto;
-import br.com.mechanic.mechanic.response.ClientPersonResponseDto;
-import br.com.mechanic.mechanic.response.ProviderPersonResponseDto;
+import br.com.mechanic.mechanic.service.model.ClientPersonModel;
+import br.com.mechanic.mechanic.service.request.ClientPersonRequest;
+import br.com.mechanic.mechanic.service.response.ClientPersonResponseByControllerDto;
+import br.com.mechanic.mechanic.service.response.ClientPersonResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

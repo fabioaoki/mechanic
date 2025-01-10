@@ -1,12 +1,11 @@
 package br.com.mechanic.mechanic.controller.provider;
 
 import br.com.mechanic.mechanic.config.security.TokenServiceBo;
-import br.com.mechanic.mechanic.request.DataAuthentication;
-import br.com.mechanic.mechanic.response.TokenDto;
+import br.com.mechanic.mechanic.service.request.DataAuthentication;
+import br.com.mechanic.mechanic.service.response.TokenDto;
 import jakarta.validation.Valid;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

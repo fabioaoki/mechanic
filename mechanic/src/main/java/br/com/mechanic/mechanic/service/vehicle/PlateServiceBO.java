@@ -1,9 +1,7 @@
 package br.com.mechanic.mechanic.service.vehicle;
 
-import br.com.mechanic.mechanic.request.PlateRequest;
-import br.com.mechanic.mechanic.request.ProviderPhoneRequest;
-import br.com.mechanic.mechanic.response.PlateResponseDto;
-import br.com.mechanic.mechanic.response.ProviderPhoneResponseDto;
+import br.com.mechanic.mechanic.service.request.PlateRequest;
+import br.com.mechanic.mechanic.service.response.PlateResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

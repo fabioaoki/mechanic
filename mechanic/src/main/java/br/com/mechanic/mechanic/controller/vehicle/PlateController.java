@@ -2,11 +2,8 @@ package br.com.mechanic.mechanic.controller.vehicle;
 
 import br.com.mechanic.mechanic.exception.PlateException;
 import br.com.mechanic.mechanic.exception.ErrorResponse;
-import br.com.mechanic.mechanic.exception.PlateException;
-import br.com.mechanic.mechanic.request.ColorRequest;
-import br.com.mechanic.mechanic.request.PlateRequest;
-import br.com.mechanic.mechanic.response.ColorResponseDto;
-import br.com.mechanic.mechanic.response.PlateResponseDto;
+import br.com.mechanic.mechanic.service.request.PlateRequest;
+import br.com.mechanic.mechanic.service.response.PlateResponseDto;
 import br.com.mechanic.mechanic.service.vehicle.PlateServiceBO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;

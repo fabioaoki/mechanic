@@ -1,8 +1,8 @@
 package br.com.mechanic.mechanic.service.vehicle;
 
 import br.com.mechanic.mechanic.exception.VehicleTypeException;
-import br.com.mechanic.mechanic.request.VehicleTypeRequestDto;
-import br.com.mechanic.mechanic.response.VehicleTypeResponseDto;
+import br.com.mechanic.mechanic.service.request.VehicleTypeRequestDto;
+import br.com.mechanic.mechanic.service.response.VehicleTypeResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

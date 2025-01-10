@@ -5,7 +5,7 @@ import br.com.mechanic.mechanic.exception.ErrorCode;
 import br.com.mechanic.mechanic.exception.ProviderServiceIdentifierException;
 import br.com.mechanic.mechanic.mapper.ProviderServiceIdentifierMapper;
 import br.com.mechanic.mechanic.repository.provider.ProviderServiceIdentifierRepositoryImpl;
-import br.com.mechanic.mechanic.response.ProviderServiceIdentifierResponseDto;
+import br.com.mechanic.mechanic.service.response.ProviderServiceIdentifierResponseDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;

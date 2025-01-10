@@ -5,9 +5,9 @@ import br.com.mechanic.mechanic.exception.ProviderAccountException;
 import br.com.mechanic.mechanic.exception.ProviderAccountTypeException;
 import br.com.mechanic.mechanic.exception.ProviderAddressException;
 import br.com.mechanic.mechanic.exception.ProviderPhoneException;
-import br.com.mechanic.mechanic.request.ProviderAccountRequestDto;
-import br.com.mechanic.mechanic.request.ProviderAccountUpdateRequestDto;
-import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;
+import br.com.mechanic.mechanic.service.request.ProviderAccountRequestDto;
+import br.com.mechanic.mechanic.service.request.ProviderAccountUpdateRequestDto;
+import br.com.mechanic.mechanic.service.response.ProviderAccountResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

@@ -1,14 +1,13 @@
 package br.com.mechanic.mechanic.service;
 
-import br.com.mechanic.mechanic.request.CompletedServiceRequest;
-import br.com.mechanic.mechanic.request.ReversalCompletedServiceRequest;
-import br.com.mechanic.mechanic.response.*;
+import br.com.mechanic.mechanic.service.request.CompletedServiceRequest;
+import br.com.mechanic.mechanic.service.request.ReversalCompletedServiceRequest;
+import br.com.mechanic.mechanic.service.response.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 public interface CompletedServiceManagerBO {
     CompletedResponseDto save(final CompletedServiceRequest completedServiceRequest);

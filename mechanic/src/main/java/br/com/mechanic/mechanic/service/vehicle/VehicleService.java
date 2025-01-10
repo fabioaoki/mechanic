@@ -1,15 +1,13 @@
 package br.com.mechanic.mechanic.service.vehicle;
 
 import br.com.mechanic.mechanic.entity.vehicle.Vehicle;
-import br.com.mechanic.mechanic.exception.EquipmentException;
 import br.com.mechanic.mechanic.exception.ErrorCode;
 import br.com.mechanic.mechanic.exception.VehicleException;
 import br.com.mechanic.mechanic.mapper.VehicleMapper;
 import br.com.mechanic.mechanic.repository.client.ClientAccountRepositoryImpl;
 import br.com.mechanic.mechanic.repository.vehicle.VehicleRepositoryImpl;
-import br.com.mechanic.mechanic.request.SaveVehicleRequest;
-import br.com.mechanic.mechanic.response.VehicleResponseDto;
-import br.com.mechanic.mechanic.response.VehicleTypeResponseDto;
+import br.com.mechanic.mechanic.service.request.SaveVehicleRequest;
+import br.com.mechanic.mechanic.service.response.VehicleResponseDto;
 import br.com.mechanic.mechanic.service.ColorServiceBO;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;

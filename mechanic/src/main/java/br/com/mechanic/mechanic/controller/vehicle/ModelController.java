@@ -2,7 +2,7 @@ package br.com.mechanic.mechanic.controller.vehicle;
 
 import br.com.mechanic.mechanic.exception.ModelException;
 import br.com.mechanic.mechanic.exception.ErrorResponse;
-import br.com.mechanic.mechanic.response.ModelResponseDto;
+import br.com.mechanic.mechanic.service.response.ModelResponseDto;
 import br.com.mechanic.mechanic.service.vehicle.ModelServiceBO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -2,9 +2,9 @@ package br.com.mechanic.mechanic.mapper;
 
 import br.com.mechanic.mechanic.entity.provider.ProviderAccount;
 import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
-import br.com.mechanic.mechanic.model.ProviderAccountModel;
-import br.com.mechanic.mechanic.request.ProviderAccountRequestDto;
-import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;
+import br.com.mechanic.mechanic.service.model.ProviderAccountModel;
+import br.com.mechanic.mechanic.service.request.ProviderAccountRequestDto;
+import br.com.mechanic.mechanic.service.response.ProviderAccountResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;

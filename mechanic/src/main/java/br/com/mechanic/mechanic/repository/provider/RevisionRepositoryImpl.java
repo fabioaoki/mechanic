@@ -1,7 +1,7 @@
 package br.com.mechanic.mechanic.repository.provider;
 
 import br.com.mechanic.mechanic.entity.vehicle.Revision;
-import br.com.mechanic.mechanic.response.RevisionDto;
+import br.com.mechanic.mechanic.service.response.RevisionDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 

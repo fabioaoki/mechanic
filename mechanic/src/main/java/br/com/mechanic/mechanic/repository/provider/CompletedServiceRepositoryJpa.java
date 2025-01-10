@@ -1,7 +1,7 @@
 package br.com.mechanic.mechanic.repository.provider;
 
 import br.com.mechanic.mechanic.entity.provider.CompletedService;
-import br.com.mechanic.mechanic.response.*;
+import br.com.mechanic.mechanic.service.response.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

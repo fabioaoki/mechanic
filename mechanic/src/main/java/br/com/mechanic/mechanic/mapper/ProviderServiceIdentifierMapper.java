@@ -1,7 +1,7 @@
 package br.com.mechanic.mechanic.mapper;
 
 import br.com.mechanic.mechanic.entity.provider.ProviderServiceIdentifier;
-import br.com.mechanic.mechanic.response.ProviderServiceIdentifierResponseDto;
+import br.com.mechanic.mechanic.service.response.ProviderServiceIdentifierResponseDto;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 

@@ -2,10 +2,10 @@ package br.com.mechanic.mechanic.controller.provider;
 
 import br.com.mechanic.mechanic.enuns.ProviderAccountStatusEnum;
 import br.com.mechanic.mechanic.exception.*;
-import br.com.mechanic.mechanic.request.PasswordRequestDto;
-import br.com.mechanic.mechanic.request.ProviderAccountRequestDto;
-import br.com.mechanic.mechanic.request.ProviderAccountUpdateRequestDto;
-import br.com.mechanic.mechanic.response.ProviderAccountResponseDto;
+import br.com.mechanic.mechanic.service.request.PasswordRequestDto;
+import br.com.mechanic.mechanic.service.request.ProviderAccountRequestDto;
+import br.com.mechanic.mechanic.service.request.ProviderAccountUpdateRequestDto;
+import br.com.mechanic.mechanic.service.response.ProviderAccountResponseDto;
 import br.com.mechanic.mechanic.service.PasswordServiceBO;
 import br.com.mechanic.mechanic.service.ProviderAccountServiceBO;
 import lombok.extern.log4j.Log4j2;

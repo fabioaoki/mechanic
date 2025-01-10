@@ -2,8 +2,7 @@ package br.com.mechanic.mechanic.controller.provider;
 
 import br.com.mechanic.mechanic.exception.ErrorResponse;
 import br.com.mechanic.mechanic.exception.ProviderPhoneException;
-import br.com.mechanic.mechanic.request.ProviderAddressRequest;
-import br.com.mechanic.mechanic.request.ProviderPhoneRequest;
+import br.com.mechanic.mechanic.service.request.ProviderPhoneRequest;
 import br.com.mechanic.mechanic.service.ProviderPhoneServiceBO;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;

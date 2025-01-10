@@ -3,9 +3,9 @@ package br.com.mechanic.mechanic.service;
 import br.com.mechanic.mechanic.exception.ProviderAccountException;
 import br.com.mechanic.mechanic.exception.ProviderServiceException;
 import br.com.mechanic.mechanic.exception.VehicleTypeException;
-import br.com.mechanic.mechanic.request.ProviderServiceRequest;
-import br.com.mechanic.mechanic.request.ProviderServiceUpdateRequestDto;
-import br.com.mechanic.mechanic.response.ProviderServiceResponseDto;
+import br.com.mechanic.mechanic.service.request.ProviderServiceRequest;
+import br.com.mechanic.mechanic.service.request.ProviderServiceUpdateRequestDto;
+import br.com.mechanic.mechanic.service.response.ProviderServiceResponseDto;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
