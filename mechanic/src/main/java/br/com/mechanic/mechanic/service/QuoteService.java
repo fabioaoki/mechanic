@@ -54,17 +54,18 @@ public class QuoteService implements QuoteServiceBO {
             QuoteServiceEntity entity = QuoteServiceMapper.MAPPER.modelToEntity(quoteServiceModel, providerAccountId, description);
             entity.setExpiredDate(LocalDateTime.now().plusMonths(1));
 
-            if (quoteServiceId.get() != null) {
+
+            if (quoteServiceId.get() == null) {
+                QuoteServiceEntity save = quoteServiceRepository.save(entity);
+                quoteServiceId.set(save.getId());
+                totalAmount.add(save.getValue());
+            }else {
                 entity.setQuoteServiceId(quoteServiceId.get());
+                QuoteServiceEntity save = quoteServiceRepository.save(entity);
+                totalAmount.add(save.getValue());
             }
 
-            QuoteServiceEntity save = quoteServiceRepository.save(entity);
 
-            if ((save.getQuoteServiceId() != null && save.getQuoteServiceId() != 0L) && (quoteServiceId.get() == null)) {
-                quoteServiceId.set(save.getQuoteServiceId());
-            }
-
-            totalAmount.add(save.getValue());
         });
         float sum = 0;
         for (Float value : totalAmount) {
