@@ -19,6 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @AllArgsConstructor
 @Log4j2
@@ -27,6 +29,9 @@ public class PlateService implements PlateServiceBO {
 
     private final PlateRepositoryImpl plateRepository;
     private final CityUtil cityUtil;
+
+    private static final Pattern MERCOSUL_PLATE_PATTERN = Pattern.compile("^[A-Z]{3}\\d[A-Z]\\d{2}$");
+    private static final Pattern OLD_PLATE_PATTERN = Pattern.compile("^[A-Z]{3}-\\d{4}$");
 
     @Transactional
     @Override
@@ -89,7 +94,8 @@ public class PlateService implements PlateServiceBO {
         }
 
         if (Objects.nonNull(requestDto.getMercosulPlate()) && !requestDto.getMercosulPlate().isEmpty()) {
-            if (!requestDto.getMercosulPlate().matches("^[A-Z]{3}\\d[A-Z]\\d{2}$")) {
+            Matcher matcher = MERCOSUL_PLATE_PATTERN.matcher(requestDto.getMercosulPlate());
+            if (!matcher.matches()) {
                 log.error("Invalid mercosulPlate format: {}", requestDto.getMercosulPlate());
                 throw new PlateException(ErrorCode.INVALID_FIELD, "The 'mercosulPlate' field is invalid. It should be in the format 'ABC1D23'.");
             }
@@ -101,7 +107,8 @@ public class PlateService implements PlateServiceBO {
                 log.info("Mercosul plate updated to: {}", requestDto.getMercosulPlate());
             }
         } else if (Objects.nonNull(requestDto.getOldPlate()) && !requestDto.getOldPlate().isEmpty()) {
-            if (!requestDto.getOldPlate().matches("^[A-Z]{3}-\\d{4}$")) {
+            Matcher matcher = OLD_PLATE_PATTERN.matcher(requestDto.getOldPlate());
+            if (!matcher.matches()) {
                 log.error("Invalid oldPlate format: {}", requestDto.getOldPlate());
                 throw new PlateException(ErrorCode.INVALID_FIELD, "The 'oldPlate' field is invalid. It should be in the format 'AAA-1234'.");
             }
@@ -146,7 +153,9 @@ public class PlateService implements PlateServiceBO {
 
         if (requestDto.getMercosulPlate() != null && !requestDto.getMercosulPlate().isEmpty()) {
             requestDto.setMercosulPlate(requestDto.getMercosulPlate().toUpperCase());
-            if (!requestDto.getMercosulPlate().matches("^[A-Z]{3}\\d[A-Z]\\d{2}$")) {
+            Matcher matcher = MERCOSUL_PLATE_PATTERN.matcher(requestDto.getMercosulPlate());
+
+            if (!matcher.matches()) {
                 log.error("Invalid mercosulPlate format: {}", requestDto.getMercosulPlate());
                 throw new PlateException(ErrorCode.INVALID_FIELD, "The 'mercosulPlate' field is invalid. It should be in the format 'ABC1D23'.");
             }
@@ -157,7 +166,9 @@ public class PlateService implements PlateServiceBO {
 
         if (requestDto.getOldPlate() != null && !requestDto.getOldPlate().isEmpty()) {
             requestDto.setOldPlate(requestDto.getOldPlate().toUpperCase());
-            if (!requestDto.getOldPlate().matches("^[A-Z]{3}-\\d{4}$")) {
+            Matcher matcher = OLD_PLATE_PATTERN.matcher(requestDto.getOldPlate());
+
+            if (!matcher.matches()) {
                 log.error("Invalid oldPlate format: {}", requestDto.getOldPlate());
                 throw new PlateException(ErrorCode.INVALID_FIELD, "The 'oldPlate' field is invalid. It should be in the format 'AAA-1234'.");
             }
@@ -166,10 +177,10 @@ public class PlateService implements PlateServiceBO {
                 throw new PlateException(ErrorCode.INVALID_FIELD, "The 'city' field is required when 'oldPlate' is filled.");
             }
             String formattedCity = cityUtil.formatCity(requestDto.getCity());
-            if (!cityUtil.isValidCity(formattedCity)) {
-                log.error("Invalid city: {}", formattedCity);
-                throw new PlateException(ErrorCode.INVALID_FIELD, "The 'city' field is invalid.");
-            }
+//            if (!cityUtil.isValidCity(formattedCity)) {
+//                log.error("Invalid city: {}", formattedCity);
+//                throw new PlateException(ErrorCode.INVALID_FIELD, "The 'city' field is invalid.");
+//            }
             log.info("Validating if old plate exists: {} in city: {}", requestDto.getOldPlate(), formattedCity);
             oldPlateIsExists(requestDto.getOldPlate(), formattedCity);
         }
