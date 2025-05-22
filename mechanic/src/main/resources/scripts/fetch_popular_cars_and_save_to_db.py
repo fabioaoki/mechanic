@@ -78,7 +78,7 @@ try:
     # Função para verificar se o registro já existe
     def record_exists(car):
         check_query = sql.SQL("""
-            SELECT 1 FROM mechanic.marc WHERE
+            SELECT 1 FROM mechanic.model WHERE
             name = %s AND model = %s AND version = %s AND year::VARCHAR = %s AND transmission_type = %s
         """)
         cursor.execute(check_query, (
@@ -92,7 +92,7 @@ try:
     
     # Inserir dados na tabela marc
     insert_query = sql.SQL("""
-        INSERT INTO mechanic.marc (name, model, version, year, transmission_type)
+        INSERT INTO mechanic.model (name, model, version, year, transmission_type)
         VALUES (%s, %s, %s, %s, %s)
     """)
     
